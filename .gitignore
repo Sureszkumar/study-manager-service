@@ -1,0 +1,11 @@
+/.apt_generated
+/target
+.settings/
+.factorypath
+.classpath
+.project
+/bin
+
+# IntelliJ
+.idea/
+*.iml
