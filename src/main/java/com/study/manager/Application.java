@@ -7,12 +7,16 @@ import org.springframework.boot.context.web.SpringBootServletInitializer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+
+import com.study.manager.filter.AuthFilter;
+
 import springfox.documentation.builders.ApiInfoBuilder;
 import springfox.documentation.builders.PathSelectors;
 import springfox.documentation.service.ApiInfo;
 import springfox.documentation.spi.DocumentationType;
 import springfox.documentation.spring.web.plugins.Docket;
 import springfox.documentation.swagger2.annotations.EnableSwagger2;
+import javax.servlet.Filter;
 
 @Configuration
 @EnableAutoConfiguration
@@ -30,6 +34,12 @@ public class Application extends SpringBootServletInitializer {
     }
 
 
+    @Bean
+    public Filter compressFilter() {
+        AuthFilter compressFilter = new AuthFilter();
+        return compressFilter;
+    }
+    
     @Bean
     public Docket newsApi() {
         return new Docket(DocumentationType.SWAGGER_2)

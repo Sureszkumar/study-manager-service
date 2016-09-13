@@ -1,8 +1,10 @@
 package com.study.manager.controller;
 
+import java.io.IOException;
 import java.util.List;
 
 import javax.inject.Inject;
+import javax.servlet.http.HttpServletResponse;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,13 +22,14 @@ import com.study.manager.service.UserService;
 import com.study.manager.service.exception.ServiceException;
 
 @RestController
+@RequestMapping(value = "/api")
 public class StudyTrackController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(StudyTrackController.class);
     
     @Inject
     private UserService userService;
-    
+	    
     /*----------------User services -------------------*/
 
     @RequestMapping(value = "/user", method = RequestMethod.GET)
@@ -63,6 +66,11 @@ public class StudyTrackController {
     @ResponseStatus(HttpStatus.CONFLICT)
     public String handleUserServiceException(ServiceException e) {
         return e.getMessage();
+    }
+    
+    @ExceptionHandler(IllegalArgumentException.class)
+    void handleBadRequests(HttpServletResponse response) throws IOException {
+        response.sendError(HttpStatus.BAD_REQUEST.value(), "Please try again and with a non empty string as 'email'");
     }
 
 }
