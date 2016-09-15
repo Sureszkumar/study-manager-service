@@ -1,9 +1,17 @@
 package com.study.manager.entity;
 
 import javax.persistence.Entity;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.validation.constraints.NotNull;
 
 import com.google.common.base.Objects;
+
+@NamedQueries({
+	@NamedQuery(name = "UserEntity.findByEmail", query = "SELECT u FROM UserEntity u WHERE u.email = ?1"),
+	@NamedQuery(name = "UserEntity.findByCredentials", query = "SELECT u FROM UserEntity u WHERE u.email = ?1 and u.password = ?2"),
+	@NamedQuery(name = "UserEntity.findByUserIdAndToken", query = "SELECT u FROM UserEntity u WHERE u.id = ?1 and u.authToken = ?2")
+})
 
 @Entity
 public class UserEntity extends BaseEntity {

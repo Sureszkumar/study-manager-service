@@ -2,6 +2,7 @@ package com.study.manager.util;
 
 
 
+import org.apache.commons.codec.binary.Base64;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.BeanWrapper;
 import org.springframework.beans.BeanWrapperImpl;
@@ -16,12 +17,12 @@ public class ServiceUtils {
    
 	public static String createAuthToken(String userEmailChunk){
         String token = UUID.randomUUID().toString().toUpperCase()
-                + "|" + userEmailChunk + "|"
+                + Base64.encodeBase64String(userEmailChunk.getBytes())
                 + LocalDateTime.now().get(ChronoField.MILLI_OF_SECOND);
         return token;
     }
 
-    public static void copyNonNullProperties(Object src, Object target) {
+	public static void copyNonNullProperties(Object src, Object target) {
         BeanUtils.copyProperties(src, target, getNullPropertyNames(src));
     }
 

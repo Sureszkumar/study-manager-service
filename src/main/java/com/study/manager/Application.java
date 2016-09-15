@@ -1,14 +1,24 @@
 package com.study.manager;
 
+import java.util.ArrayList;
+import java.util.EnumSet;
+import java.util.List;
+
+import javax.servlet.DispatcherType;
+import javax.servlet.Filter;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.builder.SpringApplicationBuilder;
+import org.springframework.boot.context.embedded.FilterRegistrationBean;
 import org.springframework.boot.context.web.SpringBootServletInitializer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 
 import com.study.manager.filter.AuthFilter;
+import com.study.manager.service.UserService;
 
 import springfox.documentation.builders.ApiInfoBuilder;
 import springfox.documentation.builders.PathSelectors;
@@ -16,7 +26,6 @@ import springfox.documentation.service.ApiInfo;
 import springfox.documentation.spi.DocumentationType;
 import springfox.documentation.spring.web.plugins.Docket;
 import springfox.documentation.swagger2.annotations.EnableSwagger2;
-import javax.servlet.Filter;
 
 @Configuration
 @EnableAutoConfiguration
@@ -33,11 +42,17 @@ public class Application extends SpringBootServletInitializer {
         return application.sources(Application.class);
     }
 
-
     @Bean
-    public Filter compressFilter() {
-        AuthFilter compressFilter = new AuthFilter();
-        return compressFilter;
+    @Autowired
+    public FilterRegistrationBean shallowEtagHeaderFilter(UserService userService) {
+        FilterRegistrationBean registration = new FilterRegistrationBean();
+        registration.setFilter(new AuthFilter(userService));
+        registration.setDispatcherTypes(EnumSet.allOf(DispatcherType.class));
+        List<String> urlPatterns = new ArrayList<String>();
+        urlPatterns.add("/api/*");
+        registration.setUrlPatterns(urlPatterns);
+        //registration.addUrlPatterns("/api/*");
+        return registration;
     }
     
     @Bean
