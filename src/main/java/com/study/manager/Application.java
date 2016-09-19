@@ -1,11 +1,8 @@
 package com.study.manager;
 
-import java.util.ArrayList;
 import java.util.EnumSet;
-import java.util.List;
 
 import javax.servlet.DispatcherType;
-import javax.servlet.Filter;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
@@ -16,6 +13,8 @@ import org.springframework.boot.context.web.SpringBootServletInitializer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.PropertySource;
+import org.springframework.scheduling.annotation.EnableAsync;
 
 import com.study.manager.filter.AuthFilter;
 import com.study.manager.service.UserService;
@@ -31,6 +30,7 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 @EnableAutoConfiguration
 @ComponentScan
 @EnableSwagger2
+@EnableAsync
 public class Application extends SpringBootServletInitializer {
 
     public static void main(final String[] args) {
@@ -48,10 +48,10 @@ public class Application extends SpringBootServletInitializer {
         FilterRegistrationBean registration = new FilterRegistrationBean();
         registration.setFilter(new AuthFilter(userService));
         registration.setDispatcherTypes(EnumSet.allOf(DispatcherType.class));
-        List<String> urlPatterns = new ArrayList<String>();
-        urlPatterns.add("/api/*");
-        registration.setUrlPatterns(urlPatterns);
-        //registration.addUrlPatterns("/api/*");
+       // List<String> urlPatterns = new ArrayList<String>();
+        //urlPatterns.add("/api/*");
+        //registration.setUrlPatterns(urlPatterns);
+        registration.addUrlPatterns("/api/*");
         return registration;
     }
     

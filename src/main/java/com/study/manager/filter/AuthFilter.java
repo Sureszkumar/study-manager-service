@@ -2,7 +2,6 @@ package com.study.manager.filter;
 
 import java.io.IOException;
 
-import javax.inject.Inject;
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
 import javax.servlet.FilterConfig;
@@ -14,7 +13,6 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
-import org.springframework.web.util.UrlPathHelper;
 
 import com.study.manager.entity.UserEntity;
 import com.study.manager.service.UserService;
@@ -25,12 +23,12 @@ public class AuthFilter implements Filter {
 	public static final String AUTH_TOKEN = "auth-token";
 	public static final String USER_ID = "user-id";
 
-
 	private UserService userService;
 
-	public AuthFilter(){
-		
+	public AuthFilter() {
+
 	}
+
 	public AuthFilter(UserService userService) {
 		this.userService = userService;
 	}
@@ -40,20 +38,17 @@ public class AuthFilter implements Filter {
 			throws IOException, ServletException {
 		HttpServletRequest request = (HttpServletRequest) req;
 		HttpServletResponse response = (HttpServletResponse) res;
-		String resourcePath = new UrlPathHelper().getPathWithinApplication(request);
 		String authToken = request.getHeader(AUTH_TOKEN);
 		String userId = request.getHeader(USER_ID);
-		if (resourcePath != null && resourcePath.contains("/api/")) {
-			if (StringUtils.isEmpty(authToken) || StringUtils.isEmpty(userId)) {
-				response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "User id or Token is empty");
-				return;
-			}
+		if (StringUtils.isEmpty(authToken) || StringUtils.isEmpty(userId)) {
+			response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "User id or Token is empty");
+			return;
+		}
 
-			UserEntity userEntity = userService.findByUserIdAndToken(Long.valueOf(userId), authToken);
-			if (userEntity == null) {
-				response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "User id and Token does not match");
-				return;
-			}
+		UserEntity userEntity = userService.findByUserIdAndAuthToken(Long.valueOf(userId), authToken);
+		if (userEntity == null) {
+			response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "User id and Token does not match");
+			return;
 		}
 		chain.doFilter(req, res);
 	}

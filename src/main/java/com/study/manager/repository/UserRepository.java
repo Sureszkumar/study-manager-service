@@ -8,5 +8,8 @@ public interface UserRepository extends BaseRepository<UserEntity> {
 	
 	public UserEntity findByCredentials(String email, String password);
 
-	public UserEntity findByUserIdAndToken(Long valueOf, String authToken);
+	public UserEntity findByUserIdAndAuthToken(Long valueOf, String authToken);
+
+	public UserEntity findByUserIdAndEmailToken(Long id, String emailVerifyToken);
+	
 }

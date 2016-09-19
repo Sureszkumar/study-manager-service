@@ -14,8 +14,10 @@ import com.study.manager.domain.User;
 import com.study.manager.entity.UserEntity;
 import com.study.manager.repository.UserRepository;
 import com.study.manager.security.Password;
+import com.study.manager.service.exception.CredentialsException;
+import com.study.manager.service.exception.EmailVerificationException;
+import com.study.manager.service.exception.ServiceException;
 import com.study.manager.translator.UserTranslator;
-import com.study.manager.util.EmailService;
 import com.study.manager.util.ServiceUtils;
 import com.study.manager.validator.CredentialsValidator;
 
@@ -31,24 +33,21 @@ public class UserService {
 
 	@Inject
 	private CredentialsValidator credentialsValidator;
-	
-	@Inject
-	private EmailService emailService;
 
 	@Transactional
 	public User create(User user) {
 
 		boolean isValidCredentials = credentialsValidator.validate(user.getEmail(), user.getPassword());
 		if (!isValidCredentials) {
-			throw new IllegalArgumentException();
+			throw new IllegalArgumentException("Invalid email or username");
 		}
 		if (userRepository.findByEmail(user.getEmail()) != null) {
-			throw new EntityExistsException();
+			throw new EntityExistsException("Email already exists");
 		}
-		
+
 		UserEntity userEntity = userTranslator.translateToEntity(user);
 		try {
-			userEntity.setPassword(Password.getSaltedHash(userEntity.getPassword()));
+			userEntity.setPassword(Password.encrypt(userEntity.getPassword()));
 			userEntity.setAuthToken(ServiceUtils.createAuthToken(userEntity.getEmail()));
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
@@ -58,35 +57,43 @@ public class UserService {
 		userEntity.setLastChangeTimestamp(now);
 		userEntity.setCreationDateTime(now);
 		userRepository.save(userEntity);
-		boolean emailSent = emailService.sendEmail(userEntity.getId(), userEntity.getEmail());
 		user = userTranslator.translateToDomain(userEntity);
-		user.setEmailSent(emailSent);
 		return user;
 	}
-	
+
 	@Transactional
 	public User loginUser(User user) {
 
 		boolean isValidCredentials = credentialsValidator.validate(user.getEmail(), user.getPassword());
 		if (!isValidCredentials) {
-			throw new IllegalArgumentException();
+			throw new CredentialsException("Invalid email id");
 		}
 		UserEntity userEntity = null;
 		try {
-			userEntity = userRepository.findByCredentials(user.getEmail(), Password.getSaltedHash(user.getPassword()));
+			userEntity = userRepository.findByEmail(user.getEmail());
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			throw new ServiceException("Exception while finding user");
+
 		}
-		if ( userEntity == null) {
-			throw new EntityNotFoundException();
+		if (userEntity == null) {
+			throw new CredentialsException("User not found for email" + user.getEmail());
+		}
+		if (!userEntity.getVerified()) {
+			throw new EmailVerificationException("Email not verified");
+		}
+		try {
+			if (!Password.check(user.getPassword(), userEntity.getPassword())) {
+				throw new CredentialsException("Invalid valid password");
+			}
+		} catch (Exception e) {
+			throw new ServiceException("Exception while decrypting password");
 		}
 		return userTranslator.translateToDomain(userEntity);
 	}
-	
+
 	public User get(Long id) {
 		UserEntity userEntity = userRepository.findOne(id);
-		if(userEntity == null) {
+		if (userEntity == null) {
 			throw new EntityNotFoundException();
 		}
 		return userTranslator.translateToDomain(userEntity);
@@ -94,13 +101,39 @@ public class UserService {
 
 	public User findUserByEmail(String email) {
 		UserEntity userEntity = userRepository.findByEmail(email);
-		if(userEntity == null) {
+		if (userEntity == null) {
 			throw new EntityNotFoundException();
 		}
 		return userTranslator.translateToDomain(userEntity);
 	}
 
-	public UserEntity findByUserIdAndToken(Long id, String token){
-		return userRepository.findByUserIdAndToken(id, token);
+	public void verifyEmail(String encryptedUserId, String token) {
+		String userId = ServiceUtils.decryptUserId(encryptedUserId);
+		UserEntity userEntity = userRepository.findByUserIdAndEmailToken(Long.valueOf(userId), token);
+		if (userEntity == null) {
+			throw new EmailVerificationException("Invalid email verify token for user");
+		}
+		userEntity.setVerified(true);
+		userRepository.save(userEntity);
+	}
+
+	public UserEntity findByUserIdAndAuthToken(Long id, String token) {
+		return userRepository.findByUserIdAndAuthToken(id, token);
+	}
+
+	@Transactional
+	public UserEntity updateEmailVerifyToken(Long id, String emailVerifyToken) {
+		UserEntity existing = userRepository.findOne(id);
+		if (existing == null) {
+			throw new ServiceException(String.format("user with id =%s not exist", id));
+		}
+		// copyNonNullProperties(o, existing);
+		existing.setLastChangeTimestamp(LocalDateTime.now());
+		existing.setEmailVerifyToken(emailVerifyToken);
+		return userRepository.save(existing);
+	}
+	
+	public void delete(Long userId) {
+		userRepository.delete(userId);
 	}
 }
