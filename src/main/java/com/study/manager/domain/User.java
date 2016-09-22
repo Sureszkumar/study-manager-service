@@ -52,6 +52,12 @@ public class User {
 	public void setEmailSent(boolean emailSent) {
 		this.emailSent = emailSent;
 	}
+
+	@Override
+	public String toString() {
+		return "User [id=" + id + ", email=" + email + ", password=" + password + ", emailSent=" + emailSent
+				+ ", authToken=" + authToken + "]";
+	}
 	
     
     

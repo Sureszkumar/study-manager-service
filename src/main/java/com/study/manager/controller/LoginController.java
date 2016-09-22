@@ -37,7 +37,7 @@ public class LoginController {
 
 	@RequestMapping(value = "/signup", method = RequestMethod.POST)
 	public ServiceResponse createUser(@RequestBody final User user) {
-		LOGGER.debug("Received request to create the {}", user);
+		LOGGER.debug("Received request to signup the {}", user);
 		User createdUser;
 		ServiceResponse response = new ServiceResponse();
 		try {

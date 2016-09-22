@@ -16,7 +16,7 @@ import com.google.common.base.Objects;
 })
 
 @Entity
-@Table(name = "user")
+@Table(name = "USER")
 public class UserEntity extends BaseEntity {
 
     @NotNull

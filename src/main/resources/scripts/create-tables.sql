@@ -3,13 +3,27 @@ CREATE
   TABLE USER
   (
     ID                    INTEGER NOT NULL AUTO_INCREMENT ,
-    MOBILE                VARCHAR(35) NOT NULL,
-    EMAIL                 VARCHAR(255),
-    NAME                  VARCHAR(255),
+    EMAIL                 VARCHAR(35) NOT NULL,
+    PASSWORD              VARCHAR(255) NOT NULL,
     AUTH_TOKEN            VARCHAR(255),
-    OTP                   VARCHAR(255),
-    OTP_VERIFIED          BOOLEAN,
+    VERIFIED      		  BOOLEAN,
+    EMAIL_VERIFY_TOKEN 	  VARCHAR(255),
     CREATION_DATE_TIME    TIMESTAMP NOT NULL,
     LAST_CHANGE_TIMESTAMP TIMESTAMP NOT NULL,
     PRIMARY KEY (ID)
   );
+  
+  
+  CREATE
+  TABLE COURSE
+  (
+    ID                    INTEGER NOT NULL AUTO_INCREMENT ,
+    TITLE                 VARCHAR(255) NOT NULL,
+    DESCRIPTION           VARCHAR(255),
+    TYPE                  VARCHAR(35),
+    DEFAULTTIME			  INTEGER
+    CREATION_DATE_TIME    TIMESTAMP NOT NULL,
+    LAST_CHANGE_TIMESTAMP TIMESTAMP NOT NULL,
+    PRIMARY KEY (ID)
+  );
+  

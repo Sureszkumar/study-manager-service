@@ -7,6 +7,8 @@ import javax.persistence.EntityExistsException;
 import javax.persistence.EntityNotFoundException;
 import javax.transaction.Transactional;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 
@@ -25,6 +27,8 @@ import com.study.manager.validator.CredentialsValidator;
 @Validated
 public class UserService {
 
+	private Logger log = LoggerFactory.getLogger(UserService.class);
+	
 	@Inject
 	private UserRepository userRepository;
 
@@ -41,6 +45,7 @@ public class UserService {
 		if (!isValidCredentials) {
 			throw new IllegalArgumentException("Invalid email or username");
 		}
+		log.debug("User credentials valid {}", isValidCredentials);
 		if (userRepository.findByEmail(user.getEmail()) != null) {
 			throw new EntityExistsException("Email already exists");
 		}
@@ -68,6 +73,7 @@ public class UserService {
 		if (!isValidCredentials) {
 			throw new CredentialsException("Invalid email id");
 		}
+		log.debug("User credentials valid {}", isValidCredentials);
 		UserEntity userEntity = null;
 		try {
 			userEntity = userRepository.findByEmail(user.getEmail());
