@@ -11,5 +11,7 @@ public interface UserRepository extends BaseRepository<UserEntity> {
 	public UserEntity findByUserIdAndAuthToken(Long valueOf, String authToken);
 
 	public UserEntity findByUserIdAndEmailToken(Long id, String emailVerifyToken);
+
+	public void verifyUser(Long userId);
 	
 }

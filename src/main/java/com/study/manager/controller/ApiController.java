@@ -83,7 +83,7 @@ public class ApiController {
 			@RequestHeader("user-id") long userId) {
 		ServiceResponse response = new ServiceResponse();
 		try {
-			userCoursesService.subscribeCourse(userId, courseId);
+			userCoursesService.unSubscribeCourse(userId, courseId);
 			response.setSuccess(true);
 			response.setMessage("Course successfully subscribed");
 			return response;
@@ -93,9 +93,9 @@ public class ApiController {
 		}
 	}
 	
-	@RequestMapping(value = "/subscribeCourse/list", method = RequestMethod.GET)
-	public List<Course> getSubscribeCourses(@RequestHeader("user-id") final Long userId) {
-		return userCoursesService.getSubscribeCourses(userId);
+	@RequestMapping(value = "/subscribedCourses", method = RequestMethod.GET)
+	public List<Course> getSubscribedCourses(@RequestHeader("user-id") final Long userId) {
+		return userCoursesService.getSubscribedCourses(userId);
 	}
 
 	@RequestMapping(value = "/addCustomCourse", method = RequestMethod.POST)

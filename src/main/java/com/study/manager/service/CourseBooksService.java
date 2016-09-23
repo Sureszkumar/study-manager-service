@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 
 import com.study.manager.entity.BookEntity;
+import com.study.manager.entity.CourseBooksEntity;
 import com.study.manager.repository.BookRepository;
 import com.study.manager.repository.CourseBooksRepository;
 
@@ -24,4 +25,9 @@ public class CourseBooksService {
         List<Long> bookIds = courseBooksRepository.findBookIds(courseId);
         return bookRepository.findAll(bookIds);
     }
+
+	public void linkCourseBook(Long courseId, Long bookId) {
+		courseBooksRepository.save(new CourseBooksEntity(courseId, bookId));
+		
+	}
 }

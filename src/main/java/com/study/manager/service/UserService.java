@@ -142,4 +142,9 @@ public class UserService {
 	public void delete(Long userId) {
 		userRepository.delete(userId);
 	}
+
+	public void verifyUser(Long userId) {
+		userRepository.verifyUser(userId);
+		
+	}
 }

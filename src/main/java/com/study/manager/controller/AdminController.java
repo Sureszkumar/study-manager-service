@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.study.manager.domain.Course;
 import com.study.manager.domain.ServiceResponse;
+import com.study.manager.service.CourseBooksService;
 import com.study.manager.service.CourseService;
 import com.study.manager.service.UserService;
 import com.study.manager.service.exception.EmailVerificationException;
@@ -33,6 +34,9 @@ public class AdminController {
 
 	@Inject
 	private CourseService courseService;
+	
+	@Inject
+	private CourseBooksService courseBooksService;
 	
 
 	/*----------------User services -------------------*/
@@ -65,6 +69,19 @@ public class AdminController {
 			return response;
 		}
 	}
+	@RequestMapping(value = "/verifyUser/{userId}", method = RequestMethod.POST)
+	public ServiceResponse verifyUser(@PathVariable("userId") final Long userId) {
+		ServiceResponse response = new ServiceResponse();
+		try {
+			userService.verifyUser(userId);
+			response.setSuccess(true);
+			response.setMessage("Successfully added");
+			return response;
+		} catch (Exception e) {
+			response.setSuccess(false);
+			return response;
+		}
+	}
 	
 	@RequestMapping(value = "/book/add", method = RequestMethod.POST)
 	public ServiceResponse addBook(@RequestBody final Course course) {
@@ -80,8 +97,20 @@ public class AdminController {
 		}
 	}
 
-	
-
+	@RequestMapping(value = "/link/course/{courseId}/book/{bookId}", method = RequestMethod.POST)
+	public ServiceResponse linkCourseBook(@PathVariable("courseId") final Long courseId, 
+			@PathVariable("courseId") final Long bookId) {
+		ServiceResponse response = new ServiceResponse();
+		try {
+			courseBooksService.linkCourseBook(courseId, bookId);
+			response.setSuccess(true);
+			response.setMessage("Successfully added");
+			return response;
+		} catch (Exception e) {
+			response.setSuccess(false);
+			return response;
+		}
+	}
 	@ExceptionHandler(EntityNotFoundException.class)
 	void handleUserNotFoundRequests(HttpServletResponse response) throws IOException {
 		response.sendError(HttpStatus.NOT_FOUND.value(), "Email address not found. Signup to continue");

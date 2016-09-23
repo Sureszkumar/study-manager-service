@@ -51,7 +51,7 @@ public class UserCoursesService {
 		userCoursesRepository.delete(userCourseEntity);
 	}
 
-	public List<Course> getSubscribeCourses(Long userId) {
+	public List<Course> getSubscribedCourses(Long userId) {
 		List<Long> courseIds = userCoursesRepository.findAllCourses(userId);
 		return courseTranslator.translateToDomain(courseRepository.findAll(courseIds));
 	}

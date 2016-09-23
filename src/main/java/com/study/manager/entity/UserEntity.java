@@ -12,7 +12,8 @@ import com.google.common.base.Objects;
 	@NamedQuery(name = "UserEntity.findByEmail", query = "SELECT u FROM UserEntity u WHERE u.email = ?1"),
 	@NamedQuery(name = "UserEntity.findByCredentials", query = "SELECT u FROM UserEntity u WHERE u.email = ?1 and u.password = ?2"),
 	@NamedQuery(name = "UserEntity.findByUserIdAndAuthToken", query = "SELECT u FROM UserEntity u WHERE u.id = ?1 and u.authToken = ?2"),
-	@NamedQuery(name = "UserEntity.findByUserIdAndEmailToken", query = "SELECT u FROM UserEntity u WHERE u.id = ?1 and u.emailVerifyToken = ?2")
+	@NamedQuery(name = "UserEntity.findByUserIdAndEmailToken", query = "SELECT u FROM UserEntity u WHERE u.id = ?1 and u.emailVerifyToken = ?2"),
+	@NamedQuery(name = "UserEntity.verifyUser", query = "UPDATE UserEntity u SET u.verified = true WHERE u.id = ?1")
 })
 
 @Entity
