@@ -1,15 +1,16 @@
 package com.study.manager.entity;
 
-import com.google.common.base.Objects;
-
 import javax.persistence.Entity;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
-import javax.validation.constraints.NotNull;
 
 @Entity
 @Table(name = "USER_COURSES")
+@NamedQueries({
+	@NamedQuery(name = "UserCoursesEntity.findAllCourses", query = "SELECT u.courseId FROM UserCoursesEntity u WHERE u.userId = ?1"),
+	@NamedQuery(name = "UserCoursesEntity.findCount", query = "SELECT count(u) FROM UserCoursesEntity u WHERE u.userId = ?1 and u.courseId = ?2")
+})
 public class UserCoursesEntity extends BaseEntity {
 
     private Long userId;

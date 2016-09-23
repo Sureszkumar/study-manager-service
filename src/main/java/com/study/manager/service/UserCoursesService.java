@@ -1,5 +1,12 @@
 package com.study.manager.service;
 
+import java.util.List;
+
+import javax.inject.Inject;
+
+import org.springframework.stereotype.Service;
+import org.springframework.validation.annotation.Validated;
+
 import com.study.manager.domain.Book;
 import com.study.manager.domain.Course;
 import com.study.manager.entity.BookEntity;
@@ -12,20 +19,11 @@ import com.study.manager.repository.CourseRepository;
 import com.study.manager.repository.UserCoursesRepository;
 import com.study.manager.translator.BookTranslator;
 import com.study.manager.translator.CourseTranslator;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Service;
-import org.springframework.validation.annotation.Validated;
-
-import javax.inject.Inject;
-import java.util.List;
 
 @Service
 @Validated
 public class UserCoursesService {
 
-	private Logger log = LoggerFactory.getLogger(UserCoursesService.class);
-	
 	@Inject
 	private UserCoursesRepository userCoursesRepository;
 
@@ -43,11 +41,14 @@ public class UserCoursesService {
 	@Inject
 	private BookTranslator bookTranslator;
 
-	public void subscribeCourses(Long userId, List<Long> courseIds) {
-		for(Long courseId : courseIds) {
-			UserCoursesEntity userCourseEntity = new UserCoursesEntity(userId, courseId);
-			userCoursesRepository.save(userCourseEntity);
-		}
+	public void subscribeCourse(Long userId, Long courseId) {
+		UserCoursesEntity userCourseEntity = new UserCoursesEntity(userId, courseId);
+		userCoursesRepository.save(userCourseEntity);
+	}
+	
+	public void unSubscribeCourse(Long userId, Long courseId) {
+		UserCoursesEntity userCourseEntity = new UserCoursesEntity(userId, courseId);
+		userCoursesRepository.delete(userCourseEntity);
 	}
 
 	public List<Course> getSubscribeCourses(Long userId) {
@@ -55,9 +56,10 @@ public class UserCoursesService {
 		return courseTranslator.translateToDomain(courseRepository.findAll(courseIds));
 	}
 
-	public void addCustomCourse(Long userId, Course course) {
+	public void 
+	addCustomCourse(Long userId, Course course) {
 		List<BookEntity> bookEntityList = bookTranslator.translateToEntity(course.getBookList());
-		for(BookEntity bookEntity : bookEntityList){
+		for (BookEntity bookEntity : bookEntityList) {
 			bookRepository.save(bookEntity);
 		}
 		CourseEntity courseEntity = courseTranslator.translateToEntity(course);
@@ -72,5 +74,10 @@ public class UserCoursesService {
 		courseBooksRepository.save(courseBooksEntity);
 		userCoursesRepository.save(new UserCoursesEntity(userId, courseBooksEntity.getId()));
 
+	}
+
+	public boolean isSubscribed(long courseId, long userId) {
+		Long count = userCoursesRepository.findCount(userId, courseId);
+		return count == 0 ? false : true;
 	}
 }

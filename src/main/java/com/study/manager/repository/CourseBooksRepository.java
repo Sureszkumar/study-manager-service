@@ -1,10 +1,8 @@
 package com.study.manager.repository;
 
-import com.study.manager.entity.BookEntity;
-import com.study.manager.entity.CourseBooksEntity;
-import com.study.manager.entity.UserCoursesEntity;
-
 import java.util.List;
+
+import com.study.manager.entity.CourseBooksEntity;
 
 public interface CourseBooksRepository extends BaseRepository<CourseBooksEntity> {
 

@@ -11,8 +11,18 @@ public class Course {
 	private String description;
 
 	private String type;
+	
+	private boolean subscribed;
 
 	private List<Book> bookList;
+
+	public boolean isSubscribed() {
+		return subscribed;
+	}
+
+	public void setSubscribed(boolean subscribed) {
+		this.subscribed = subscribed;
+	}
 
 	public String getDescription() {
 		return description;

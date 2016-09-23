@@ -5,16 +5,14 @@ import java.util.List;
 
 import javax.inject.Inject;
 
-import com.study.manager.domain.Book;
-import com.study.manager.repository.CourseBooksRepository;
-import com.study.manager.repository.UserCoursesRepository;
-import com.study.manager.translator.BookTranslator;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 
+import com.study.manager.domain.Book;
 import com.study.manager.domain.Course;
 import com.study.manager.entity.CourseEntity;
 import com.study.manager.repository.CourseRepository;
+import com.study.manager.translator.BookTranslator;
 import com.study.manager.translator.CourseTranslator;
 
 @Service
@@ -31,11 +29,18 @@ public class CourseService {
 	private BookTranslator bookTranslator;
 
 	@Inject
+	private UserCoursesService userCoursesService;
+
+	@Inject
 	private CourseBooksService courseBooksService;
 
-	public List<Course> getAll() {
+	public List<Course> getAll(long userId) {
 		List<CourseEntity> courseEntities = courseRepository.findAll();
-		return courseTranslator.translateToDomain(courseEntities);
+		List<Course> courseList = courseTranslator.translateToDomain(courseEntities);
+		for (Course course : courseList) {
+			course.setSubscribed(userCoursesService.isSubscribed(course.getId(), userId));
+		}
+		return courseList;
 	}
 
 	public void addCourse(Course course) {
@@ -43,7 +48,7 @@ public class CourseService {
 		courseEntity.setCreationDateTime(LocalDateTime.now());
 		courseEntity.setLastChangeTimestamp(LocalDateTime.now());
 		courseRepository.save(courseEntity);
-		
+
 	}
 
 	public Course getCourse(Long courseId) {

@@ -11,11 +11,14 @@ import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.study.manager.domain.Course;
 import com.study.manager.domain.ServiceResponse;
+import com.study.manager.service.CourseService;
 import com.study.manager.service.UserService;
 import com.study.manager.service.exception.EmailVerificationException;
 
@@ -28,6 +31,9 @@ public class AdminController {
 	@Inject
 	private UserService userService;
 
+	@Inject
+	private CourseService courseService;
+	
 
 	/*----------------User services -------------------*/
 
@@ -46,6 +52,35 @@ public class AdminController {
 		}
 	}
 
+	@RequestMapping(value = "/course/add", method = RequestMethod.POST)
+	public ServiceResponse addCourse(@RequestBody final Course course) {
+		ServiceResponse response = new ServiceResponse();
+		try {
+			courseService.addCourse(course);
+			response.setSuccess(true);
+			response.setMessage("Successfully added");
+			return response;
+		} catch (Exception e) {
+			response.setSuccess(false);
+			return response;
+		}
+	}
+	
+	@RequestMapping(value = "/book/add", method = RequestMethod.POST)
+	public ServiceResponse addBook(@RequestBody final Course course) {
+		ServiceResponse response = new ServiceResponse();
+		try {
+			courseService.addCourse(course);
+			response.setSuccess(true);
+			response.setMessage("Successfully added");
+			return response;
+		} catch (Exception e) {
+			response.setSuccess(false);
+			return response;
+		}
+	}
+
+	
 
 	@ExceptionHandler(EntityNotFoundException.class)
 	void handleUserNotFoundRequests(HttpServletResponse response) throws IOException {

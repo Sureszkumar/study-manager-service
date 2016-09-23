@@ -8,7 +8,7 @@ import javax.persistence.Enumerated;
 import javax.persistence.Table;
 
 @Entity
-@Table(name = "COURSE")
+@Table(name = "BOOK")
 public class BookEntity extends BaseEntity {
 	
 	private String title;
