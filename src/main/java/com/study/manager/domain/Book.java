@@ -1,18 +1,14 @@
 package com.study.manager.domain;
 
-import java.util.List;
+public class Book {
 
-public class Course {
-	
 	private Long id;
-	
+
 	private String title;
 
 	private String description;
 
 	private String type;
-
-	private List<Book> bookList;
 
 	public String getDescription() {
 		return description;
@@ -28,14 +24,6 @@ public class Course {
 
 	public void setType(String type) {
 		this.type = type;
-	}
-
-	public List<Book> getBookList() {
-		return bookList;
-	}
-
-	public void setBookList(List<Book> bookList) {
-		this.bookList = bookList;
 	}
 
 	public String getTitle() {

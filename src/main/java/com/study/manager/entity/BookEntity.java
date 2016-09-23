@@ -9,23 +9,23 @@ import javax.persistence.Table;
 
 @Entity
 @Table(name = "COURSE")
-public class CourseEntity extends BaseEntity {
+public class BookEntity extends BaseEntity {
 	
 	private String title;
 
 	private String description;
+
+	private long pages;
 	
 	@Enumerated(EnumType.STRING)
 	private Type type;
-	
-	private int defaultTime;
-	
-	public int getDefaultTime() {
-		return defaultTime;
+
+	public long getPages() {
+		return pages;
 	}
 
-	public void setDefaultTime(int defaultTime) {
-		this.defaultTime = defaultTime;
+	public void setPages(long pages) {
+		this.pages = pages;
 	}
 
 	public String getDescription() {

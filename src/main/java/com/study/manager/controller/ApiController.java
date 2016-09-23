@@ -7,6 +7,8 @@ import javax.inject.Inject;
 import javax.persistence.EntityNotFoundException;
 import javax.servlet.http.HttpServletResponse;
 
+import com.study.manager.domain.Book;
+import com.study.manager.service.UserCoursesService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -36,6 +38,9 @@ public class ApiController {
 	@Inject
 	private CourseService courseService;
 
+	@Inject
+	private UserCoursesService userCoursesService;
+
 	/*----------------User services -------------------*/
 
 	@RequestMapping(value = "/user/id/{id}", method = RequestMethod.GET)
@@ -55,6 +60,11 @@ public class ApiController {
 		return courseService.getAll();
 	}
 
+	@RequestMapping(value = "/course/{courseId}", method = RequestMethod.GET)
+	public Course getCourse( @PathVariable("courseId") final Long courseId) {
+		return courseService.getCourse(courseId);
+	}
+
 	@RequestMapping(value = "/course/add", method = RequestMethod.POST)
 	public ServiceResponse addCourse(@RequestBody final Course course) {
 		ServiceResponse response = new ServiceResponse();
@@ -69,6 +79,52 @@ public class ApiController {
 		}
 	}
 
+	@RequestMapping(value = "user/{userId}/subscribeCourses", method = RequestMethod.POST)
+	public ServiceResponse subscribeCourses(@PathVariable("userId") final Long userId, @RequestBody final List<Long> courseIds) {
+		ServiceResponse response = new ServiceResponse();
+		try {
+			userCoursesService.subscribeCourses(userId, courseIds);
+			response.setSuccess(true);
+			response.setMessage("Course successfully subscribed");
+			return response;
+		} catch (Exception e) {
+			response.setSuccess(false);
+			return response;
+		}
+	}
+
+	@RequestMapping(value = "user/{userId}/course/list", method = RequestMethod.GET)
+	public List<Course> getSubscribeCourses(@PathVariable("userId") final Long userId) {
+		return userCoursesService.getSubscribeCourses(userId);
+	}
+
+	@RequestMapping(value = "user/{userId}/course/add", method = RequestMethod.POST)
+	public ServiceResponse addCustomCourse(@PathVariable("userId") final Long userId, @RequestBody final Course course) {
+		ServiceResponse response = new ServiceResponse();
+		try {
+			userCoursesService.addCustomCourse(userId, course);
+			response.setSuccess(true);
+			response.setMessage("Successfully added");
+			return response;
+		} catch (Exception e) {
+			response.setSuccess(false);
+			return response;
+		}
+	}
+	@RequestMapping(value = "user/{userId}/course/{courseId}", method = RequestMethod.POST)
+	public ServiceResponse addCustomBook(@PathVariable("userId") final Long userId, @PathVariable("courseId") final Long courseId,
+										 @RequestBody final Book book) {
+		ServiceResponse response = new ServiceResponse();
+		try {
+			userCoursesService.addCustomBook(userId, courseId, book);
+			response.setSuccess(true);
+			response.setMessage("Successfully added");
+			return response;
+		} catch (Exception e) {
+			response.setSuccess(false);
+			return response;
+		}
+	}
 	@ExceptionHandler(EntityNotFoundException.class)
 	void handleUserNotFoundRequests(HttpServletResponse response) throws IOException {
 		response.sendError(HttpStatus.NOT_FOUND.value(), "Email address not found. Signup to continue");

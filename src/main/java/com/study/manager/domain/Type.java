@@ -1,6 +1,6 @@
 package com.study.manager.domain;
 
-public enum CourseType {
+public enum Type {
 
 	RECOMMENDED, CUSTOM;
 }

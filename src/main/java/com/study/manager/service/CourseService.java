@@ -5,6 +5,10 @@ import java.util.List;
 
 import javax.inject.Inject;
 
+import com.study.manager.domain.Book;
+import com.study.manager.repository.CourseBooksRepository;
+import com.study.manager.repository.UserCoursesRepository;
+import com.study.manager.translator.BookTranslator;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 
@@ -23,6 +27,12 @@ public class CourseService {
 	@Inject
 	private CourseTranslator courseTranslator;
 
+	@Inject
+	private BookTranslator bookTranslator;
+
+	@Inject
+	private CourseBooksService courseBooksService;
+
 	public List<Course> getAll() {
 		List<CourseEntity> courseEntities = courseRepository.findAll();
 		return courseTranslator.translateToDomain(courseEntities);
@@ -36,4 +46,12 @@ public class CourseService {
 		
 	}
 
+	public Course getCourse(Long courseId) {
+		CourseEntity courseEntity = courseRepository.findOne(courseId);
+		List<Book> bookList = bookTranslator.translateToDomain(courseBooksService.findBooks(courseId));
+		Course course = courseTranslator.translateToDomain(courseEntity);
+		course.getBookList().addAll(bookList);
+		return course;
+
+	}
 }
