@@ -143,8 +143,20 @@ public class UserService {
 		userRepository.delete(userId);
 	}
 
+	public UserEntity updateUser(Long userId, UserEntity newUserEntity){
+        UserEntity existing = userRepository.findOne(userId);
+        if (existing == null) {
+            throw new ServiceException(
+                    String.format("user with id =%s not exist", userId));
+        }
+        ServiceUtils.copyNonNullProperties(newUserEntity, existing);
+        existing.setLastChangeTimestamp(LocalDateTime.now());
+        return userRepository.save(existing);
+	}
 	public void verifyUser(Long userId) {
-		userRepository.verifyUser(userId);
-		
+		UserEntity existing = userRepository.findOne(userId);
+		existing.setVerified(true);
+		existing.setLastChangeTimestamp(LocalDateTime.now());
+		userRepository.save(existing);
 	}
 }

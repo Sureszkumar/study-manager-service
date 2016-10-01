@@ -47,7 +47,7 @@ public class UserCoursesService {
 	}
 	
 	public void unSubscribeCourse(Long userId, Long courseId) {
-		UserCoursesEntity userCourseEntity = new UserCoursesEntity(userId, courseId);
+		UserCoursesEntity userCourseEntity = userCoursesRepository.findBy(userId,courseId);
 		userCoursesRepository.delete(userCourseEntity);
 	}
 

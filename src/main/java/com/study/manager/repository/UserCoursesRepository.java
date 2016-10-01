@@ -9,4 +9,6 @@ public interface UserCoursesRepository extends BaseRepository<UserCoursesEntity>
 	List<Long> findAllCourses(Long userId);
 
 	Long findCount(long userId, long courseId);
+
+	UserCoursesEntity findBy(Long userId, Long courseId);
 }

@@ -85,7 +85,7 @@ public class ApiController {
 		try {
 			userCoursesService.unSubscribeCourse(userId, courseId);
 			response.setSuccess(true);
-			response.setMessage("Course successfully subscribed");
+			response.setMessage("Course successfully unSubscribed");
 			return response;
 		} catch (Exception e) {
 			response.setSuccess(false);

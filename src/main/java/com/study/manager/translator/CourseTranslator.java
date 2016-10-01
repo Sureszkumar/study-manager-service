@@ -22,6 +22,7 @@ public class CourseTranslator {
 			course.setTitle(courseEntity.getTitle());
 			course.setDescription(courseEntity.getDescription());
 			course.setType(courseEntity.getType().name());
+			course.setSubscribed(true);
 			courseList.add(course);
 		}
 		return courseList;

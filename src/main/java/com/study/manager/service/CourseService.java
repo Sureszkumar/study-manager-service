@@ -1,6 +1,7 @@
 package com.study.manager.service;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -10,7 +11,11 @@ import org.springframework.validation.annotation.Validated;
 
 import com.study.manager.domain.Book;
 import com.study.manager.domain.Course;
+import com.study.manager.entity.BookEntity;
+import com.study.manager.entity.CourseBooksEntity;
 import com.study.manager.entity.CourseEntity;
+import com.study.manager.repository.BookRepository;
+import com.study.manager.repository.CourseBooksRepository;
 import com.study.manager.repository.CourseRepository;
 import com.study.manager.translator.BookTranslator;
 import com.study.manager.translator.CourseTranslator;
@@ -34,6 +39,12 @@ public class CourseService {
 	@Inject
 	private CourseBooksService courseBooksService;
 
+	@Inject
+	private CourseBooksRepository courseBooksRepository;
+
+	@Inject
+	private BookRepository bookRepository;
+
 	public List<Course> getAll(long userId) {
 		List<CourseEntity> courseEntities = courseRepository.findAll();
 		List<Course> courseList = courseTranslator.translateToDomain(courseEntities);
@@ -45,9 +56,24 @@ public class CourseService {
 
 	public void addCourse(Course course) {
 		CourseEntity courseEntity = courseTranslator.translateToEntity(course);
+		List<Book> bookList = course.getBookList();
+		List<BookEntity> savedbookList = null;
+		if (bookList != null) {
+			List<BookEntity> translateToEntity = bookTranslator.translateToEntity(bookList);
+			savedbookList = bookRepository.save(translateToEntity);
+		}
 		courseEntity.setCreationDateTime(LocalDateTime.now());
 		courseEntity.setLastChangeTimestamp(LocalDateTime.now());
-		courseRepository.save(courseEntity);
+		CourseEntity savedCourse = courseRepository.save(courseEntity);
+		List<CourseBooksEntity> courseBooksEntities = new ArrayList<>();
+		if (savedbookList != null) {
+			for (BookEntity bookEntity : savedbookList) {
+				CourseBooksEntity courseBooksEntity = new CourseBooksEntity(savedCourse.getId(), bookEntity.getId());
+				courseBooksEntities.add(courseBooksEntity);
+			}
+
+			courseBooksRepository.save(courseBooksEntities);
+		}
 
 	}
 

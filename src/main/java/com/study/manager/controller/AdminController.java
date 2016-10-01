@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.study.manager.domain.Course;
 import com.study.manager.domain.ServiceResponse;
+import com.study.manager.domain.User;
 import com.study.manager.service.CourseBooksService;
 import com.study.manager.service.CourseService;
 import com.study.manager.service.UserService;
@@ -55,20 +56,20 @@ public class AdminController {
 			return response;
 		}
 	}
-
-	@RequestMapping(value = "/course/add", method = RequestMethod.POST)
-	public ServiceResponse addCourse(@RequestBody final Course course) {
-		ServiceResponse response = new ServiceResponse();
+	@RequestMapping(value = "/user/{id}", method = RequestMethod.GET)
+	public User get(@PathVariable("id") final Long id) {
+		LOGGER.debug("Received request to retrieve user : {}", id);
 		try {
-			courseService.addCourse(course);
-			response.setSuccess(true);
-			response.setMessage("Successfully added");
-			return response;
+			User user = userService.get(id);
+			//response.setSuccess(true);
+			//response.setMessage("User retreived successfully");
+			return user;
 		} catch (Exception e) {
-			response.setSuccess(false);
-			return response;
+			//response.setSuccess(false);
+			return null;
 		}
 	}
+	
 	@RequestMapping(value = "/verifyUser/{userId}", method = RequestMethod.POST)
 	public ServiceResponse verifyUser(@PathVariable("userId") final Long userId) {
 		ServiceResponse response = new ServiceResponse();
@@ -82,6 +83,21 @@ public class AdminController {
 			return response;
 		}
 	}
+	
+	@RequestMapping(value = "/course/add", method = RequestMethod.POST)
+	public ServiceResponse addCourse(@RequestBody final Course course) {
+		ServiceResponse response = new ServiceResponse();
+		try {
+			courseService.addCourse(course);
+			response.setSuccess(true);
+			response.setMessage("Successfully added");
+			return response;
+		} catch (Exception e) {
+			response.setSuccess(false);
+			return response;
+		}
+	}
+	
 	
 	@RequestMapping(value = "/book/add", method = RequestMethod.POST)
 	public ServiceResponse addBook(@RequestBody final Course course) {

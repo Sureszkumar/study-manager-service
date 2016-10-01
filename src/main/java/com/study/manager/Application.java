@@ -10,10 +10,13 @@ import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.context.embedded.FilterRegistrationBean;
 import org.springframework.boot.context.web.SpringBootServletInitializer;
+import org.springframework.cloud.aws.context.config.annotation.EnableContextCredentials;
+import org.springframework.cloud.aws.context.config.annotation.EnableContextRegion;
+import org.springframework.cloud.aws.jdbc.config.annotation.EnableRdsInstance;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.PropertySource;
+import org.springframework.context.annotation.ImportResource;
 import org.springframework.scheduling.annotation.EnableAsync;
 
 import com.study.manager.filter.AuthFilter;
@@ -31,6 +34,9 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 @ComponentScan
 @EnableSwagger2
 @EnableAsync
+//@EnableRdsInstance(databaseName="studyManager", dbInstanceIdentifier="aa1pxmwgdqe5qay", username="admin123",password="admin123")
+//@EnableContextCredentials(accessKey="AKIAIZYPAISXADDJUO6A", secretKey="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")
+//@EnableContextRegion(region="us-west-2")
 public class Application extends SpringBootServletInitializer {
 
     public static void main(final String[] args) {
