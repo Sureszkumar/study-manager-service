@@ -42,7 +42,7 @@ public class AuthFilter implements Filter {
 			throws IOException, ServletException {
 		HttpServletRequest request = (HttpServletRequest) req;
 		HttpServletResponse response = (HttpServletResponse) res;
-		StringBuilder sb = new StringBuilder();
+		/*StringBuilder sb = new StringBuilder();
 	    BufferedReader reader = request.getReader();
 	    try {
 	        String line;
@@ -52,7 +52,7 @@ public class AuthFilter implements Filter {
 	    } finally {
 	        reader.close();
 	    }
-	    log.debug("request : ", sb.toString());
+	    log.debug("request : ", sb.toString());*/
 		String authToken = request.getHeader(AUTH_TOKEN);
 		String userId = request.getHeader(USER_ID);
 		log.debug("User id : {}, AuthToken : {}", userId, authToken);

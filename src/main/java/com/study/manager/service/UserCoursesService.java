@@ -45,9 +45,9 @@ public class UserCoursesService {
 		UserCoursesEntity userCourseEntity = new UserCoursesEntity(userId, courseId);
 		userCoursesRepository.save(userCourseEntity);
 	}
-	
+
 	public void unSubscribeCourse(Long userId, Long courseId) {
-		UserCoursesEntity userCourseEntity = userCoursesRepository.findBy(userId,courseId);
+		UserCoursesEntity userCourseEntity = userCoursesRepository.findBy(userId, courseId);
 		userCoursesRepository.delete(userCourseEntity);
 	}
 
@@ -56,11 +56,12 @@ public class UserCoursesService {
 		return courseTranslator.translateToDomain(courseRepository.findAll(courseIds));
 	}
 
-	public void 
-	addCustomCourse(Long userId, Course course) {
-		List<BookEntity> bookEntityList = bookTranslator.translateToEntity(course.getBookList());
-		for (BookEntity bookEntity : bookEntityList) {
-			bookRepository.save(bookEntity);
+	public void addCustomCourse(Long userId, Course course) {
+		if (course.getBookList() != null) {
+			List<BookEntity> bookEntityList = bookTranslator.translateToEntity(course.getBookList());
+			for (BookEntity bookEntity : bookEntityList) {
+				bookRepository.save(bookEntity);
+			}
 		}
 		CourseEntity courseEntity = courseTranslator.translateToEntity(course);
 		CourseEntity persistedEntity = courseRepository.save(courseEntity);

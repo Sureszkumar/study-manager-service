@@ -74,6 +74,7 @@ public class ApiController {
 			return response;
 		} catch (Exception e) {
 			response.setSuccess(false);
+			response.setMessage(e.getMessage());
 			return response;
 		}
 	}
@@ -89,6 +90,7 @@ public class ApiController {
 			return response;
 		} catch (Exception e) {
 			response.setSuccess(false);
+			response.setMessage(e.getMessage());
 			return response;
 		}
 	}
@@ -108,6 +110,7 @@ public class ApiController {
 			return response;
 		} catch (Exception e) {
 			response.setSuccess(false);
+			response.setMessage(e.getMessage());
 			return response;
 		}
 	}
@@ -122,6 +125,7 @@ public class ApiController {
 			return response;
 		} catch (Exception e) {
 			response.setSuccess(false);
+			response.setMessage(e.getMessage());
 			return response;
 		}
 	}
