@@ -1,15 +1,18 @@
 package com.study.manager.util;
 
-import org.apache.commons.codec.binary.Base64;
-import org.springframework.beans.BeanUtils;
-import org.springframework.beans.BeanWrapper;
-import org.springframework.beans.BeanWrapperImpl;
-
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoField;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
+
+import org.apache.commons.codec.binary.Base64;
+import org.springframework.beans.BeanUtils;
+import org.springframework.beans.BeanWrapper;
+import org.springframework.beans.BeanWrapperImpl;
+
+import com.study.manager.domain.Proficiency;
 
 public class ServiceUtils {
 
@@ -50,6 +53,14 @@ public class ServiceUtils {
 		}
 		String[] result = new String[emptyNames.size()];
 		return emptyNames.toArray(result);
+	}
+
+	public static LocalDate calculateTargetDate(LocalDate startDate, Long noOfPages, Proficiency proficiency,
+			Long noOfHours) {
+		
+		
+
+		return null;
 	}
 
 	public static String formVerifyEmailUrl(Long id, String email) {

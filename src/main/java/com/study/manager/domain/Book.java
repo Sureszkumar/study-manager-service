@@ -11,6 +11,17 @@ public class Book {
 	private String title;
 
 	private String description;
+	
+	private byte[] image;
+	
+
+	public byte[] getImage() {
+		return image;
+	}
+
+	public void setImage(byte[] image) {
+		this.image = image;
+	}
 
 	private String type;
 

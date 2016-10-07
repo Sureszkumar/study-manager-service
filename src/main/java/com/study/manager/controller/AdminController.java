@@ -14,11 +14,17 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.study.manager.domain.Book;
 import com.study.manager.domain.Course;
 import com.study.manager.domain.ServiceResponse;
 import com.study.manager.domain.User;
+import com.study.manager.service.BookService;
 import com.study.manager.service.CourseBooksService;
 import com.study.manager.service.CourseService;
 import com.study.manager.service.UserService;
@@ -35,6 +41,9 @@ public class AdminController {
 
 	@Inject
 	private CourseService courseService;
+	
+	@Inject
+	private BookService bookService;
 	
 	@Inject
 	private CourseBooksService courseBooksService;
@@ -99,11 +108,12 @@ public class AdminController {
 	}
 	
 	
-	@RequestMapping(value = "/book/add", method = RequestMethod.POST)
-	public ServiceResponse addBook(@RequestBody final Course course) {
+	@RequestMapping(value = "/book/add", consumes = {"multipart/form-data"}, method = RequestMethod.POST)
+	public ServiceResponse addBook(@RequestParam final String bookJson, @RequestPart("image") MultipartFile image) {
 		ServiceResponse response = new ServiceResponse();
 		try {
-			courseService.addCourse(course);
+			Book book = new ObjectMapper().readValue(bookJson, Book.class);
+			bookService.addBook(book, image.getBytes());
 			response.setSuccess(true);
 			response.setMessage("Successfully added");
 			return response;
@@ -113,6 +123,19 @@ public class AdminController {
 		}
 	}
 
+	@RequestMapping(value = "/book/{id}", method = RequestMethod.GET)
+	public Book getBook(@PathVariable("id") final Long id) {
+		LOGGER.debug("Received request to retrieve user : {}", id);
+		try {
+			Book book = bookService.get(id);
+			//response.setSuccess(true);
+			//response.setMessage("User retreived successfully");
+			return book;
+		} catch (Exception e) {
+			//response.setSuccess(false);
+			return null;
+		}
+	}
 	@RequestMapping(value = "/link/course/{courseId}/book/{bookId}", method = RequestMethod.POST)
 	public ServiceResponse linkCourseBook(@PathVariable("courseId") final Long courseId, 
 			@PathVariable("courseId") final Long bookId) {

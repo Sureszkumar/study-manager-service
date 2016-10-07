@@ -6,6 +6,7 @@ import java.util.List;
 
 import javax.inject.Inject;
 
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 
@@ -45,6 +46,7 @@ public class CourseService {
 	@Inject
 	private BookRepository bookRepository;
 
+	@Cacheable("courses")
 	public List<Course> getAll(long userId) {
 		List<CourseEntity> courseEntities = courseRepository.findAll();
 		List<Course> courseList = courseTranslator.translateToDomain(courseEntities);
@@ -54,6 +56,7 @@ public class CourseService {
 		return courseList;
 	}
 
+	
 	public void addCourse(Course course) {
 		CourseEntity courseEntity = courseTranslator.translateToEntity(course);
 		List<Book> bookList = course.getBookList();
@@ -77,6 +80,7 @@ public class CourseService {
 
 	}
 
+	@Cacheable("course")
 	public Course getCourse(Long courseId) {
 		CourseEntity courseEntity = courseRepository.findOne(courseId);
 		List<Book> bookList = bookTranslator.translateToDomain(courseBooksService.findBooks(courseId));

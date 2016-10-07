@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 
 import javax.inject.Inject;
 
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 
@@ -22,15 +23,17 @@ public class BookService {
 	@Inject
 	private BookRepository bookRepository;
 	
-	public void addCourse(Book book) {
+	public void addBook(Book book, byte[] bookImage) {
 		BookEntity bookEntity = bookTranslator.translateToEntity(book);
+		bookEntity.setBookImage(bookImage);
 		bookEntity.setCreationDateTime(LocalDateTime.now());
 		bookEntity.setLastChangeTimestamp(LocalDateTime.now());
 		bookRepository.save(bookEntity);
 
 	}
 
-	public Book getCourse(Long bookeId) {
+	@Cacheable("book")
+	public Book get(Long bookeId) {
 		BookEntity bookEntity = bookRepository.findOne(bookeId);
 		return bookTranslator.translateToDomain(bookEntity);
 	}

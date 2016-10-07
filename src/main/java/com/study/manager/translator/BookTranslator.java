@@ -32,6 +32,7 @@ public class BookTranslator {
         book.setTitle(bookEntity.getTitle());
         book.setDescription(bookEntity.getDescription());
         book.setType(bookEntity.getType().name());
+        book.setImage(bookEntity.getBookImage());
         return book;
     }
 

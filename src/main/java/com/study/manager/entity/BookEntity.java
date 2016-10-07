@@ -1,11 +1,12 @@
 package com.study.manager.entity;
 
-import com.study.manager.domain.Type;
-
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.Lob;
 import javax.persistence.Table;
+
+import com.study.manager.domain.Type;
 
 @Entity
 @Table(name = "BOOK")
@@ -19,6 +20,17 @@ public class BookEntity extends BaseEntity {
 	
 	@Enumerated(EnumType.STRING)
 	private Type type;
+
+	@Lob
+	private byte[] bookImage;
+	
+	public byte[] getBookImage() {
+		return bookImage;
+	}
+
+	public void setBookImage(byte[] bookImage) {
+		this.bookImage = bookImage;
+	}
 
 	public long getPages() {
 		return pages;
