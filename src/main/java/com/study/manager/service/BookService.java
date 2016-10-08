@@ -23,9 +23,8 @@ public class BookService {
 	@Inject
 	private BookRepository bookRepository;
 	
-	public void addBook(Book book, byte[] bookImage) {
+	public void addBook(Book book) {
 		BookEntity bookEntity = bookTranslator.translateToEntity(book);
-		bookEntity.setBookImage(bookImage);
 		bookEntity.setCreationDateTime(LocalDateTime.now());
 		bookEntity.setLastChangeTimestamp(LocalDateTime.now());
 		bookRepository.save(bookEntity);

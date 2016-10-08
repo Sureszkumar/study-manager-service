@@ -6,6 +6,8 @@ import javax.inject.Inject;
 import javax.persistence.EntityNotFoundException;
 import javax.servlet.http.HttpServletResponse;
 
+import com.study.manager.entity.EntityType;
+import com.study.manager.service.ImageService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -47,6 +49,9 @@ public class AdminController {
 	
 	@Inject
 	private CourseBooksService courseBooksService;
+
+	@Inject
+	private ImageService imageService;
 	
 
 	/*----------------User services -------------------*/
@@ -108,12 +113,53 @@ public class AdminController {
 	}
 	
 	
-	@RequestMapping(value = "/book/add", consumes = {"multipart/form-data"}, method = RequestMethod.POST)
-	public ServiceResponse addBook(@RequestParam final String bookJson, @RequestPart("image") MultipartFile image) {
+	@RequestMapping(value = "/book/add", method = RequestMethod.POST)
+	public ServiceResponse addBook(@RequestBody final Book book) {
 		ServiceResponse response = new ServiceResponse();
 		try {
-			Book book = new ObjectMapper().readValue(bookJson, Book.class);
-			bookService.addBook(book, image.getBytes());
+			bookService.addBook(book);
+			response.setSuccess(true);
+			response.setMessage("Successfully added");
+			return response;
+		} catch (Exception e) {
+			response.setSuccess(false);
+			return response;
+		}
+	}
+
+	@RequestMapping(value = "addImage/book/{bookId}", consumes = {"multipart/form-data"}, method = RequestMethod.POST)
+	public ServiceResponse addBookImage(@RequestParam final Long bookId, @RequestPart("image") MultipartFile image) {
+		ServiceResponse response = new ServiceResponse();
+		try {
+			imageService.add(image.getBytes(), bookId, EntityType.BOOK);
+			response.setSuccess(true);
+			response.setMessage("Successfully added");
+			return response;
+		} catch (Exception e) {
+			response.setSuccess(false);
+			return response;
+		}
+	}
+
+	@RequestMapping(value = "addImage/user/{userId}", consumes = {"multipart/form-data"}, method = RequestMethod.POST)
+	public ServiceResponse addUserImage(@RequestParam final Long userId, @RequestPart("image") MultipartFile image) {
+		ServiceResponse response = new ServiceResponse();
+		try {
+			imageService.add(image.getBytes(), userId, EntityType.USER);
+			response.setSuccess(true);
+			response.setMessage("Successfully added");
+			return response;
+		} catch (Exception e) {
+			response.setSuccess(false);
+			return response;
+		}
+	}
+
+	@RequestMapping(value = "addImage/course/{courseId}", consumes = {"multipart/form-data"}, method = RequestMethod.POST)
+	public ServiceResponse addCourseImage(@RequestParam final Long courseId, @RequestPart("image") MultipartFile image) {
+		ServiceResponse response = new ServiceResponse();
+		try {
+			imageService.add(image.getBytes(), courseId, EntityType.COURSE);
 			response.setSuccess(true);
 			response.setMessage("Successfully added");
 			return response;

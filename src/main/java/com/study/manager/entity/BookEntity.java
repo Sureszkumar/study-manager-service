@@ -21,17 +21,6 @@ public class BookEntity extends BaseEntity {
 	@Enumerated(EnumType.STRING)
 	private Type type;
 
-	@Lob
-	private byte[] bookImage;
-	
-	public byte[] getBookImage() {
-		return bookImage;
-	}
-
-	public void setBookImage(byte[] bookImage) {
-		this.bookImage = bookImage;
-	}
-
 	public long getPages() {
 		return pages;
 	}

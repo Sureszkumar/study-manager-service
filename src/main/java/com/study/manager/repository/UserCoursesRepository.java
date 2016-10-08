@@ -11,6 +11,7 @@ public interface UserCoursesRepository extends BaseRepository<UserCoursesEntity>
 	@Cacheable("userCourseIds")
 	List<Long> findAllCourses(Long userId);
 
+	@Cacheable("findCount")
 	Long findCount(long userId, long courseId);
 
 	@Cacheable("userCourse")
