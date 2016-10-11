@@ -20,6 +20,7 @@ import com.study.manager.repository.CourseBooksRepository;
 import com.study.manager.repository.CourseRepository;
 import com.study.manager.translator.BookTranslator;
 import com.study.manager.translator.CourseTranslator;
+import com.study.manager.util.ServiceUtils;
 
 @Service
 @Validated
@@ -67,6 +68,8 @@ public class CourseService {
 		}
 		courseEntity.setCreationDateTime(LocalDateTime.now());
 		courseEntity.setLastChangeTimestamp(LocalDateTime.now());
+		int defaultTimeInWeeks = ServiceUtils.getDefaultCoursePreparationTime(1000, 18, 7);
+		courseEntity.setDefaultTimeInWeeks(defaultTimeInWeeks);
 		CourseEntity savedCourse = courseRepository.save(courseEntity);
 		List<CourseBooksEntity> courseBooksEntities = new ArrayList<>();
 		if (savedbookList != null) {

@@ -12,13 +12,12 @@ import javax.persistence.Table;
 	@NamedQuery(name = "CourseBooksEntity.findBookIds", query = "SELECT u.bookId FROM CourseBooksEntity u WHERE u.courseId = ?1")
 })
 public class CourseBooksEntity extends BaseEntity {
-    private Long courseId;
-    private Long bookId;
 
-
+	private Long courseId;
+    
+	private Long bookId;
 
     public CourseBooksEntity(Long courseId, Long bookId) {
-
         this.courseId = courseId;
         this.bookId = bookId;
     }

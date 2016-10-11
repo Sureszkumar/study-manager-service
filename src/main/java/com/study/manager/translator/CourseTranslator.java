@@ -23,6 +23,7 @@ public class CourseTranslator {
 			course.setDescription(courseEntity.getDescription());
 			course.setType(courseEntity.getType().name());
 			course.setSubscribed(true);
+			course.setPrepartionTimeInWeeks(courseEntity.getDefaultTimeInWeeks());
 			courseList.add(course);
 		}
 		return courseList;

@@ -18,14 +18,14 @@ public class CourseEntity extends BaseEntity {
 	@Enumerated(EnumType.STRING)
 	private Type type;
 	
-	private int defaultTime;
-	
-	public int getDefaultTime() {
-		return defaultTime;
+	private int defaultTimeInWeeks;
+
+	public int getDefaultTimeInWeeks() {
+		return defaultTimeInWeeks;
 	}
 
-	public void setDefaultTime(int defaultTime) {
-		this.defaultTime = defaultTime;
+	public void setDefaultTimeInWeeks(int defaultTimeInWeeks) {
+		this.defaultTimeInWeeks = defaultTimeInWeeks;
 	}
 
 	public String getDescription() {

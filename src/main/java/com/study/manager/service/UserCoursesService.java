@@ -1,5 +1,6 @@
 package com.study.manager.service;
 
+import java.time.LocalDate;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -9,10 +10,17 @@ import org.springframework.validation.annotation.Validated;
 
 import com.study.manager.domain.Book;
 import com.study.manager.domain.Course;
+import com.study.manager.domain.CourseSettings;
+import com.study.manager.domain.CourseStatus;
+import com.study.manager.domain.Proficiency;
 import com.study.manager.entity.BookEntity;
 import com.study.manager.entity.CourseBooksEntity;
 import com.study.manager.entity.CourseEntity;
+import com.study.manager.entity.ProficiencyEntity;
 import com.study.manager.entity.UserCoursesEntity;
+import com.study.manager.entity.WeekEntity;
+import com.study.manager.entity.WeeklyHoursEntity;
+import com.study.manager.entity.WeeklyPagesEntity;
 import com.study.manager.repository.BookRepository;
 import com.study.manager.repository.CourseBooksRepository;
 import com.study.manager.repository.CourseRepository;
@@ -42,7 +50,25 @@ public class UserCoursesService {
 	private BookTranslator bookTranslator;
 
 	public void subscribeCourse(Long userId, Long courseId) {
-		UserCoursesEntity userCourseEntity = new UserCoursesEntity(userId, courseId);
+		UserCoursesEntity userCourseEntity = new UserCoursesEntity();
+		userCourseEntity.setUserId(userId);
+		userCourseEntity.setCourseId(courseId);
+		userCourseEntity.setStartDate(LocalDate.now());
+		userCourseEntity.setCompletionRate(0);
+		userCourseEntity.setCurrentStatus(CourseStatus.ON_TRACK.name());
+		int defaultTimeInWeeks = courseRepository.findOne(courseId).getDefaultTimeInWeeks();
+		userCourseEntity.setEndDate(LocalDate.now().plusWeeks(defaultTimeInWeeks));
+		ProficiencyEntity proficiencyEntity = new ProficiencyEntity();
+		proficiencyEntity.setValue(Proficiency.EASY.name());
+		userCourseEntity.setProficiencyEntity(proficiencyEntity);
+		WeeklyHoursEntity weeklyHoursEntity = new WeeklyHoursEntity();
+		WeekEntity weekEntity = new WeekEntity(1, 1, 1, 1, 1, 1, 1);
+		weeklyHoursEntity.setWeekEntity(weekEntity);
+		userCourseEntity.setWeeklyHoursEntity(weeklyHoursEntity);
+		WeeklyPagesEntity weeklyPagesEntity = new WeeklyPagesEntity();
+		WeekEntity weekEntityPages = new WeekEntity(18, 18, 18, 18, 18, 18, 18);
+		weeklyPagesEntity.setWeekEntity(weekEntityPages);
+		userCourseEntity.setWeeklyPagesEntity(weeklyPagesEntity);
 		userCoursesRepository.save(userCourseEntity);
 	}
 
@@ -80,5 +106,15 @@ public class UserCoursesService {
 	public boolean isSubscribed(long courseId, long userId) {
 		Long count = userCoursesRepository.findCount(userId, courseId);
 		return count == 0 ? false : true;
+	}
+
+	public CourseSettings getCourseSettings(long userId, Long courseId) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public void updateCourseSettings(long userId, Long courseId, CourseSettings courseSettings) {
+		// TODO Auto-generated method stub
+		
 	}
 }

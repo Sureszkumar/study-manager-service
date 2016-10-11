@@ -1,5 +1,6 @@
 package com.study.manager.domain;
 
+import java.time.LocalDate;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -19,6 +20,56 @@ public class Course {
 	private boolean subscribed;
 
 	private List<Book> bookList;
+
+	private int prepartionTimeInWeeks;
+
+	private LocalDate startDate;
+
+	private LocalDate endDate;
+
+	private String currentStatus;
+
+	private int completionRate;
+
+	public LocalDate getStartDate() {
+		return startDate;
+	}
+
+	public void setStartDate(LocalDate startDate) {
+		this.startDate = startDate;
+	}
+
+	public LocalDate getEndDate() {
+		return endDate;
+	}
+
+	public void setEndDate(LocalDate endDate) {
+		this.endDate = endDate;
+	}
+
+	public String getCurrentStatus() {
+		return currentStatus;
+	}
+
+	public void setCurrentStatus(String currentStatus) {
+		this.currentStatus = currentStatus;
+	}
+
+	public int getCompletionRate() {
+		return completionRate;
+	}
+
+	public void setCompletionRate(int completionRate) {
+		this.completionRate = completionRate;
+	}
+
+	public int getPrepartionTimeInWeeks() {
+		return prepartionTimeInWeeks;
+	}
+
+	public void setPrepartionTimeInWeeks(int prepartionTimeInWeeks) {
+		this.prepartionTimeInWeeks = prepartionTimeInWeeks;
+	}
 
 	public boolean isSubscribed() {
 		return subscribed;

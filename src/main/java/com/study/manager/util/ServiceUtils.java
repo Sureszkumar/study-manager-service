@@ -57,10 +57,14 @@ public class ServiceUtils {
 
 	public static LocalDate calculateTargetDate(LocalDate startDate, Long noOfPages, Proficiency proficiency,
 			Long noOfHours) {
-		
-		
 
 		return null;
+	}
+
+	public static int getDefaultCoursePreparationTime(int noOfPages, int noOfPagesPerHour, int noOfHoursPerWeek) {
+
+		return noOfPages / (noOfPagesPerHour * noOfHoursPerWeek);
+
 	}
 
 	public static String formVerifyEmailUrl(Long id, String email) {
