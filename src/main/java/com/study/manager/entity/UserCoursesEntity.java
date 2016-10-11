@@ -26,18 +26,29 @@ public class UserCoursesEntity extends BaseEntity {
 
 	private LocalDate endDate;
 
-	private WeeklyHoursEntity weeklyHoursEntity;
-
-	private WeeklyPagesEntity weeklyPagesEntity;
-
-	private ProficiencyEntity proficiencyEntity;
+	private String proficiency;
 
 	private String currentStatus;
 
 	private int completionRate;
+	
+	@OneToOne(cascade = CascadeType.ALL)
+	@JoinColumn(name = "weekly_hours_id")
+	private WeeklyHoursEntity weeklyHoursEntity;
 
 	@OneToOne(cascade = CascadeType.ALL)
 	@JoinColumn(name = "weekly_pages_id")
+	private WeeklyPagesEntity weeklyPagesEntity;
+
+	public String getProficiency() {
+		return proficiency;
+	}
+
+	public void setProficiency(String proficiency) {
+		this.proficiency = proficiency;
+	}
+
+	
 	public WeeklyPagesEntity getWeeklyPagesEntity() {
 		return weeklyPagesEntity;
 	}
@@ -46,24 +57,13 @@ public class UserCoursesEntity extends BaseEntity {
 		this.weeklyPagesEntity = weeklyPagesEntity;
 	}
 
-	@OneToOne(cascade = CascadeType.ALL)
-	@JoinColumn(name = "weekly_hours_id")
+	
 	public WeeklyHoursEntity getWeeklyHoursEntity() {
 		return weeklyHoursEntity;
 	}
 
 	public void setWeeklyHoursEntity(WeeklyHoursEntity weeklyHoursEntity) {
 		this.weeklyHoursEntity = weeklyHoursEntity;
-	}
-
-	@OneToOne(cascade = CascadeType.ALL)
-	@JoinColumn(name = "course_proficiency_id")
-	public ProficiencyEntity getProficiencyEntity() {
-		return proficiencyEntity;
-	}
-
-	public void setProficiencyEntity(ProficiencyEntity proficiencyEntity) {
-		this.proficiencyEntity = proficiencyEntity;
 	}
 
 	public UserCoursesEntity() {

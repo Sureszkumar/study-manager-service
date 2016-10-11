@@ -19,6 +19,22 @@ public class Book {
 	private int noOfPages;
 	
 	
+	public String getAuthor() {
+		return author;
+	}
+
+	public void setAuthor(String author) {
+		this.author = author;
+	}
+
+	public int getNoOfPages() {
+		return noOfPages;
+	}
+
+	public void setNoOfPages(int noOfPages) {
+		this.noOfPages = noOfPages;
+	}
+
 	public String getDescription() {
 		return description;
 	}

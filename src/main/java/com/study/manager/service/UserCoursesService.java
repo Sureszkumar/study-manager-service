@@ -13,10 +13,10 @@ import com.study.manager.domain.Course;
 import com.study.manager.domain.CourseSettings;
 import com.study.manager.domain.CourseStatus;
 import com.study.manager.domain.Proficiency;
+import com.study.manager.domain.WeeklyHours;
 import com.study.manager.entity.BookEntity;
 import com.study.manager.entity.CourseBooksEntity;
 import com.study.manager.entity.CourseEntity;
-import com.study.manager.entity.ProficiencyEntity;
 import com.study.manager.entity.UserCoursesEntity;
 import com.study.manager.entity.WeekEntity;
 import com.study.manager.entity.WeeklyHoursEntity;
@@ -26,6 +26,7 @@ import com.study.manager.repository.CourseBooksRepository;
 import com.study.manager.repository.CourseRepository;
 import com.study.manager.repository.UserCoursesRepository;
 import com.study.manager.translator.BookTranslator;
+import com.study.manager.translator.CourseSettingsTranslator;
 import com.study.manager.translator.CourseTranslator;
 
 @Service
@@ -48,6 +49,8 @@ public class UserCoursesService {
 	private BookRepository bookRepository;
 	@Inject
 	private BookTranslator bookTranslator;
+	@Inject
+	private CourseSettingsTranslator courseSettingsTranslator;
 
 	public void subscribeCourse(Long userId, Long courseId) {
 		UserCoursesEntity userCourseEntity = new UserCoursesEntity();
@@ -58,9 +61,7 @@ public class UserCoursesService {
 		userCourseEntity.setCurrentStatus(CourseStatus.ON_TRACK.name());
 		int defaultTimeInWeeks = courseRepository.findOne(courseId).getDefaultTimeInWeeks();
 		userCourseEntity.setEndDate(LocalDate.now().plusWeeks(defaultTimeInWeeks));
-		ProficiencyEntity proficiencyEntity = new ProficiencyEntity();
-		proficiencyEntity.setValue(Proficiency.EASY.name());
-		userCourseEntity.setProficiencyEntity(proficiencyEntity);
+		userCourseEntity.setProficiency(Proficiency.EASY.name());
 		WeeklyHoursEntity weeklyHoursEntity = new WeeklyHoursEntity();
 		WeekEntity weekEntity = new WeekEntity(1, 1, 1, 1, 1, 1, 1);
 		weeklyHoursEntity.setWeekEntity(weekEntity);
@@ -109,12 +110,17 @@ public class UserCoursesService {
 	}
 
 	public CourseSettings getCourseSettings(long userId, Long courseId) {
-		// TODO Auto-generated method stub
-		return null;
+		UserCoursesEntity userCoursesEntity = userCoursesRepository.findBy(userId, courseId);
+		return courseSettingsTranslator.translateToDomain(userCoursesEntity);
 	}
 
 	public void updateCourseSettings(long userId, Long courseId, CourseSettings courseSettings) {
-		// TODO Auto-generated method stub
-		
+		UserCoursesEntity userCoursesEntity = userCoursesRepository.findBy(userId, courseId);
+		WeeklyHours weeklyHours = courseSettings.getWeeklyHours();
+		WeekEntity weekEntity = new WeekEntity(weeklyHours.getMonday(), weeklyHours.getTuesday(), 
+				weeklyHours.getWednesday(), weeklyHours.getThursday(), weeklyHours.getFriday(), 
+				weeklyHours.getSaturday(), weeklyHours.getSunday());
+		userCoursesEntity.getWeeklyHoursEntity().setWeekEntity(weekEntity);
+		userCoursesRepository.save(userCoursesEntity);
 	}
 }

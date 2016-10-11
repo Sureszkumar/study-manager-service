@@ -30,18 +30,16 @@ public class UserEntity extends BaseEntity {
     
     private String emailVerifyToken;
 
-    public String getEmailVerifyToken() {
+	@NotNull
+    private Boolean verified = false;
+
+	public String getEmailVerifyToken() {
 		return emailVerifyToken;
 	}
 
 	public void setEmailVerifyToken(String emailVerifyToken) {
 		this.emailVerifyToken = emailVerifyToken;
 	}
-
-
-	@NotNull
-    private Boolean verified = false;
-
 
     public String getPassword() {
 		return password;
