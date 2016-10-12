@@ -22,8 +22,11 @@ public class WeekEntity {
 	public WeekEntity() {
 	}
 
-	public WeekEntity(int monday, int tuesday, int wednesday, int thursday, int friday, int saturday,
-			int sunday) {
+	public WeekEntity(int defaultPages) {
+		this(defaultPages, defaultPages, defaultPages, defaultPages, defaultPages, defaultPages, defaultPages);
+	}
+
+	public WeekEntity(int monday, int tuesday, int wednesday, int thursday, int friday, int saturday, int sunday) {
 		this.monday = monday;
 		this.tuesday = tuesday;
 		this.wednesday = wednesday;
@@ -87,6 +90,10 @@ public class WeekEntity {
 
 	public void setSunday(int sunday) {
 		this.sunday = sunday;
+	}
+
+	public int getTotalWeekCount() {
+		return this.monday + this.tuesday + this.wednesday + this.thursday + this.friday + this.saturday + this.sunday;
 	}
 
 }

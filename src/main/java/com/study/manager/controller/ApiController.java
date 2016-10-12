@@ -78,7 +78,7 @@ public class ApiController {
 		try {
 			userCoursesService.updateCourseSettings(userId, courseId, courseSettings);
 			response.setSuccess(true);
-			response.setMessage("Course settings successfully subscribed");
+			response.setMessage("Course settings successfully updated");
 			return response;
 		} catch (Exception e) {
 			response.setSuccess(false);

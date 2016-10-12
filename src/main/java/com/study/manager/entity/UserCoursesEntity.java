@@ -31,7 +31,13 @@ public class UserCoursesEntity extends BaseEntity {
 	private String currentStatus;
 
 	private int completionRate;
-	
+
+	private int totalNoOfPages;
+
+	private int pagesRead;
+
+	private int pagesUnRead;
+
 	@OneToOne(cascade = CascadeType.ALL)
 	@JoinColumn(name = "weekly_hours_id")
 	private WeeklyHoursEntity weeklyHoursEntity;
@@ -39,6 +45,30 @@ public class UserCoursesEntity extends BaseEntity {
 	@OneToOne(cascade = CascadeType.ALL)
 	@JoinColumn(name = "weekly_pages_id")
 	private WeeklyPagesEntity weeklyPagesEntity;
+
+	public int getPagesUnRead() {
+		return pagesUnRead;
+	}
+
+	public void setPagesUnRead(int pagesUnRead) {
+		this.pagesUnRead = pagesUnRead;
+	}
+
+	public int getTotalNoOfPages() {
+		return totalNoOfPages;
+	}
+
+	public void setTotalNoOfPages(int totalNoOfPages) {
+		this.totalNoOfPages = totalNoOfPages;
+	}
+
+	public int getPagesRead() {
+		return pagesRead;
+	}
+
+	public void setPagesRead(int pagesRead) {
+		this.pagesRead = pagesRead;
+	}
 
 	public String getProficiency() {
 		return proficiency;
@@ -48,7 +78,6 @@ public class UserCoursesEntity extends BaseEntity {
 		this.proficiency = proficiency;
 	}
 
-	
 	public WeeklyPagesEntity getWeeklyPagesEntity() {
 		return weeklyPagesEntity;
 	}
@@ -57,7 +86,6 @@ public class UserCoursesEntity extends BaseEntity {
 		this.weeklyPagesEntity = weeklyPagesEntity;
 	}
 
-	
 	public WeeklyHoursEntity getWeeklyHoursEntity() {
 		return weeklyHoursEntity;
 	}

@@ -18,7 +18,7 @@ public class BookEntity extends BaseEntity {
 	private String description;
 	
 	@NotNull
-	private long noOfPages;
+	private int noOfPages;
 
 	private String author;
 
@@ -28,11 +28,11 @@ public class BookEntity extends BaseEntity {
 	@Enumerated(EnumType.STRING)
 	private Type type;
 	
-	public long getNoOfPages() {
+	public int getNoOfPages() {
 		return noOfPages;
 	}
 
-	public void setNoOfPages(long noOfPages) {
+	public void setNoOfPages(int noOfPages) {
 		this.noOfPages = noOfPages;
 	}
 
@@ -56,7 +56,7 @@ public class BookEntity extends BaseEntity {
 		return noOfPages;
 	}
 
-	public void setPages(long pages) {
+	public void setPages(int pages) {
 		this.noOfPages = pages;
 	}
 

@@ -23,7 +23,7 @@ import com.study.manager.domain.Book;
 import com.study.manager.domain.Course;
 import com.study.manager.domain.ServiceResponse;
 import com.study.manager.domain.User;
-import com.study.manager.entity.ProficiencyEntity;
+import com.study.manager.entity.CourseProficiencyEntity;
 import com.study.manager.entity.EntityType;
 import com.study.manager.service.BookService;
 import com.study.manager.service.CourseBooksService;
@@ -117,7 +117,7 @@ public class AdminController {
 	}
 
 	@RequestMapping(value = "/courseProficiency/add", method = RequestMethod.POST)
-	public ServiceResponse addCourse(@RequestBody final ProficiencyEntity courseProficiencyEntity) {
+	public ServiceResponse addCourse(@RequestBody final CourseProficiencyEntity courseProficiencyEntity) {
 		ServiceResponse response = new ServiceResponse();
 		try {
 			courseProficiencyService.add(courseProficiencyEntity);

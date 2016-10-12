@@ -3,14 +3,21 @@ package com.study.manager.translator;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.inject.Inject;
+
 import org.springframework.stereotype.Component;
 
 import com.study.manager.domain.Course;
 import com.study.manager.domain.Type;
 import com.study.manager.entity.CourseEntity;
+import com.study.manager.entity.UserCoursesEntity;
+import com.study.manager.repository.UserCoursesRepository;
 
 @Component
 public class CourseTranslator {
+
+	@Inject
+	private UserCoursesRepository userCoursesRepository;
 
 	public List<Course> translateToDomain(List<CourseEntity> courseEntities) {
 
@@ -24,6 +31,25 @@ public class CourseTranslator {
 			course.setType(courseEntity.getType().name());
 			course.setSubscribed(true);
 			course.setPrepartionTimeInWeeks(courseEntity.getDefaultTimeInWeeks());
+			courseList.add(course);
+		}
+		return courseList;
+	}
+
+	public List<Course> translateToDomain(List<CourseEntity> courseEntities, Long userId) {
+
+		List<Course> courseList = new ArrayList<>();
+		for (CourseEntity courseEntity : courseEntities) {
+			Course course = new Course();
+			long courseId = courseEntity.getId();
+			UserCoursesEntity userCoursesEntity = userCoursesRepository.findBy(userId, courseId);
+			course.setId(courseId);
+			course.setTitle(courseEntity.getTitle());
+			course.setDescription(courseEntity.getDescription());
+			course.setType(courseEntity.getType().name());
+			course.setEndDate(userCoursesEntity.getEndDate());
+			course.setCurrentStatus(userCoursesEntity.getCurrentStatus());
+			course.setCompletionRate(userCoursesEntity.getCompletionRate());
 			courseList.add(course);
 		}
 		return courseList;

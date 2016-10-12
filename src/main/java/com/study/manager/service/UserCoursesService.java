@@ -1,5 +1,7 @@
 package com.study.manager.service;
 
+import static java.time.temporal.ChronoUnit.DAYS;
+
 import java.time.LocalDate;
 import java.util.List;
 
@@ -17,12 +19,14 @@ import com.study.manager.domain.WeeklyHours;
 import com.study.manager.entity.BookEntity;
 import com.study.manager.entity.CourseBooksEntity;
 import com.study.manager.entity.CourseEntity;
+import com.study.manager.entity.CourseProficiencyEntity;
 import com.study.manager.entity.UserCoursesEntity;
 import com.study.manager.entity.WeekEntity;
 import com.study.manager.entity.WeeklyHoursEntity;
 import com.study.manager.entity.WeeklyPagesEntity;
 import com.study.manager.repository.BookRepository;
 import com.study.manager.repository.CourseBooksRepository;
+import com.study.manager.repository.CourseProficiencyRepository;
 import com.study.manager.repository.CourseRepository;
 import com.study.manager.repository.UserCoursesRepository;
 import com.study.manager.translator.BookTranslator;
@@ -38,6 +42,9 @@ public class UserCoursesService {
 
 	@Inject
 	private CourseBooksRepository courseBooksRepository;
+
+	@Inject
+	private CourseProficiencyRepository courseProficiencyRepository;
 
 	@Inject
 	private CourseRepository courseRepository;
@@ -57,6 +64,13 @@ public class UserCoursesService {
 		userCourseEntity.setUserId(userId);
 		userCourseEntity.setCourseId(courseId);
 		userCourseEntity.setStartDate(LocalDate.now());
+		List<Long> bookIds = courseBooksRepository.findBookIds(courseId);
+		List<BookEntity> books = bookRepository.findAll(bookIds);
+		int totalNoOfPages = 0;
+		for (BookEntity book : books) {
+			totalNoOfPages = + book.getNoOfPages();
+		}
+		userCourseEntity.setTotalNoOfPages(totalNoOfPages);
 		userCourseEntity.setCompletionRate(0);
 		userCourseEntity.setCurrentStatus(CourseStatus.ON_TRACK.name());
 		int defaultTimeInWeeks = courseRepository.findOne(courseId).getDefaultTimeInWeeks();
@@ -67,7 +81,9 @@ public class UserCoursesService {
 		weeklyHoursEntity.setWeekEntity(weekEntity);
 		userCourseEntity.setWeeklyHoursEntity(weeklyHoursEntity);
 		WeeklyPagesEntity weeklyPagesEntity = new WeeklyPagesEntity();
-		WeekEntity weekEntityPages = new WeekEntity(18, 18, 18, 18, 18, 18, 18);
+		CourseProficiencyEntity courseProficiencyEntity = courseProficiencyRepository.findByCourseId(courseId);
+		int easyPages = courseProficiencyEntity.getEasyPages();
+		WeekEntity weekEntityPages = new WeekEntity(easyPages);
 		weeklyPagesEntity.setWeekEntity(weekEntityPages);
 		userCourseEntity.setWeeklyPagesEntity(weeklyPagesEntity);
 		userCoursesRepository.save(userCourseEntity);
@@ -75,12 +91,13 @@ public class UserCoursesService {
 
 	public void unSubscribeCourse(Long userId, Long courseId) {
 		UserCoursesEntity userCourseEntity = userCoursesRepository.findBy(userId, courseId);
+		
 		userCoursesRepository.delete(userCourseEntity);
 	}
 
 	public List<Course> getSubscribedCourses(Long userId) {
 		List<Long> courseIds = userCoursesRepository.findAllCourses(userId);
-		return courseTranslator.translateToDomain(courseRepository.findAll(courseIds));
+		return courseTranslator.translateToDomain(courseRepository.findAll(courseIds), userId);
 	}
 
 	public void addCustomCourse(Long userId, Course course) {
@@ -116,11 +133,55 @@ public class UserCoursesService {
 
 	public void updateCourseSettings(long userId, Long courseId, CourseSettings courseSettings) {
 		UserCoursesEntity userCoursesEntity = userCoursesRepository.findBy(userId, courseId);
-		WeeklyHours weeklyHours = courseSettings.getWeeklyHours();
-		WeekEntity weekEntity = new WeekEntity(weeklyHours.getMonday(), weeklyHours.getTuesday(), 
-				weeklyHours.getWednesday(), weeklyHours.getThursday(), weeklyHours.getFriday(), 
-				weeklyHours.getSaturday(), weeklyHours.getSunday());
-		userCoursesEntity.getWeeklyHoursEntity().setWeekEntity(weekEntity);
+		WeeklyHours newWeeklyHours = courseSettings.getWeeklyHours();
+		WeekEntity weekDayHours = userCoursesEntity.getWeeklyHoursEntity().getWeekEntity();
+		LocalDate newTargetDate = courseSettings.getTargetDate();
+		if (newTargetDate != null) {
+			int pagesUnRead = userCoursesEntity.getPagesUnRead();
+			long noOfDaysLeft = DAYS.between(newTargetDate, LocalDate.now());
+			int dailyPagesToRead = (int) (pagesUnRead / noOfDaysLeft);
+			weekDayHours = new WeekEntity(dailyPagesToRead);
+
+		} else {
+			if (newWeeklyHours != null) {
+				weekDayHours = new WeekEntity(newWeeklyHours.getMonday(), newWeeklyHours.getTuesday(),
+						newWeeklyHours.getWednesday(), newWeeklyHours.getThursday(), newWeeklyHours.getFriday(),
+						newWeeklyHours.getSaturday(), newWeeklyHours.getSunday());
+				userCoursesEntity.getWeeklyHoursEntity().setWeekEntity(weekDayHours);
+				int totalPagesPerWeek = userCoursesEntity.getWeeklyPagesEntity().getWeekEntity().getTotalWeekCount();
+				int weeksToComplete = userCoursesEntity.getPagesUnRead() / totalPagesPerWeek;
+				LocalDate newEndDate = userCoursesEntity.getStartDate().plusWeeks(weeksToComplete);
+				userCoursesEntity.setEndDate(newEndDate);
+
+			}
+			if (courseSettings.getProficiency() != null
+					&& !courseSettings.getProficiency().equals(userCoursesEntity.getProficiency())) {
+				userCoursesEntity.setProficiency(courseSettings.getProficiency());
+				String newProficiency = userCoursesEntity.getProficiency();
+				CourseProficiencyEntity courseProficiencyEntity = courseProficiencyRepository.findByCourseId(courseId);
+				int pagesPerHour = 0;
+				if (newProficiency.equals(Proficiency.EASY.name())) {
+					pagesPerHour = courseProficiencyEntity.getEasyPages();
+				} else if (newProficiency.equals(Proficiency.NORMAL.name())) {
+					pagesPerHour = courseProficiencyEntity.getNormalPages();
+				} else if (newProficiency.equals(Proficiency.NORMAL.name())) {
+					pagesPerHour = courseProficiencyEntity.getNormalPages();
+				}
+				WeekEntity weekDayPages = new WeekEntity();
+				weekDayPages.setMonday(weekDayHours.getMonday() * pagesPerHour);
+				weekDayPages.setTuesday(weekDayHours.getTuesday() * pagesPerHour);
+				weekDayPages.setWednesday(weekDayHours.getWednesday() * pagesPerHour);
+				weekDayPages.setThursday(weekDayHours.getThursday() * pagesPerHour);
+				weekDayPages.setFriday(weekDayHours.getFriday() * pagesPerHour);
+				weekDayPages.setSaturday(weekDayHours.getSaturday() * pagesPerHour);
+				weekDayPages.setSunday(weekDayHours.getSunday() * pagesPerHour);
+				userCoursesEntity.getWeeklyPagesEntity().setWeekEntity(weekDayPages);
+				int totalPagesPerWeek = weekDayPages.getTotalWeekCount();
+				int weeksToComplete = userCoursesEntity.getPagesUnRead() / totalPagesPerWeek;
+				LocalDate newEndDate = userCoursesEntity.getStartDate().plusWeeks(weeksToComplete);
+				userCoursesEntity.setEndDate(newEndDate);
+			}
+		}
 		userCoursesRepository.save(userCoursesEntity);
 	}
 }

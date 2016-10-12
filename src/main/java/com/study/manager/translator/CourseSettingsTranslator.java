@@ -12,7 +12,7 @@ public class CourseSettingsTranslator {
 
 	public CourseSettings translateToDomain(UserCoursesEntity userCoursesEntity) {
 		CourseSettings courseSettings = new CourseSettings();
-		//courseSettings.setProficiency(userCoursesEntity.getProficiencyEntity().getValue());
+		courseSettings.setProficiency(userCoursesEntity.getProficiency());
 		courseSettings.setTargetDate(userCoursesEntity.getEndDate());
 		WeeklyHours weeklyHours = new WeeklyHours();
 		WeekEntity weekEntity = userCoursesEntity.getWeeklyHoursEntity().getWeekEntity();
