@@ -21,6 +21,8 @@ public class BookTranslator {
             book.setTitle(bookEntity.getTitle());
             book.setDescription(bookEntity.getDescription());
             book.setType(bookEntity.getType().name());
+            book.setAuthor(bookEntity.getAuthor());
+            book.setNoOfPages(bookEntity.getNoOfPages());
             bookList.add(book);
         }
         return bookList;
@@ -50,6 +52,8 @@ public class BookTranslator {
             bookEntity.setTitle(book.getTitle());
             bookEntity.setDescription(book.getDescription());
             bookEntity.setType(Type.valueOf(book.getType()));
+            bookEntity.setAuthor(book.getAuthor());
+            bookEntity.setNoOfPages(book.getNoOfPages());
             bookEntityList.add(bookEntity);
         }
         return bookEntityList;

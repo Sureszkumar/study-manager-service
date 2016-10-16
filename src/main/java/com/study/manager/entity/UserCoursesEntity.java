@@ -38,6 +38,16 @@ public class UserCoursesEntity extends BaseEntity {
 
 	private int pagesUnRead;
 
+	private int todayGoal;
+
+	public int getTodayGoal() {
+		return todayGoal;
+	}
+
+	public void setTodayGoal(int todayGoal) {
+		this.todayGoal = todayGoal;
+	}
+
 	@OneToOne(cascade = CascadeType.ALL)
 	@JoinColumn(name = "weekly_hours_id")
 	private WeeklyHoursEntity weeklyHoursEntity;

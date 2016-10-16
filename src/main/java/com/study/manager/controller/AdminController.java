@@ -70,6 +70,7 @@ public class AdminController {
 			return response;
 		} catch (Exception e) {
 			response.setSuccess(false);
+			response.setMessage(e.getMessage());
 			return response;
 		}
 	}
@@ -94,10 +95,11 @@ public class AdminController {
 		try {
 			userService.verifyUser(userId);
 			response.setSuccess(true);
-			response.setMessage("Successfully added");
+			response.setMessage("Successfully verified user");
 			return response;
 		} catch (Exception e) {
 			response.setSuccess(false);
+			response.setMessage(e.getMessage());
 			return response;
 		}
 	}
@@ -108,24 +110,26 @@ public class AdminController {
 		try {
 			courseService.addCourse(course);
 			response.setSuccess(true);
-			response.setMessage("Successfully added");
+			response.setMessage("Successfully Course added");
 			return response;
 		} catch (Exception e) {
 			response.setSuccess(false);
+			response.setMessage(e.getMessage());
 			return response;
 		}
 	}
 
 	@RequestMapping(value = "/courseProficiency/add", method = RequestMethod.POST)
-	public ServiceResponse addCourse(@RequestBody final CourseProficiencyEntity courseProficiencyEntity) {
+	public ServiceResponse addCourseProficiency(@RequestBody final CourseProficiencyEntity courseProficiencyEntity) {
 		ServiceResponse response = new ServiceResponse();
 		try {
 			courseProficiencyService.add(courseProficiencyEntity);
 			response.setSuccess(true);
-			response.setMessage("Successfully added");
+			response.setMessage("Successfully courseProficiency added");
 			return response;
 		} catch (Exception e) {
 			response.setSuccess(false);
+			response.setMessage(e.getMessage());
 			return response;
 		}
 	}
@@ -136,10 +140,11 @@ public class AdminController {
 		try {
 			bookService.addBook(book);
 			response.setSuccess(true);
-			response.setMessage("Successfully added");
+			response.setMessage("Successfully Book added");
 			return response;
 		} catch (Exception e) {
 			response.setSuccess(false);
+			response.setMessage(e.getMessage());
 			return response;
 		}
 	}
@@ -150,10 +155,11 @@ public class AdminController {
 		try {
 			imageService.add(image.getBytes(), bookId, EntityType.BOOK);
 			response.setSuccess(true);
-			response.setMessage("Successfully added");
+			response.setMessage("Successfully Image added");
 			return response;
 		} catch (Exception e) {
 			response.setSuccess(false);
+			response.setMessage(e.getMessage());
 			return response;
 		}
 	}
@@ -164,10 +170,11 @@ public class AdminController {
 		try {
 			imageService.add(image.getBytes(), userId, EntityType.USER);
 			response.setSuccess(true);
-			response.setMessage("Successfully added");
+			response.setMessage("Successfully Image added");
 			return response;
 		} catch (Exception e) {
 			response.setSuccess(false);
+			response.setMessage(e.getMessage());
 			return response;
 		}
 	}
@@ -180,10 +187,11 @@ public class AdminController {
 		try {
 			imageService.add(image.getBytes(), courseId, EntityType.COURSE);
 			response.setSuccess(true);
-			response.setMessage("Successfully added");
+			response.setMessage("Successfully Image added");
 			return response;
 		} catch (Exception e) {
 			response.setSuccess(false);
+			response.setMessage(e.getMessage());
 			return response;
 		}
 	}
@@ -209,10 +217,11 @@ public class AdminController {
 		try {
 			courseBooksService.linkCourseBook(courseId, bookId);
 			response.setSuccess(true);
-			response.setMessage("Successfully added");
+			response.setMessage("Successfully course and book linked");
 			return response;
 		} catch (Exception e) {
 			response.setSuccess(false);
+			response.setMessage(e.getMessage());
 			return response;
 		}
 	}

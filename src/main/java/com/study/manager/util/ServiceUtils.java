@@ -66,7 +66,9 @@ public class ServiceUtils {
 		return noOfPages / (noOfPagesPerHour * noOfHoursPerWeek);
 
 	}
-
+	public static void main(String a[]) {
+		System.out.println(getDefaultCoursePreparationTime(544, 18, 7));
+	}
 	public static String formVerifyEmailUrl(Long id, String email) {
 		return "";
 

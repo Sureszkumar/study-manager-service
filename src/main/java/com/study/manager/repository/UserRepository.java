@@ -9,7 +9,6 @@ public interface UserRepository extends BaseRepository<UserEntity> {
 	
 	public UserEntity findByCredentials(String email, String password);
 
-	@Cacheable(value = "findByUserIdAndAuthToken")
 	public UserEntity findByUserIdAndAuthToken(Long valueOf, String authToken);
 
 	public UserEntity findByUserIdAndEmailToken(Long id, String emailVerifyToken);

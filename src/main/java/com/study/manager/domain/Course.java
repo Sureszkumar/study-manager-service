@@ -17,11 +17,11 @@ public class Course {
 
 	private String type;
 
-	private boolean subscribed;
+	private Boolean subscribed;
 
 	private List<Book> bookList;
 
-	private int prepartionTimeInWeeks;
+	private Integer preparationTimeInWeeks;
 
 	private LocalDate startDate;
 
@@ -29,7 +29,21 @@ public class Course {
 
 	private String currentStatus;
 
-	private int completionRate;
+	private Integer completionRate;
+
+	private Integer todayGoal;
+
+	public Integer getTodayGoal() {
+		return todayGoal;
+	}
+
+	public void setTodayGoal(Integer todayGoal) {
+		this.todayGoal = todayGoal;
+	}
+
+	public Boolean getSubscribed() {
+		return subscribed;
+	}
 
 	public LocalDate getStartDate() {
 		return startDate;
@@ -55,27 +69,27 @@ public class Course {
 		this.currentStatus = currentStatus;
 	}
 
-	public int getCompletionRate() {
+	public Integer getCompletionRate() {
 		return completionRate;
 	}
 
-	public void setCompletionRate(int completionRate) {
+	public void setCompletionRate(Integer completionRate) {
 		this.completionRate = completionRate;
 	}
 
-	public int getPrepartionTimeInWeeks() {
-		return prepartionTimeInWeeks;
+	public Integer getPreparationTimeInWeeks() {
+		return preparationTimeInWeeks;
 	}
 
-	public void setPrepartionTimeInWeeks(int prepartionTimeInWeeks) {
-		this.prepartionTimeInWeeks = prepartionTimeInWeeks;
+	public void setPreparationTimeInWeeks(Integer preparationTimeInWeeks) {
+		this.preparationTimeInWeeks = preparationTimeInWeeks;
 	}
 
-	public boolean isSubscribed() {
+	public Boolean isSubscribed() {
 		return subscribed;
 	}
 
-	public void setSubscribed(boolean subscribed) {
+	public void setSubscribed(Boolean subscribed) {
 		this.subscribed = subscribed;
 	}
 

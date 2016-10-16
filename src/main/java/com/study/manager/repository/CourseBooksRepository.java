@@ -8,6 +8,5 @@ import com.study.manager.entity.CourseBooksEntity;
 
 public interface CourseBooksRepository extends BaseRepository<CourseBooksEntity> {
 
-	@Cacheable("courseBookIds")
     List<Long> findBookIds(Long courseId);
 }

@@ -26,70 +26,73 @@ import com.study.manager.util.ServiceUtils;
 @Validated
 public class CourseService {
 
-	@Inject
-	private CourseRepository courseRepository;
+    @Inject
+    private CourseRepository courseRepository;
 
-	@Inject
-	private CourseTranslator courseTranslator;
+    @Inject
+    private CourseTranslator courseTranslator;
 
-	@Inject
-	private BookTranslator bookTranslator;
+    @Inject
+    private BookTranslator bookTranslator;
 
-	@Inject
-	private UserCoursesService userCoursesService;
+    @Inject
+    private UserCoursesService userCoursesService;
 
-	@Inject
-	private CourseBooksService courseBooksService;
+    @Inject
+    private CourseBooksService courseBooksService;
 
-	@Inject
-	private CourseBooksRepository courseBooksRepository;
+    @Inject
+    private CourseBooksRepository courseBooksRepository;
 
-	@Inject
-	private BookRepository bookRepository;
+    @Inject
+    private BookRepository bookRepository;
 
-	@Cacheable("courses")
-	public List<Course> getAll(long userId) {
-		List<CourseEntity> courseEntities = courseRepository.findAll();
-		List<Course> courseList = courseTranslator.translateToDomain(courseEntities);
-		for (Course course : courseList) {
-			course.setSubscribed(userCoursesService.isSubscribed(course.getId(), userId));
-		}
-		return courseList;
-	}
+    public List<Course> getAll(long userId) {
+        List<CourseEntity> courseEntities = courseRepository.findAll();
+        List<Course> courseList = courseTranslator.translateToDomain(courseEntities);
+        for (Course course : courseList) {
+            course.setSubscribed(userCoursesService.isSubscribed(course.getId(), userId));
+        }
+        return courseList;
+    }
 
-	
-	public void addCourse(Course course) {
-		CourseEntity courseEntity = courseTranslator.translateToEntity(course);
-		List<Book> bookList = course.getBookList();
-		List<BookEntity> savedbookList = null;
-		if (bookList != null) {
-			List<BookEntity> translateToEntity = bookTranslator.translateToEntity(bookList);
-			savedbookList = bookRepository.save(translateToEntity);
-		}
-		courseEntity.setCreationDateTime(LocalDateTime.now());
-		courseEntity.setLastChangeTimestamp(LocalDateTime.now());
-		int defaultTimeInWeeks = ServiceUtils.getDefaultCoursePreparationTime(1000, 18, 7);
-		courseEntity.setDefaultTimeInWeeks(defaultTimeInWeeks);
-		CourseEntity savedCourse = courseRepository.save(courseEntity);
-		List<CourseBooksEntity> courseBooksEntities = new ArrayList<>();
-		if (savedbookList != null) {
-			for (BookEntity bookEntity : savedbookList) {
-				CourseBooksEntity courseBooksEntity = new CourseBooksEntity(savedCourse.getId(), bookEntity.getId());
-				courseBooksEntities.add(courseBooksEntity);
-			}
 
-			courseBooksRepository.save(courseBooksEntities);
-		}
+    public void addCourse(Course course) {
+        CourseEntity courseEntity = courseTranslator.translateToEntity(course);
+        List<Book> bookList = course.getBookList();
+        int totalNOfPages = 0;
+        for (Book book : bookList) {
+            totalNOfPages += book.getNoOfPages();
+        }
+        List<BookEntity> savedbookList = null;
+        if (bookList != null) {
+            List<BookEntity> translateToEntity = bookTranslator.translateToEntity(bookList);
+            savedbookList = bookRepository.save(translateToEntity);
+        }
 
-	}
+        courseEntity.setCreationDateTime(LocalDateTime.now());
+        courseEntity.setLastChangeTimestamp(LocalDateTime.now());
+        int defaultTimeInWeeks = ServiceUtils.getDefaultCoursePreparationTime(totalNOfPages, 18, 7);
+        courseEntity.setDefaultTimeInWeeks(defaultTimeInWeeks);
+        CourseEntity savedCourse = courseRepository.save(courseEntity);
+        List<CourseBooksEntity> courseBooksEntities = new ArrayList<>();
+        if (savedbookList != null) {
+            for (BookEntity bookEntity : savedbookList) {
+                CourseBooksEntity courseBooksEntity = new CourseBooksEntity(savedCourse.getId(), bookEntity.getId());
+                courseBooksEntities.add(courseBooksEntity);
+            }
 
-	@Cacheable("course")
-	public Course getCourse(Long courseId) {
-		CourseEntity courseEntity = courseRepository.findOne(courseId);
-		List<Book> bookList = bookTranslator.translateToDomain(courseBooksService.findBooks(courseId));
-		Course course = courseTranslator.translateToDomain(courseEntity);
-		course.getBookList().addAll(bookList);
-		return course;
+            courseBooksRepository.save(courseBooksEntities);
+        }
 
-	}
+    }
+
+    public Course getCourse(Long courseId) {
+        CourseEntity courseEntity = courseRepository.findOne(courseId);
+        List<Book> bookList = bookTranslator.translateToDomain(courseBooksService.findBooks(courseId));
+        Course course = courseTranslator.translateToDomain(courseEntity);
+        course.setBookList(bookList);
+        return course;
+
+    }
 }

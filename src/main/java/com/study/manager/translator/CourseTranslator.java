@@ -30,7 +30,7 @@ public class CourseTranslator {
 			course.setDescription(courseEntity.getDescription());
 			course.setType(courseEntity.getType().name());
 			course.setSubscribed(true);
-			course.setPrepartionTimeInWeeks(courseEntity.getDefaultTimeInWeeks());
+			course.setPreparationTimeInWeeks(courseEntity.getDefaultTimeInWeeks());
 			courseList.add(course);
 		}
 		return courseList;
@@ -50,6 +50,7 @@ public class CourseTranslator {
 			course.setEndDate(userCoursesEntity.getEndDate());
 			course.setCurrentStatus(userCoursesEntity.getCurrentStatus());
 			course.setCompletionRate(userCoursesEntity.getCompletionRate());
+			course.setTodayGoal(userCoursesEntity.getTodayGoal());
 			courseList.add(course);
 		}
 		return courseList;

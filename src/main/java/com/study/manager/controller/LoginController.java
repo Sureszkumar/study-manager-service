@@ -50,7 +50,7 @@ public class LoginController {
 		}
 		emailService.sendEmail(createdUser.getId(), createdUser.getEmail());
 		response.setSuccess(true);
-		response.setMessage("User created for email" + user.getEmail());
+		response.setMessage("User created for email " + user.getEmail() +" Check your mail and verify");
 		return response;
 	}
 
