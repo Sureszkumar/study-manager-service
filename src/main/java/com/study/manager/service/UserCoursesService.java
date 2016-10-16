@@ -9,8 +9,6 @@ import java.util.List;
 
 import javax.inject.Inject;
 
-import com.study.manager.service.exception.ServiceException;
-import org.apache.tomcat.jni.Local;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 
@@ -33,6 +31,7 @@ import com.study.manager.repository.CourseBooksRepository;
 import com.study.manager.repository.CourseProficiencyRepository;
 import com.study.manager.repository.CourseRepository;
 import com.study.manager.repository.UserCoursesRepository;
+import com.study.manager.service.exception.ServiceException;
 import com.study.manager.translator.BookTranslator;
 import com.study.manager.translator.CourseSettingsTranslator;
 import com.study.manager.translator.CourseTranslator;
@@ -144,18 +143,21 @@ public class UserCoursesService {
         return courseSettingsTranslator.translateToDomain(userCoursesEntity);
     }
 
+    
     public void updateCourseSettings(long userId, Long courseId, CourseSettings courseSettings) {
         UserCoursesEntity userCoursesEntity = userCoursesRepository.findBy(userId, courseId);
         WeeklyHours newWeeklyHours = courseSettings.getWeeklyHours();
         LocalDate newTargetDate = courseSettings.getTargetDate();
         if (newTargetDate != null) {
             int pagesUnRead = userCoursesEntity.getPagesUnRead();
-            long noOfDaysLeft = DAYS.between(newTargetDate, LocalDate.now());
+            long noOfDaysLeft = DAYS.between(LocalDate.now(), newTargetDate);
             int dailyPagesToRead = (int) (pagesUnRead / noOfDaysLeft);
             WeekEntity weekDayPages = new WeekEntity(dailyPagesToRead);
             userCoursesEntity.getWeeklyPagesEntity().setWeekEntity(weekDayPages);
             WeekEntity weekDayHours = new WeekEntity(0);
             userCoursesEntity.getWeeklyHoursEntity().setWeekEntity(weekDayHours);
+            userCoursesEntity.setTodayGoal(dailyPagesToRead);
+            userCoursesEntity.setEndDate(newTargetDate);
 
         } else {
 
@@ -193,11 +195,6 @@ public class UserCoursesService {
     public static LocalDate getAbsoluteEndDate(LocalDate endDate, WeekEntity weekDayHours) {
         DayOfWeek actualDayOfWeek = weekDayHours.getNonZeroDay();
         return endDate.with(TemporalAdjusters.next(actualDayOfWeek));
-    }
-
-    public static void main(String a[]) {
-        WeekEntity weekDayHours = new WeekEntity(1,0,0,0,0,1,1);
-        System.out.println(getAbsoluteEndDate(LocalDate.now(), weekDayHours));
     }
 
     private WeekEntity getWeekDayPages(Long courseId, String proficiency, WeekEntity weekDayHours) {
