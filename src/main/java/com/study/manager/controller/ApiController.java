@@ -65,6 +65,11 @@ public class ApiController {
 		return userCoursesService.getSubscribedCourses(userId);
 	}
 
+	@RequestMapping(value = "/subscribedCourse/{courseId}", method = RequestMethod.GET)
+	public Course getSubscribedCourses(@RequestHeader("user-id") final Long userId, @PathVariable final Long courseId) {
+		return userCoursesService.getSubscribedCourse(userId, courseId);
+	}
+
 	@RequestMapping(value = "/course/{courseId}/settings", method = RequestMethod.GET)
 	public CourseSettings getCourseSettings(@RequestHeader("user-id") long userId,
 			@PathVariable("courseId") final Long courseId) {

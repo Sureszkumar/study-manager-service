@@ -109,6 +109,11 @@ public class UserCoursesService {
         return courseTranslator.translateToDomain(courseRepository.findAll(courseIds), userId);
     }
 
+    public Course getSubscribedCourse(Long userId, Long courseId) {
+        List<Long> courseIds = userCoursesRepository.findAllCourses(userId);
+        return courseTranslator.translateToDomain(courseRepository.findAll(courseIds), userId);
+    }
+    
     public void addCustomCourse(Long userId, Course course) {
         if (course.getBookList() != null) {
             List<BookEntity> bookEntityList = bookTranslator.translateToEntity(course.getBookList());
