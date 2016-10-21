@@ -1,12 +1,14 @@
 package com.study.manager.entity;
 
 import java.time.LocalDate;
+import java.util.List;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
@@ -40,13 +42,9 @@ public class UserCoursesEntity extends BaseEntity {
 
 	private int todayGoal;
 
-	public int getTodayGoal() {
-		return todayGoal;
-	}
-
-	public void setTodayGoal(int todayGoal) {
-		this.todayGoal = todayGoal;
-	}
+	@OneToMany(cascade = CascadeType.ALL)
+	@JoinColumn(name = "user_course_book_id")
+	private List<UserCourseBooksEntity> userCourseBooksEntity;
 
 	@OneToOne(cascade = CascadeType.ALL)
 	@JoinColumn(name = "weekly_hours_id")
@@ -55,6 +53,22 @@ public class UserCoursesEntity extends BaseEntity {
 	@OneToOne(cascade = CascadeType.ALL)
 	@JoinColumn(name = "weekly_pages_id")
 	private WeeklyPagesEntity weeklyPagesEntity;
+
+	public List<UserCourseBooksEntity> getUserCourseBooksEntity() {
+		return userCourseBooksEntity;
+	}
+
+	public void setUserCourseBooksEntity(List<UserCourseBooksEntity> userCourseBooksEntity) {
+		this.userCourseBooksEntity = userCourseBooksEntity;
+	}
+
+	public int getTodayGoal() {
+		return todayGoal;
+	}
+
+	public void setTodayGoal(int todayGoal) {
+		this.todayGoal = todayGoal;
+	}
 
 	public int getPagesUnRead() {
 		return pagesUnRead;

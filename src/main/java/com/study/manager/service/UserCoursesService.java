@@ -1,17 +1,5 @@
 package com.study.manager.service;
 
-import static java.time.temporal.ChronoUnit.DAYS;
-
-import java.time.DayOfWeek;
-import java.time.LocalDate;
-import java.time.temporal.TemporalAdjusters;
-import java.util.List;
-
-import javax.inject.Inject;
-
-import org.springframework.stereotype.Service;
-import org.springframework.validation.annotation.Validated;
-
 import com.study.manager.domain.Book;
 import com.study.manager.domain.Course;
 import com.study.manager.domain.CourseSettings;
@@ -22,6 +10,7 @@ import com.study.manager.entity.BookEntity;
 import com.study.manager.entity.CourseBooksEntity;
 import com.study.manager.entity.CourseEntity;
 import com.study.manager.entity.CourseProficiencyEntity;
+import com.study.manager.entity.UserCourseBooksEntity;
 import com.study.manager.entity.UserCoursesEntity;
 import com.study.manager.entity.WeekEntity;
 import com.study.manager.entity.WeeklyHoursEntity;
@@ -35,6 +24,17 @@ import com.study.manager.service.exception.ServiceException;
 import com.study.manager.translator.BookTranslator;
 import com.study.manager.translator.CourseSettingsTranslator;
 import com.study.manager.translator.CourseTranslator;
+import org.springframework.stereotype.Service;
+import org.springframework.validation.annotation.Validated;
+
+import javax.inject.Inject;
+import java.time.DayOfWeek;
+import java.time.LocalDate;
+import java.time.temporal.TemporalAdjusters;
+import java.util.ArrayList;
+import java.util.List;
+
+import static java.time.temporal.ChronoUnit.DAYS;
 
 @Service
 @Validated
@@ -70,10 +70,22 @@ public class UserCoursesService {
         userCourseEntity.setStartDate(LocalDate.now());
         List<Long> bookIds = courseBooksRepository.findBookIds(courseId);
         List<BookEntity> books = bookRepository.findAll(bookIds);
+        List<UserCourseBooksEntity> userCourseBooksEntities = new ArrayList<>();
         int totalNoOfPages = 0;
         for (BookEntity book : books) {
+            UserCourseBooksEntity userCourseBooksEntity = new UserCourseBooksEntity();
+            userCourseBooksEntity.setAuthor(book.getAuthor());
+            userCourseBooksEntity.setDescription(book.getDescription());
+            userCourseBooksEntity.setIsbn(book.getIsbn());
+            userCourseBooksEntity.setTotalNoOfPages(book.getNoOfPages());
+            userCourseBooksEntity.setNoOfPagesRead(0);
+            userCourseBooksEntity.setNoOfPagesUnRead(book.getNoOfPages());
+            userCourseBooksEntity.setTitle(book.getTitle());
+            userCourseBooksEntity.setType(book.getType());
             totalNoOfPages = +book.getNoOfPages();
+            userCourseBooksEntities.add(userCourseBooksEntity);
         }
+        userCourseEntity.setUserCourseBooksEntity(userCourseBooksEntities);
         userCourseEntity.setTotalNoOfPages(totalNoOfPages);
         userCourseEntity.setPagesUnRead(totalNoOfPages);
         userCourseEntity.setCompletionRate(0);
@@ -111,7 +123,7 @@ public class UserCoursesService {
 
     public Course getSubscribedCourse(Long userId, Long courseId) {
         List<Long> courseIds = userCoursesRepository.findAllCourses(userId);
-        return courseTranslator.translateToDomain(courseRepository.findAll(courseIds), userId);
+        return null;//courseTranslator.translateToDomain(courseRepository.findAll(courseIds), userId);
     }
     
     public void addCustomCourse(Long userId, Course course) {
@@ -221,5 +233,27 @@ public class UserCoursesService {
         weekDayPages.setSaturday(weekDayHours.getSaturday() * pagesPerHour);
         weekDayPages.setSunday(weekDayHours.getSunday() * pagesPerHour);
         return weekDayPages;
+    }
+
+    public Course getCourseUpdate(Long userId, Long courseId) {
+        UserCoursesEntity userCoursesEntity = userCoursesRepository.findBy(userId, courseId);
+        CourseEntity courseEntity = courseRepository.findOne(courseId);
+        Course course = courseTranslator.translateToDomain(courseEntity);
+        List<UserCourseBooksEntity> userCourseBooksEntities = userCoursesEntity.getUserCourseBooksEntity();
+        List<Book> bookList = new ArrayList<>();
+        for(UserCourseBooksEntity userCourseBooksEntity : userCourseBooksEntities){
+            Book book = new Book();
+            book.setNoOfPages(userCourseBooksEntity.getTotalNoOfPages());
+            book.setType(userCourseBooksEntity.getType().name());
+            book.setAuthor(userCourseBooksEntity.getAuthor());
+            book.setTitle(userCourseBooksEntity.getTitle());
+            book.setId(userCourseBooksEntity.getId());
+            book.setNoOfPagesRead(userCourseBooksEntity.getNoOfPagesRead());
+            book.setNoOfPagesUnRead(userCourseBooksEntity.getNoOfPagesUnRead());
+            bookList.add(book);
+        }
+        course.setBookList(bookList);
+        return course;
+
     }
 }

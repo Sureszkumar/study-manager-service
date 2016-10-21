@@ -17,8 +17,27 @@ public class Book {
 	private String author;
 	
 	private int noOfPages;
-	
-	
+
+	private int noOfPagesRead;
+
+	private int noOfPagesUnRead;
+
+	public int getNoOfPagesRead() {
+		return noOfPagesRead;
+	}
+
+	public void setNoOfPagesRead(int noOfPagesRead) {
+		this.noOfPagesRead = noOfPagesRead;
+	}
+
+	public int getNoOfPagesUnRead() {
+		return noOfPagesUnRead;
+	}
+
+	public void setNoOfPagesUnRead(int noOfPagesUnRead) {
+		this.noOfPagesUnRead = noOfPagesUnRead;
+	}
+
 	public String getAuthor() {
 		return author;
 	}

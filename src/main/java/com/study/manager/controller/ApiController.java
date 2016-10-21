@@ -44,6 +44,7 @@ public class ApiController {
 		return courseService.getCourse(courseId);
 	}
 
+
 	@RequestMapping(value = "/subscribeCourse/{courseId}", method = RequestMethod.POST)
 	public ServiceResponse subscribeCourse(@PathVariable("courseId") final Long courseId,
 			@RequestHeader("user-id") long userId) {
@@ -64,6 +65,13 @@ public class ApiController {
 	public List<Course> getSubscribedCourses(@RequestHeader("user-id") final Long userId) {
 		return userCoursesService.getSubscribedCourses(userId);
 	}
+
+	@RequestMapping(value = "/courseUpdate/{courseId}", method = RequestMethod.GET)
+	public Course getCourseUpdate(@PathVariable("courseId") final Long courseId,
+								  @RequestHeader("user-id") final Long userId) {
+		return userCoursesService.getCourseUpdate(userId, courseId);
+	}
+
 
 	@RequestMapping(value = "/subscribedCourse/{courseId}", method = RequestMethod.GET)
 	public Course getSubscribedCourses(@RequestHeader("user-id") final Long userId, @PathVariable final Long courseId) {
