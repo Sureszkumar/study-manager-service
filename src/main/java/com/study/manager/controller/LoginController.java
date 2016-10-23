@@ -43,7 +43,7 @@ public class LoginController {
 		try {
 			createdUser = userService.create(user);
 
-		} catch (Exception e) {
+		} catch (Exception e) { 
 			response.setSuccess(false);
 			response.setMessage(e.getMessage());
 			return response;

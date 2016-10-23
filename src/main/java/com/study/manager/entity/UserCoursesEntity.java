@@ -43,7 +43,7 @@ public class UserCoursesEntity extends BaseEntity {
 	private int todayGoal;
 
 	@OneToMany(cascade = CascadeType.ALL)
-	@JoinColumn(name = "user_course_book_id")
+	@JoinColumn(name = "user_course_id")
 	private List<UserCourseBooksEntity> userCourseBooksEntity;
 
 	@OneToOne(cascade = CascadeType.ALL)

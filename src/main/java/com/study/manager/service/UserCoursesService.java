@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.inject.Inject;
+import javax.persistence.EntityExistsException;
 
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
@@ -67,7 +68,11 @@ public class UserCoursesService {
 	private CourseSettingsTranslator courseSettingsTranslator;
 
 	public void subscribeCourse(Long userId, Long courseId) {
-		UserCoursesEntity userCourseEntity = new UserCoursesEntity();
+		UserCoursesEntity userCourseEntity = userCoursesRepository.findBy(userId, courseId);
+		if (userCourseEntity != null) {
+			throw new EntityExistsException("User already subscribed to this course");
+		}
+		userCourseEntity = new UserCoursesEntity();
 		userCourseEntity.setUserId(userId);
 		userCourseEntity.setCourseId(courseId);
 		userCourseEntity.setStartDate(LocalDate.now());
@@ -167,8 +172,9 @@ public class UserCoursesService {
 				userCourseBooksEntity.setNoOfPagesUnRead(
 						userCourseBooksEntity.getTotalNoOfPages() - userCourseBooksEntity.getNoOfPagesRead());
 				userCoursesEntity.setTodayGoal(userCoursesEntity.getTodayGoal() - goal.getNoOfPagesRead());
-				userCoursesEntity.setCompletionRate(
-						userCourseBooksEntity.getNoOfPagesRead() / userCourseBooksEntity.getTotalNoOfPages() * 100);
+				double completionRate = ((double) userCourseBooksEntity.getNoOfPagesRead()
+						/ userCourseBooksEntity.getTotalNoOfPages()) * 100;
+				userCoursesEntity.setCompletionRate(userCoursesEntity.getCompletionRate() + completionRate);
 			}
 		}
 		userCoursesRepository.save(userCoursesEntity);
@@ -272,5 +278,22 @@ public class UserCoursesService {
 		course.setBookList(bookList);
 		return course;
 
+	}
+
+	public void addDailyGoal() {
+		List<UserCoursesEntity> userCourses = userCoursesRepository.findAll();
+		if (userCourses != null && !userCourses.isEmpty()) {
+			for (UserCoursesEntity userCoursesEntity : userCourses) {
+				int todayGoal = userCoursesEntity.getWeeklyPagesEntity().getWeekEntity().getTodayGoal(LocalDate.now());
+				int pastGoal = userCoursesEntity.getTodayGoal();
+				if (pastGoal > 0) {
+					userCoursesEntity.setCurrentStatus(CourseStatus.BEHIND_SCHEDULE.name());
+				} else {
+					userCoursesEntity.setCurrentStatus(CourseStatus.ON_TRACK.name());
+				}
+				userCoursesEntity.setTodayGoal(pastGoal + todayGoal);
+				userCoursesRepository.save(userCoursesEntity);
+			}
+		}
 	}
 }
