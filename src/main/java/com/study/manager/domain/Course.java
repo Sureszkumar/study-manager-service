@@ -1,5 +1,6 @@
 package com.study.manager.domain;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -29,7 +30,7 @@ public class Course {
 
 	private String currentStatus;
 
-	private Integer completionRate;
+	private BigDecimal completionRate;
 
 	private Integer todayGoal;
 
@@ -69,11 +70,11 @@ public class Course {
 		this.currentStatus = currentStatus;
 	}
 
-	public Integer getCompletionRate() {
+	public BigDecimal getCompletionRate() {
 		return completionRate;
 	}
 
-	public void setCompletionRate(Integer completionRate) {
+	public void setCompletionRate(BigDecimal completionRate) {
 		this.completionRate = completionRate;
 	}
 

@@ -1,5 +1,6 @@
 package com.study.manager.translator;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -49,7 +50,7 @@ public class CourseTranslator {
 			course.setType(courseEntity.getType().name());
 			course.setEndDate(userCoursesEntity.getEndDate());
 			course.setCurrentStatus(userCoursesEntity.getCurrentStatus());
-			course.setCompletionRate(userCoursesEntity.getCompletionRate());
+			course.setCompletionRate(BigDecimal.valueOf(userCoursesEntity.getCompletionRate()));
 			course.setTodayGoal(userCoursesEntity.getTodayGoal());
 			courseList.add(course);
 		}

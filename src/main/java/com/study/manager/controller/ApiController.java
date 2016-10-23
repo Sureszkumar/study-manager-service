@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.study.manager.domain.Book;
 import com.study.manager.domain.Course;
 import com.study.manager.domain.CourseSettings;
+import com.study.manager.domain.Goal;
 import com.study.manager.domain.ServiceResponse;
 import com.study.manager.service.CourseService;
 import com.study.manager.service.UserCoursesService;
@@ -66,18 +67,29 @@ public class ApiController {
 		return userCoursesService.getSubscribedCourses(userId);
 	}
 
-	@RequestMapping(value = "/courseUpdate/{courseId}", method = RequestMethod.GET)
-	public Course getCourseUpdate(@PathVariable("courseId") final Long courseId,
-								  @RequestHeader("user-id") final Long userId) {
-		return userCoursesService.getCourseUpdate(userId, courseId);
-	}
-
-
 	@RequestMapping(value = "/subscribedCourse/{courseId}", method = RequestMethod.GET)
-	public Course getSubscribedCourses(@RequestHeader("user-id") final Long userId, @PathVariable final Long courseId) {
+	public Course getSubscribedCourse(@PathVariable("courseId") final Long courseId,
+								  @RequestHeader("user-id") final Long userId) {
 		return userCoursesService.getSubscribedCourse(userId, courseId);
 	}
 
+	@RequestMapping(value = "/updateSubscribedCourse/{courseId}", method = RequestMethod.POST)
+	public ServiceResponse updateSubscribedCourse(@RequestHeader("user-id") long userId,
+			@PathVariable("courseId") final Long courseId, @RequestBody Goal goal) {
+		ServiceResponse response = new ServiceResponse();
+		try {
+			userCoursesService.updateSubscribedCourseGoal(userId, courseId, goal);
+			response.setSuccess(true);
+			response.setMessage("Subscribed Course goal successfully updated");
+			return response;
+		} catch (Exception e) {
+			response.setSuccess(false);
+			response.setMessage(e.getMessage());
+			return response;
+		}
+	}
+
+	
 	@RequestMapping(value = "/course/{courseId}/settings", method = RequestMethod.GET)
 	public CourseSettings getCourseSettings(@RequestHeader("user-id") long userId,
 			@PathVariable("courseId") final Long courseId) {

@@ -32,7 +32,7 @@ public class UserCoursesEntity extends BaseEntity {
 
 	private String currentStatus;
 
-	private int completionRate;
+	private double completionRate;
 
 	private int totalNoOfPages;
 
@@ -168,11 +168,11 @@ public class UserCoursesEntity extends BaseEntity {
 		this.currentStatus = currentStatus;
 	}
 
-	public int getCompletionRate() {
+	public double getCompletionRate() {
 		return completionRate;
 	}
 
-	public void setCompletionRate(int completionRate) {
+	public void setCompletionRate(double completionRate) {
 		this.completionRate = completionRate;
 	}
 
