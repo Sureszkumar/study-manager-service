@@ -1,12 +1,15 @@
 package com.study.manager.service;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 import javax.inject.Inject;
 import javax.persistence.EntityExistsException;
 import javax.persistence.EntityNotFoundException;
 import javax.transaction.Transactional;
 
+import com.study.manager.entity.UserCoursesEntity;
+import com.study.manager.repository.UserCoursesRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -31,6 +34,9 @@ public class UserService {
 	
 	@Inject
 	private UserRepository userRepository;
+
+	@Inject
+	private UserCoursesRepository userCoursesRepository;
 
 	@Inject
 	private UserTranslator userTranslator;
@@ -141,6 +147,8 @@ public class UserService {
 	
 	public void delete(Long userId) {
 		userRepository.delete(userId);
+		List<UserCoursesEntity> userCoursesEntities = userCoursesRepository.findAllByUserId(userId);
+		userCoursesRepository.delete(userCoursesEntities);
 	}
 
 	public UserEntity updateUser(Long userId, UserEntity newUserEntity){

@@ -15,165 +15,166 @@ import javax.persistence.Table;
 @Entity
 @Table(name = "USER_COURSES")
 @NamedQueries({
-		@NamedQuery(name = "UserCoursesEntity.findAllCourses", query = "SELECT u.courseId FROM UserCoursesEntity u WHERE u.userId = ?1"),
-		@NamedQuery(name = "UserCoursesEntity.findCount", query = "SELECT count(u) FROM UserCoursesEntity u WHERE u.userId = ?1 and u.courseId = ?2"),
-		@NamedQuery(name = "UserCoursesEntity.findBy", query = "SELECT u FROM UserCoursesEntity u WHERE u.userId = ?1 and u.courseId = ?2"), })
+        @NamedQuery(name = "UserCoursesEntity.findAllCourses", query = "SELECT u.courseId FROM UserCoursesEntity u WHERE u.userId = ?1"),
+        @NamedQuery(name = "UserCoursesEntity.findAllByUserId", query = "SELECT u from UserCoursesEntity u WHERE u.userId = ?1"),
+        @NamedQuery(name = "UserCoursesEntity.findCount", query = "SELECT count(u) FROM UserCoursesEntity u WHERE u.userId = ?1 and u.courseId = ?2"),
+        @NamedQuery(name = "UserCoursesEntity.findBy", query = "SELECT u FROM UserCoursesEntity u WHERE u.userId = ?1 and u.courseId = ?2"),})
 public class UserCoursesEntity extends BaseEntity {
 
-	private Long userId;
+    private Long userId;
 
-	private Long courseId;
+    private Long courseId;
 
-	private LocalDate startDate;
+    private LocalDate startDate;
 
-	private LocalDate endDate;
+    private LocalDate endDate;
 
-	private String proficiency;
+    private String proficiency;
 
-	private String currentStatus;
+    private String currentStatus;
 
-	private double completionRate;
+    private double completionRate;
 
-	private int totalNoOfPages;
+    private int totalNoOfPages;
 
-	private int pagesRead;
+    private int pagesRead;
 
-	private int pagesUnRead;
+    private int pagesUnRead;
 
-	private int todayGoal;
+    private int todayGoal;
 
-	@OneToMany(cascade = CascadeType.ALL)
-	@JoinColumn(name = "user_course_id")
-	private List<UserCourseBooksEntity> userCourseBooksEntity;
+    @OneToMany(cascade = CascadeType.ALL)
+    @JoinColumn(name = "user_course_id")
+    private List<UserCourseBooksEntity> userCourseBooksEntity;
 
-	@OneToOne(cascade = CascadeType.ALL)
-	@JoinColumn(name = "weekly_hours_id")
-	private WeeklyHoursEntity weeklyHoursEntity;
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "weekly_hours_id")
+    private WeeklyHoursEntity weeklyHoursEntity;
 
-	@OneToOne(cascade = CascadeType.ALL)
-	@JoinColumn(name = "weekly_pages_id")
-	private WeeklyPagesEntity weeklyPagesEntity;
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "weekly_pages_id")
+    private WeeklyPagesEntity weeklyPagesEntity;
 
-	public List<UserCourseBooksEntity> getUserCourseBooksEntity() {
-		return userCourseBooksEntity;
-	}
+    public List<UserCourseBooksEntity> getUserCourseBooksEntity() {
+        return userCourseBooksEntity;
+    }
 
-	public void setUserCourseBooksEntity(List<UserCourseBooksEntity> userCourseBooksEntity) {
-		this.userCourseBooksEntity = userCourseBooksEntity;
-	}
+    public void setUserCourseBooksEntity(List<UserCourseBooksEntity> userCourseBooksEntity) {
+        this.userCourseBooksEntity = userCourseBooksEntity;
+    }
 
-	public int getTodayGoal() {
-		return todayGoal;
-	}
+    public int getTodayGoal() {
+        return todayGoal;
+    }
 
-	public void setTodayGoal(int todayGoal) {
-		this.todayGoal = todayGoal;
-	}
+    public void setTodayGoal(int todayGoal) {
+        this.todayGoal = todayGoal;
+    }
 
-	public int getPagesUnRead() {
-		return pagesUnRead;
-	}
+    public int getPagesUnRead() {
+        return pagesUnRead;
+    }
 
-	public void setPagesUnRead(int pagesUnRead) {
-		this.pagesUnRead = pagesUnRead;
-	}
+    public void setPagesUnRead(int pagesUnRead) {
+        this.pagesUnRead = pagesUnRead;
+    }
 
-	public int getTotalNoOfPages() {
-		return totalNoOfPages;
-	}
+    public int getTotalNoOfPages() {
+        return totalNoOfPages;
+    }
 
-	public void setTotalNoOfPages(int totalNoOfPages) {
-		this.totalNoOfPages = totalNoOfPages;
-	}
+    public void setTotalNoOfPages(int totalNoOfPages) {
+        this.totalNoOfPages = totalNoOfPages;
+    }
 
-	public int getPagesRead() {
-		return pagesRead;
-	}
+    public int getPagesRead() {
+        return pagesRead;
+    }
 
-	public void setPagesRead(int pagesRead) {
-		this.pagesRead = pagesRead;
-	}
+    public void setPagesRead(int pagesRead) {
+        this.pagesRead = pagesRead;
+    }
 
-	public String getProficiency() {
-		return proficiency;
-	}
+    public String getProficiency() {
+        return proficiency;
+    }
 
-	public void setProficiency(String proficiency) {
-		this.proficiency = proficiency;
-	}
+    public void setProficiency(String proficiency) {
+        this.proficiency = proficiency;
+    }
 
-	public WeeklyPagesEntity getWeeklyPagesEntity() {
-		return weeklyPagesEntity;
-	}
+    public WeeklyPagesEntity getWeeklyPagesEntity() {
+        return weeklyPagesEntity;
+    }
 
-	public void setWeeklyPagesEntity(WeeklyPagesEntity weeklyPagesEntity) {
-		this.weeklyPagesEntity = weeklyPagesEntity;
-	}
+    public void setWeeklyPagesEntity(WeeklyPagesEntity weeklyPagesEntity) {
+        this.weeklyPagesEntity = weeklyPagesEntity;
+    }
 
-	public WeeklyHoursEntity getWeeklyHoursEntity() {
-		return weeklyHoursEntity;
-	}
+    public WeeklyHoursEntity getWeeklyHoursEntity() {
+        return weeklyHoursEntity;
+    }
 
-	public void setWeeklyHoursEntity(WeeklyHoursEntity weeklyHoursEntity) {
-		this.weeklyHoursEntity = weeklyHoursEntity;
-	}
+    public void setWeeklyHoursEntity(WeeklyHoursEntity weeklyHoursEntity) {
+        this.weeklyHoursEntity = weeklyHoursEntity;
+    }
 
-	public UserCoursesEntity() {
+    public UserCoursesEntity() {
 
-	}
+    }
 
-	public UserCoursesEntity(Long userId, Long courseId) {
-		this.userId = userId;
-		this.courseId = courseId;
-	}
+    public UserCoursesEntity(Long userId, Long courseId) {
+        this.userId = userId;
+        this.courseId = courseId;
+    }
 
-	public LocalDate getStartDate() {
-		return startDate;
-	}
+    public LocalDate getStartDate() {
+        return startDate;
+    }
 
-	public void setStartDate(LocalDate startDate) {
-		this.startDate = startDate;
-	}
+    public void setStartDate(LocalDate startDate) {
+        this.startDate = startDate;
+    }
 
-	public LocalDate getEndDate() {
-		return endDate;
-	}
+    public LocalDate getEndDate() {
+        return endDate;
+    }
 
-	public void setEndDate(LocalDate endDate) {
-		this.endDate = endDate;
-	}
+    public void setEndDate(LocalDate endDate) {
+        this.endDate = endDate;
+    }
 
-	public void setUserId(Long userId) {
-		this.userId = userId;
-	}
+    public void setUserId(Long userId) {
+        this.userId = userId;
+    }
 
-	public void setCourseId(Long courseId) {
-		this.courseId = courseId;
-	}
+    public void setCourseId(Long courseId) {
+        this.courseId = courseId;
+    }
 
-	public Long getCourseId() {
-		return courseId;
-	}
+    public Long getCourseId() {
+        return courseId;
+    }
 
-	public Long getUserId() {
+    public Long getUserId() {
 
-		return userId;
-	}
+        return userId;
+    }
 
-	public String getCurrentStatus() {
-		return currentStatus;
-	}
+    public String getCurrentStatus() {
+        return currentStatus;
+    }
 
-	public void setCurrentStatus(String currentStatus) {
-		this.currentStatus = currentStatus;
-	}
+    public void setCurrentStatus(String currentStatus) {
+        this.currentStatus = currentStatus;
+    }
 
-	public double getCompletionRate() {
-		return completionRate;
-	}
+    public double getCompletionRate() {
+        return completionRate;
+    }
 
-	public void setCompletionRate(double completionRate) {
-		this.completionRate = completionRate;
-	}
+    public void setCompletionRate(double completionRate) {
+        this.completionRate = completionRate;
+    }
 
 }
