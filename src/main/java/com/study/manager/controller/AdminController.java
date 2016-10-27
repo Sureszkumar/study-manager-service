@@ -1,6 +1,7 @@
 package com.study.manager.controller;
 
 import java.io.IOException;
+import java.util.List;
 
 import javax.inject.Inject;
 import javax.persistence.EntityNotFoundException;
@@ -37,203 +38,209 @@ import com.study.manager.service.exception.EmailVerificationException;
 @RequestMapping(value = "/admin")
 public class AdminController {
 
-	private static final Logger LOGGER = LoggerFactory.getLogger(AdminController.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(AdminController.class);
 
-	@Inject
-	private UserService userService;
+    @Inject
+    private UserService userService;
 
-	@Inject
-	private CourseService courseService;
+    @Inject
+    private CourseService courseService;
 
-	@Inject
-	private BookService bookService;
+    @Inject
+    private BookService bookService;
 
-	@Inject
-	private CourseBooksService courseBooksService;
+    @Inject
+    private CourseBooksService courseBooksService;
 
-	@Inject
-	private ImageService imageService;
+    @Inject
+    private ImageService imageService;
 
-	@Inject
-	private CourseProficiencyService courseProficiencyService;
+    @Inject
+    private CourseProficiencyService courseProficiencyService;
 
 	/*----------------User services -------------------*/
 
-	@RequestMapping(value = "/user/{id}", method = RequestMethod.DELETE)
-	public ServiceResponse delete(@PathVariable("id") final Long id) {
-		LOGGER.debug("Received request to retrieve user : {}", id);
-		ServiceResponse response = new ServiceResponse();
-		try {
-			userService.delete(id);
-			response.setSuccess(true);
-			response.setMessage("User deleted successfully");
-			return response;
-		} catch (Exception e) {
-			response.setSuccess(false);
-			response.setMessage(e.getMessage());
-			return response;
-		}
-	}
+    @RequestMapping(value = "/user/{id}", method = RequestMethod.DELETE)
+    public ServiceResponse delete(@PathVariable("id") final Long id) {
+        LOGGER.debug("Received request to retrieve user : {}", id);
+        ServiceResponse response = new ServiceResponse();
+        try {
+            userService.delete(id);
+            response.setSuccess(true);
+            response.setMessage("User deleted successfully");
+            return response;
+        } catch (Exception e) {
+            response.setSuccess(false);
+            response.setMessage(e.getMessage());
+            return response;
+        }
+    }
 
-	@RequestMapping(value = "/user/{id}", method = RequestMethod.GET)
-	public User get(@PathVariable("id") final Long id) {
-		LOGGER.debug("Received request to retrieve user : {}", id);
-		try {
-			User user = userService.get(id);
-			// response.setSuccess(true);
-			// response.setMessage("User retreived successfully");
-			return user;
-		} catch (Exception e) {
-			// response.setSuccess(false);
-			return null;
-		}
-	}
+    @RequestMapping(value = "/users", method = RequestMethod.GET)
+    public List<User> getAllUsers() {
+        List<User> users = userService.findAll();
+        return users;
+    }
 
-	@RequestMapping(value = "/verifyUser/{userId}", method = RequestMethod.POST)
-	public ServiceResponse verifyUser(@PathVariable("userId") final Long userId) {
-		ServiceResponse response = new ServiceResponse();
-		try {
-			userService.verifyUser(userId);
-			response.setSuccess(true);
-			response.setMessage("Successfully verified user");
-			return response;
-		} catch (Exception e) {
-			response.setSuccess(false);
-			response.setMessage(e.getMessage());
-			return response;
-		}
-	}
+    @RequestMapping(value = "/user/{id}", method = RequestMethod.GET)
+    public User get(@PathVariable("id") final Long id) {
+        LOGGER.debug("Received request to retrieve user : {}", id);
+        try {
+            User user = userService.get(id);
+            // response.setSuccess(true);
+            // response.setMessage("User retreived successfully");
+            return user;
+        } catch (Exception e) {
+            // response.setSuccess(false);
+            return null;
+        }
+    }
 
-	@RequestMapping(value = "/course/add", method = RequestMethod.POST)
-	public ServiceResponse addCourse(@RequestBody final Course course) {
-		ServiceResponse response = new ServiceResponse();
-		try {
-			courseService.addCourse(course);
-			response.setSuccess(true);
-			response.setMessage("Successfully Course added");
-			return response;
-		} catch (Exception e) {
-			response.setSuccess(false);
-			response.setMessage(e.getMessage());
-			return response;
-		}
-	}
+    @RequestMapping(value = "/verifyUser/{userId}", method = RequestMethod.POST)
+    public ServiceResponse verifyUser(@PathVariable("userId") final Long userId) {
+        ServiceResponse response = new ServiceResponse();
+        try {
+            userService.verifyUser(userId);
+            response.setSuccess(true);
+            response.setMessage("Successfully verified user");
+            return response;
+        } catch (Exception e) {
+            response.setSuccess(false);
+            response.setMessage(e.getMessage());
+            return response;
+        }
+    }
 
-	@RequestMapping(value = "/courseProficiency/add", method = RequestMethod.POST)
-	public ServiceResponse addCourseProficiency(@RequestBody final CourseProficiencyEntity courseProficiencyEntity) {
-		ServiceResponse response = new ServiceResponse();
-		try {
-			courseProficiencyService.add(courseProficiencyEntity);
-			response.setSuccess(true);
-			response.setMessage("Successfully courseProficiency added");
-			return response;
-		} catch (Exception e) {
-			response.setSuccess(false);
-			response.setMessage(e.getMessage());
-			return response;
-		}
-	}
+    @RequestMapping(value = "/course/add", method = RequestMethod.POST)
+    public ServiceResponse addCourse(@RequestBody final Course course) {
+        ServiceResponse response = new ServiceResponse();
+        try {
+            courseService.addCourse(course);
+            response.setSuccess(true);
+            response.setMessage("Successfully Course added");
+            return response;
+        } catch (Exception e) {
+            response.setSuccess(false);
+            response.setMessage(e.getMessage());
+            return response;
+        }
+    }
 
-	@RequestMapping(value = "/book/add", method = RequestMethod.POST)
-	public ServiceResponse addBook(@RequestBody final Book book) {
-		ServiceResponse response = new ServiceResponse();
-		try {
-			bookService.addBook(book);
-			response.setSuccess(true);
-			response.setMessage("Successfully Book added");
-			return response;
-		} catch (Exception e) {
-			response.setSuccess(false);
-			response.setMessage(e.getMessage());
-			return response;
-		}
-	}
+    @RequestMapping(value = "/courseProficiency/add", method = RequestMethod.POST)
+    public ServiceResponse addCourseProficiency(@RequestBody final CourseProficiencyEntity courseProficiencyEntity) {
+        ServiceResponse response = new ServiceResponse();
+        try {
+            courseProficiencyService.add(courseProficiencyEntity);
+            response.setSuccess(true);
+            response.setMessage("Successfully courseProficiency added");
+            return response;
+        } catch (Exception e) {
+            response.setSuccess(false);
+            response.setMessage(e.getMessage());
+            return response;
+        }
+    }
 
-	@RequestMapping(value = "addImage/book/{bookId}", consumes = { "multipart/form-data" }, method = RequestMethod.POST)
-	public ServiceResponse addBookImage(@RequestParam final Long bookId, @RequestPart("image") MultipartFile image) {
-		ServiceResponse response = new ServiceResponse();
-		try {
-			imageService.add(image.getBytes(), bookId, EntityType.BOOK);
-			response.setSuccess(true);
-			response.setMessage("Successfully Image added");
-			return response;
-		} catch (Exception e) {
-			response.setSuccess(false);
-			response.setMessage(e.getMessage());
-			return response;
-		}
-	}
+    @RequestMapping(value = "/book/add", method = RequestMethod.POST)
+    public ServiceResponse addBook(@RequestBody final Book book) {
+        ServiceResponse response = new ServiceResponse();
+        try {
+            bookService.addBook(book);
+            response.setSuccess(true);
+            response.setMessage("Successfully Book added");
+            return response;
+        } catch (Exception e) {
+            response.setSuccess(false);
+            response.setMessage(e.getMessage());
+            return response;
+        }
+    }
 
-	@RequestMapping(value = "addImage/user/{userId}", consumes = { "multipart/form-data" }, method = RequestMethod.POST)
-	public ServiceResponse addUserImage(@RequestParam final Long userId, @RequestPart("image") MultipartFile image) {
-		ServiceResponse response = new ServiceResponse();
-		try {
-			imageService.add(image.getBytes(), userId, EntityType.USER);
-			response.setSuccess(true);
-			response.setMessage("Successfully Image added");
-			return response;
-		} catch (Exception e) {
-			response.setSuccess(false);
-			response.setMessage(e.getMessage());
-			return response;
-		}
-	}
+    @RequestMapping(value = "addImage/book/{bookId}", consumes = {"multipart/form-data"}, method = RequestMethod.POST)
+    public ServiceResponse addBookImage(@RequestParam final Long bookId, @RequestPart("image") MultipartFile image) {
+        ServiceResponse response = new ServiceResponse();
+        try {
+            imageService.add(image.getBytes(), bookId, EntityType.BOOK);
+            response.setSuccess(true);
+            response.setMessage("Successfully Image added");
+            return response;
+        } catch (Exception e) {
+            response.setSuccess(false);
+            response.setMessage(e.getMessage());
+            return response;
+        }
+    }
 
-	@RequestMapping(value = "addImage/course/{courseId}", consumes = {
-			"multipart/form-data" }, method = RequestMethod.POST)
-	public ServiceResponse addCourseImage(@RequestParam final Long courseId,
-			@RequestPart("image") MultipartFile image) {
-		ServiceResponse response = new ServiceResponse();
-		try {
-			imageService.add(image.getBytes(), courseId, EntityType.COURSE);
-			response.setSuccess(true);
-			response.setMessage("Successfully Image added");
-			return response;
-		} catch (Exception e) {
-			response.setSuccess(false);
-			response.setMessage(e.getMessage());
-			return response;
-		}
-	}
+    @RequestMapping(value = "addImage/user/{userId}", consumes = {"multipart/form-data"}, method = RequestMethod.POST)
+    public ServiceResponse addUserImage(@RequestParam final Long userId, @RequestPart("image") MultipartFile image) {
+        ServiceResponse response = new ServiceResponse();
+        try {
+            imageService.add(image.getBytes(), userId, EntityType.USER);
+            response.setSuccess(true);
+            response.setMessage("Successfully Image added");
+            return response;
+        } catch (Exception e) {
+            response.setSuccess(false);
+            response.setMessage(e.getMessage());
+            return response;
+        }
+    }
 
-	@RequestMapping(value = "/book/{id}", method = RequestMethod.GET)
-	public Book getBook(@PathVariable("id") final Long id) {
-		LOGGER.debug("Received request to retrieve user : {}", id);
-		try {
-			Book book = bookService.get(id);
-			// response.setSuccess(true);
-			// response.setMessage("User retreived successfully");
-			return book;
-		} catch (Exception e) {
-			// response.setSuccess(false);
-			return null;
-		}
-	}
+    @RequestMapping(value = "addImage/course/{courseId}", consumes = {
+            "multipart/form-data"}, method = RequestMethod.POST)
+    public ServiceResponse addCourseImage(@RequestParam final Long courseId,
+                                          @RequestPart("image") MultipartFile image) {
+        ServiceResponse response = new ServiceResponse();
+        try {
+            imageService.add(image.getBytes(), courseId, EntityType.COURSE);
+            response.setSuccess(true);
+            response.setMessage("Successfully Image added");
+            return response;
+        } catch (Exception e) {
+            response.setSuccess(false);
+            response.setMessage(e.getMessage());
+            return response;
+        }
+    }
 
-	@RequestMapping(value = "/link/course/{courseId}/book/{bookId}", method = RequestMethod.POST)
-	public ServiceResponse linkCourseBook(@PathVariable("courseId") final Long courseId,
-			@PathVariable("courseId") final Long bookId) {
-		ServiceResponse response = new ServiceResponse();
-		try {
-			courseBooksService.linkCourseBook(courseId, bookId);
-			response.setSuccess(true);
-			response.setMessage("Successfully course and book linked");
-			return response;
-		} catch (Exception e) {
-			response.setSuccess(false);
-			response.setMessage(e.getMessage());
-			return response;
-		}
-	}
+    @RequestMapping(value = "/book/{id}", method = RequestMethod.GET)
+    public Book getBook(@PathVariable("id") final Long id) {
+        LOGGER.debug("Received request to retrieve user : {}", id);
+        try {
+            Book book = bookService.get(id);
+            // response.setSuccess(true);
+            // response.setMessage("User retreived successfully");
+            return book;
+        } catch (Exception e) {
+            // response.setSuccess(false);
+            return null;
+        }
+    }
 
-	@ExceptionHandler(EntityNotFoundException.class)
-	void handleUserNotFoundRequests(HttpServletResponse response) throws IOException {
-		response.sendError(HttpStatus.NOT_FOUND.value(), "Email address not found. Signup to continue");
-	}
+    @RequestMapping(value = "/link/course/{courseId}/book/{bookId}", method = RequestMethod.POST)
+    public ServiceResponse linkCourseBook(@PathVariable("courseId") final Long courseId,
+                                          @PathVariable("courseId") final Long bookId) {
+        ServiceResponse response = new ServiceResponse();
+        try {
+            courseBooksService.linkCourseBook(courseId, bookId);
+            response.setSuccess(true);
+            response.setMessage("Successfully course and book linked");
+            return response;
+        } catch (Exception e) {
+            response.setSuccess(false);
+            response.setMessage(e.getMessage());
+            return response;
+        }
+    }
 
-	@ExceptionHandler(EmailVerificationException.class)
-	void handleEmailVerfificationException(HttpServletResponse response) throws IOException {
-		response.sendError(HttpStatus.BAD_REQUEST.value(), "Invalid email verify token for user");
-	}
+    @ExceptionHandler(EntityNotFoundException.class)
+    void handleUserNotFoundRequests(HttpServletResponse response) throws IOException {
+        response.sendError(HttpStatus.NOT_FOUND.value(), "Email address not found. Signup to continue");
+    }
+
+    @ExceptionHandler(EmailVerificationException.class)
+    void handleEmailVerfificationException(HttpServletResponse response) throws IOException {
+        response.sendError(HttpStatus.BAD_REQUEST.value(), "Invalid email verify token for user");
+    }
 
 }

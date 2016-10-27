@@ -167,4 +167,9 @@ public class UserService {
 		existing.setLastChangeTimestamp(LocalDateTime.now());
 		userRepository.save(existing);
 	}
+
+	public List<User> findAll() {
+		return userTranslator.translateToDomain(userRepository.findAll());
+
+	}
 }

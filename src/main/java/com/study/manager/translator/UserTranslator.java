@@ -5,6 +5,9 @@ import org.springframework.stereotype.Component;
 import com.study.manager.domain.User;
 import com.study.manager.entity.UserEntity;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Component
 public class UserTranslator {
 
@@ -14,6 +17,15 @@ public class UserTranslator {
 		user.setEmail(userEntity.getEmail());
 		user.setAuthToken(userEntity.getAuthToken());
 		return user;
+	}
+
+	public List<User> translateToDomain(List<UserEntity> userEntities) {
+
+		List<User> users = new ArrayList<>();
+		for(UserEntity userEntity :userEntities){
+			users.add(translateToDomain(userEntity));
+		}
+		return users;
 	}
 
 	public UserEntity translateToEntity(User user) {
