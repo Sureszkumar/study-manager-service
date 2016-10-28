@@ -137,6 +137,7 @@ public class ApiController {
 			response.setSuccess(true);
 			response.setMessage("Successfully added");
 			return response;
+
 		} catch (Exception e) {
 			response.setSuccess(false);
 			response.setMessage(e.getMessage());
@@ -144,7 +145,7 @@ public class ApiController {
 		}
 	}
 
-	@RequestMapping(value = "/course/{courseId}/addCustomBook", method = RequestMethod.POST)
+	@RequestMapping(value = "/subscribedCourse/{courseId}/addCustomBook", method = RequestMethod.POST)
 	public ServiceResponse addCustomBook(@RequestHeader("user-id") final Long userId,
 			@PathVariable("courseId") final Long courseId, @RequestBody final Book book) {
 		ServiceResponse response = new ServiceResponse();
