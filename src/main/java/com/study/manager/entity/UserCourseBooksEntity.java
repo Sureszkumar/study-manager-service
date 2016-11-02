@@ -1,99 +1,110 @@
 package com.study.manager.entity;
 
-import com.study.manager.domain.Type;
-
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
+
+import com.study.manager.domain.Type;
 
 @Entity
 @Table(name = "USER_COURSE_BOOKS")
 public class UserCourseBooksEntity extends BaseEntity {
 
-    private String title;
+	private String title;
 
-    private String description;
+	private String description;
 
-    private int totalNoOfPages;
+	private int totalNoOfPages;
 
-    private int noOfPagesRead;
+	private int noOfPagesRead;
 
-    private int noOfPagesUnRead;
+	private int noOfPagesUnRead;
 
-    private String author;
+	private String author;
 
-    private String isbn;
+	private String isbn;
 
-    @NotNull
-    @Enumerated(EnumType.STRING)
-    private Type type;
+	@NotNull
+	@Enumerated(EnumType.STRING)
+	private Type type;
 
-    public int getTotalNoOfPages() {
-        return totalNoOfPages;
-    }
+	/*@OneToOne(cascade = { CascadeType.ALL })
+	private BookImage bookImage;
 
-    public void setTotalNoOfPages(int totalNoOfPages) {
-        this.totalNoOfPages = totalNoOfPages;
-    }
+	public BookImage getBookImage() {
+		return bookImage;
+	}
 
-    public int getNoOfPagesRead() {
-        return noOfPagesRead;
-    }
+	public void setBookImage(BookImage bookImage) {
+		this.bookImage = bookImage;
+	}*/
 
-    public void setNoOfPagesRead(int noOfPagesRead) {
-        this.noOfPagesRead = noOfPagesRead;
-    }
+	public int getTotalNoOfPages() {
+		return totalNoOfPages;
+	}
 
-    public int getNoOfPagesUnRead() {
-        return noOfPagesUnRead;
-    }
+	public void setTotalNoOfPages(int totalNoOfPages) {
+		this.totalNoOfPages = totalNoOfPages;
+	}
 
-    public void setNoOfPagesUnRead(int noOfPagesUnRead) {
-        this.noOfPagesUnRead = noOfPagesUnRead;
-    }
+	public int getNoOfPagesRead() {
+		return noOfPagesRead;
+	}
 
-    public String getAuthor() {
-        return author;
-    }
+	public void setNoOfPagesRead(int noOfPagesRead) {
+		this.noOfPagesRead = noOfPagesRead;
+	}
 
-    public void setAuthor(String author) {
-        this.author = author;
-    }
+	public int getNoOfPagesUnRead() {
+		return noOfPagesUnRead;
+	}
 
-    public String getIsbn() {
-        return isbn;
-    }
+	public void setNoOfPagesUnRead(int noOfPagesUnRead) {
+		this.noOfPagesUnRead = noOfPagesUnRead;
+	}
 
-    public void setIsbn(String isbn) {
-        this.isbn = isbn;
-    }
+	public String getAuthor() {
+		return author;
+	}
 
-    public String getDescription() {
-        return description;
-    }
+	public void setAuthor(String author) {
+		this.author = author;
+	}
 
-    public void setDescription(String description) {
-        this.description = description;
-    }
+	public String getIsbn() {
+		return isbn;
+	}
 
-    public Type getType() {
-        return type;
-    }
+	public void setIsbn(String isbn) {
+		this.isbn = isbn;
+	}
 
-    public void setType(Type type) {
-        this.type = type;
-    }
+	public String getDescription() {
+		return description;
+	}
 
-    public String getTitle() {
-        return title;
-    }
+	public void setDescription(String description) {
+		this.description = description;
+	}
 
-    public void setTitle(String title) {
-        this.title = title;
-    }
+	public Type getType() {
+		return type;
+	}
 
+	public void setType(Type type) {
+		this.type = type;
+	}
 
+	public String getTitle() {
+		return title;
+	}
+
+	public void setTitle(String title) {
+		this.title = title;
+	}
 
 }

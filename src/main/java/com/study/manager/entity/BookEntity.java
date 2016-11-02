@@ -1,8 +1,10 @@
 package com.study.manager.entity;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
@@ -16,18 +18,21 @@ public class BookEntity extends BaseEntity {
 	private String title;
 
 	private String description;
-	
+
 	@NotNull
 	private int noOfPages;
 
 	private String author;
 
 	private String isbn;
-	
+
 	@NotNull
 	@Enumerated(EnumType.STRING)
 	private Type type;
-	
+
+	@OneToOne(cascade = { CascadeType.ALL })
+	private BookImage bookImage;
+
 	public int getNoOfPages() {
 		return noOfPages;
 	}
@@ -84,4 +89,13 @@ public class BookEntity extends BaseEntity {
 		this.title = title;
 	}
 
+	public BookImage getBookImage() {
+		return bookImage;
+	}
+
+	public void setBookImage(BookImage bookImage) {
+		this.bookImage = bookImage;
+	}
+
+	
 }

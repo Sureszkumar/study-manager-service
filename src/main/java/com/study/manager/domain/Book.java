@@ -21,6 +21,17 @@ public class Book {
 	private int noOfPagesRead;
 
 	private int noOfPagesUnRead;
+	
+	private String imageUrl;
+	
+
+	public String getImageUrl() {
+		return imageUrl;
+	}
+
+	public void setImageUrl(String imageUrl) {
+		this.imageUrl = imageUrl;
+	}
 
 	public int getNoOfPagesRead() {
 		return noOfPagesRead;
