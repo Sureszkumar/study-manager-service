@@ -11,8 +11,6 @@ import java.util.List;
 import javax.inject.Inject;
 import javax.persistence.EntityExistsException;
 
-import com.study.manager.translator.UserCourseBooksTranslator;
-import com.study.manager.util.ServiceUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 
@@ -24,7 +22,6 @@ import com.study.manager.domain.Goal;
 import com.study.manager.domain.Proficiency;
 import com.study.manager.domain.WeeklyHours;
 import com.study.manager.entity.BookEntity;
-import com.study.manager.entity.CourseBooksEntity;
 import com.study.manager.entity.CourseEntity;
 import com.study.manager.entity.CourseProficiencyEntity;
 import com.study.manager.entity.UserCourseBooksEntity;
@@ -38,9 +35,10 @@ import com.study.manager.repository.CourseProficiencyRepository;
 import com.study.manager.repository.CourseRepository;
 import com.study.manager.repository.UserCoursesRepository;
 import com.study.manager.service.exception.ServiceException;
-import com.study.manager.translator.BookTranslator;
 import com.study.manager.translator.CourseSettingsTranslator;
 import com.study.manager.translator.CourseTranslator;
+import com.study.manager.translator.UserCourseBooksTranslator;
+import com.study.manager.util.ServiceUtils;
 
 @Service
 @Validated
@@ -64,8 +62,6 @@ public class UserCoursesService {
 
     @Inject
     private BookRepository bookRepository;
-    @Inject
-    private BookTranslator bookTranslator;
     @Inject
     private CourseSettingsTranslator courseSettingsTranslator;
     @Inject
@@ -187,7 +183,7 @@ public class UserCoursesService {
         return count == 0 ? false : true;
     }
 
-    public CourseSettings getCourseSettings(long userId, Long courseId) {
+    public CourseSettings getSubscribedCourseSettings(long userId, Long courseId) {
         UserCoursesEntity userCoursesEntity = userCoursesRepository.findBy(userId, courseId);
         if (userCoursesEntity == null) {
             throw new ServiceException("User : " + userId + " is not subscribed to course : " + courseId);
@@ -214,7 +210,7 @@ public class UserCoursesService {
 
     }
 
-    public void updateCourseSettings(long userId, Long courseId, CourseSettings courseSettings) {
+    public void updateSubscribedCourseSettings(long userId, Long courseId, CourseSettings courseSettings) {
         UserCoursesEntity userCoursesEntity = userCoursesRepository.findBy(userId, courseId);
         WeeklyHours newWeeklyHours = courseSettings.getWeeklyHours();
         LocalDate newTargetDate = courseSettings.getTargetDate();
@@ -274,10 +270,10 @@ public class UserCoursesService {
         int pagesPerHour = 0;
         if (proficiency.equals(Proficiency.EASY.name())) {
             pagesPerHour = courseProficiencyEntity.getEasyPages();
-        } else if (proficiency.equals(Proficiency.NORMAL.name())) {
-            pagesPerHour = courseProficiencyEntity.getNormalPages();
-        } else if (proficiency.equals(Proficiency.NORMAL.name())) {
-            pagesPerHour = courseProficiencyEntity.getNormalPages();
+        } else if (proficiency.equals(Proficiency.MODERATE.name())) {
+            pagesPerHour = courseProficiencyEntity.getModeratePages();
+        } else if (proficiency.equals(Proficiency.DIFFICULT.name())) {
+            pagesPerHour = courseProficiencyEntity.getDifficultPages();
         }
         WeekEntity weekDayPages = new WeekEntity();
         weekDayPages.setMonday(weekDayHours.getMonday() * pagesPerHour);

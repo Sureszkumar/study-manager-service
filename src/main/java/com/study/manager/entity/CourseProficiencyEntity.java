@@ -16,7 +16,7 @@ public class CourseProficiencyEntity extends BaseEntity {
 
 	private int easyPages;
 
-	private int normalPages;
+	private int moderatePages;
 
 	private int difficultPages;
 
@@ -36,12 +36,12 @@ public class CourseProficiencyEntity extends BaseEntity {
 		this.easyPages = easyPages;
 	}
 
-	public int getNormalPages() {
-		return normalPages;
+	public int getModeratePages() {
+		return moderatePages;
 	}
 
-	public void setNormalPages(int normalPages) {
-		this.normalPages = normalPages;
+	public void setModeratePages(int moderatePages) {
+		this.moderatePages = moderatePages;
 	}
 
 	public int getDifficultPages() {
