@@ -90,18 +90,18 @@ public class ApiController {
 	}
 
 	
-	@RequestMapping(value = "/course/{courseId}/settings", method = RequestMethod.GET)
-	public CourseSettings getCourseSettings(@RequestHeader("user-id") long userId,
+	@RequestMapping(value = "/subscribedCourse/{courseId}/settings", method = RequestMethod.GET)
+	public CourseSettings getSubscribedCourseSettings(@RequestHeader("user-id") long userId,
 			@PathVariable("courseId") final Long courseId) {
-		return userCoursesService.getCourseSettings(userId, courseId);
+		return userCoursesService.getSubscribedCourseSettings(userId, courseId);
 	}
 
-	@RequestMapping(value = "/course/{courseId}/settings", method = RequestMethod.POST)
-	public ServiceResponse updateCourseSettings(@RequestHeader("user-id") long userId,
+	@RequestMapping(value = "/subscribedCourse/{courseId}/settings", method = RequestMethod.POST)
+	public ServiceResponse updateSubscribedCourseSettings(@RequestHeader("user-id") long userId,
 			@PathVariable("courseId") final Long courseId, @RequestBody CourseSettings courseSettings) {
 		ServiceResponse response = new ServiceResponse();
 		try {
-			userCoursesService.updateCourseSettings(userId, courseId, courseSettings);
+			userCoursesService.updateSubscribedCourseSettings(userId, courseId, courseSettings);
 			response.setSuccess(true);
 			response.setMessage("Course settings successfully updated");
 			return response;
