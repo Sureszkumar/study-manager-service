@@ -192,4 +192,26 @@ public class UserService {
         }
 
     }
+
+    public void resetPassword(Long userId, String password) {
+        UserEntity userEntity = userRepository.findOne(userId);
+        if (userEntity == null) {
+            throw new ServiceException("User not found for userId" + userId);
+        }
+        try {
+            userEntity.setPassword(Password.encrypt(password));
+            userRepository.save(userEntity);
+        } catch (Exception e) {
+            throw new ServiceException("Exception while encrypting password");
+        }
+    }
+
+    public void updateUserProfile(Long userId, User user) {
+        UserEntity userEntity = userRepository.findOne(userId);
+        if (userEntity == null) {
+            throw new ServiceException("User not found for userId" + userId);
+        }
+        userEntity.setName(user.getName());
+        userRepository.save(userEntity);
+    }
 }

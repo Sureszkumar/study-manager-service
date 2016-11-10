@@ -7,6 +7,8 @@ import javax.inject.Inject;
 import javax.persistence.EntityNotFoundException;
 import javax.servlet.http.HttpServletResponse;
 
+import com.study.manager.domain.User;
+import com.study.manager.service.UserService;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -34,6 +36,9 @@ public class ApiController {
 
 	@Inject
 	private UserCoursesService userCoursesService;
+
+	@Inject
+	private UserService userService;
 
 	@RequestMapping(value = "/courses", method = RequestMethod.GET)
 	public List<Course> getAllCourses(@RequestHeader("user-id") long userId) {
@@ -151,6 +156,38 @@ public class ApiController {
 		ServiceResponse response = new ServiceResponse();
 		try {
 			userCoursesService.addCustomBook(userId, courseId, book);
+			response.setSuccess(true);
+			response.setMessage("Successfully added");
+			return response;
+		} catch (Exception e) {
+			response.setSuccess(false);
+			response.setMessage(e.getMessage());
+			return response;
+		}
+	}
+
+	@RequestMapping(value = "/resetPassword", method = RequestMethod.POST)
+	 public ServiceResponse resetPassword(@RequestHeader("user-id") final Long userId,
+										  @RequestBody final User user) {
+		ServiceResponse response = new ServiceResponse();
+		try {
+			userService.resetPassword(userId, user.getPassword());
+			response.setSuccess(true);
+			response.setMessage("Successfully added");
+			return response;
+		} catch (Exception e) {
+			response.setSuccess(false);
+			response.setMessage(e.getMessage());
+			return response;
+		}
+	}
+
+	@RequestMapping(value = "/updateUserProfile", method = RequestMethod.POST)
+	public ServiceResponse updateUserProfile(@RequestHeader("user-id") final Long userId,
+										 @RequestBody final User user) {
+		ServiceResponse response = new ServiceResponse();
+		try {
+			userService.updateUserProfile(userId, user);
 			response.setSuccess(true);
 			response.setMessage("Successfully added");
 			return response;
