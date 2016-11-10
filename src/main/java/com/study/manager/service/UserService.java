@@ -32,7 +32,7 @@ import com.study.manager.validator.CredentialsValidator;
 public class UserService {
 
 	private Logger log = LoggerFactory.getLogger(UserService.class);
-	
+
 	@Inject
 	private UserRepository userRepository;
 
@@ -45,8 +45,8 @@ public class UserService {
 	@Inject
 	private CredentialsValidator credentialsValidator;
 
-    @Inject
-    private EmailService emailService;
+	@Inject
+	private EmailService emailService;
 
 	@Transactional
 	public User create(User user) {
@@ -77,7 +77,7 @@ public class UserService {
 	}
 
 	@Transactional
-	public User loginUser(User user) {
+	public User loginUser(User user) throws Exception {
 
 		boolean isValidCredentials = credentialsValidator.validate(user.getEmail(), user.getPassword());
 		if (!isValidCredentials) {
@@ -97,12 +97,8 @@ public class UserService {
 		if (!userEntity.getVerified()) {
 			throw new EmailVerificationException("Email not verified");
 		}
-		try {
-			if (!Password.check(user.getPassword(), userEntity.getPassword())) {
-				throw new CredentialsException("Invalid valid password");
-			}
-		} catch (Exception e) {
-			throw new ServiceException("Exception while decrypting password");
+		if (!Password.check(user.getPassword(), userEntity.getPassword())) {
+			throw new CredentialsException("Invalid valid password");
 		}
 		return userTranslator.translateToDomain(userEntity);
 	}
@@ -148,23 +144,23 @@ public class UserService {
 		existing.setEmailVerifyToken(emailVerifyToken);
 		return userRepository.save(existing);
 	}
-	
+
 	public void delete(Long userId) {
 		userRepository.delete(userId);
 		List<UserCoursesEntity> userCoursesEntities = userCoursesRepository.findAllByUserId(userId);
 		userCoursesRepository.delete(userCoursesEntities);
 	}
 
-	public UserEntity updateUser(Long userId, UserEntity newUserEntity){
-        UserEntity existing = userRepository.findOne(userId);
-        if (existing == null) {
-            throw new ServiceException(
-                    String.format("user with id =%s not exist", userId));
-        }
-        ServiceUtils.copyNonNullProperties(newUserEntity, existing);
-        existing.setLastChangeTimestamp(LocalDateTime.now());
-        return userRepository.save(existing);
+	public UserEntity updateUser(Long userId, UserEntity newUserEntity) {
+		UserEntity existing = userRepository.findOne(userId);
+		if (existing == null) {
+			throw new ServiceException(String.format("user with id =%s not exist", userId));
+		}
+		ServiceUtils.copyNonNullProperties(newUserEntity, existing);
+		existing.setLastChangeTimestamp(LocalDateTime.now());
+		return userRepository.save(existing);
 	}
+
 	public void verifyUser(Long userId) {
 		UserEntity existing = userRepository.findOne(userId);
 		existing.setVerified(true);
@@ -177,41 +173,41 @@ public class UserService {
 
 	}
 
-    public void sendPassword(String email) {
-        UserEntity userEntity = userRepository.findByEmail(email);
-        if (userEntity == null) {
-            throw new CredentialsException("User not found for email" + email);
-        }
-        try {
-            String randomPassword = ServiceUtils.generateRandomPassword();
-            userEntity.setPassword(Password.encrypt(randomPassword));
-            userRepository.save(userEntity);
-            emailService.sendNewPassword(email, randomPassword);
-        } catch (Exception e) {
-            throw new ServiceException("Exception while encrypting password");
-        }
+	public void sendPassword(String email) {
+		UserEntity userEntity = userRepository.findByEmail(email);
+		if (userEntity == null) {
+			throw new CredentialsException("User not found for email" + email);
+		}
+		try {
+			String randomPassword = ServiceUtils.generateRandomPassword();
+			userEntity.setPassword(Password.encrypt(randomPassword));
+			userRepository.save(userEntity);
+			emailService.sendNewPassword(email, randomPassword);
+		} catch (Exception e) {
+			throw new ServiceException("Exception while encrypting password");
+		}
 
-    }
+	}
 
-    public void resetPassword(Long userId, String password) {
-        UserEntity userEntity = userRepository.findOne(userId);
-        if (userEntity == null) {
-            throw new ServiceException("User not found for userId" + userId);
-        }
-        try {
-            userEntity.setPassword(Password.encrypt(password));
-            userRepository.save(userEntity);
-        } catch (Exception e) {
-            throw new ServiceException("Exception while encrypting password");
-        }
-    }
+	public void resetPassword(Long userId, String password) {
+		UserEntity userEntity = userRepository.findOne(userId);
+		if (userEntity == null) {
+			throw new ServiceException("User not found for userId" + userId);
+		}
+		try {
+			userEntity.setPassword(Password.encrypt(password));
+			userRepository.save(userEntity);
+		} catch (Exception e) {
+			throw new ServiceException("Exception while encrypting password");
+		}
+	}
 
-    public void updateUserProfile(Long userId, User user) {
-        UserEntity userEntity = userRepository.findOne(userId);
-        if (userEntity == null) {
-            throw new ServiceException("User not found for userId" + userId);
-        }
-        userEntity.setName(user.getName());
-        userRepository.save(userEntity);
-    }
+	public void updateUserProfile(Long userId, User user) {
+		UserEntity userEntity = userRepository.findOne(userId);
+		if (userEntity == null) {
+			throw new ServiceException("User not found for userId" + userId);
+		}
+		userEntity.setName(user.getName());
+		userRepository.save(userEntity);
+	}
 }

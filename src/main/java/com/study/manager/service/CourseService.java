@@ -11,6 +11,7 @@ import org.springframework.validation.annotation.Validated;
 
 import com.study.manager.domain.Book;
 import com.study.manager.domain.Course;
+import com.study.manager.domain.Type;
 import com.study.manager.entity.BookEntity;
 import com.study.manager.entity.CourseBooksEntity;
 import com.study.manager.entity.CourseEntity;
@@ -49,10 +50,19 @@ public class CourseService {
     public List<Course> getAll(long userId) {
         List<CourseEntity> courseEntities = courseRepository.findAll();
         List<Course> courseList = courseTranslator.translateToDomain(courseEntities);
+        List<Course> newCourseList = new ArrayList<>();
         for (Course course : courseList) {
-            course.setSubscribed(userCoursesService.isSubscribed(course.getId(), userId));
+        	boolean subscribed = userCoursesService.isSubscribed(course.getId(), userId);
+        	if(course.getType().equals(Type.CUSTOM.name())) {
+        		if(subscribed){
+        			newCourseList.add(course);
+        		}
+        	} else {
+        		newCourseList.add(course);
+        	}
+            course.setSubscribed(subscribed);
         }
-        return courseList;
+        return newCourseList;
     }
 
 

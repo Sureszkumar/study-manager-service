@@ -65,10 +65,9 @@ public class ServiceUtils {
 
 	public static String generateRandomPassword(){
 		String characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-		String pwd = RandomStringUtils.random(10, 0, 0, false, false, characters.toCharArray(), new SecureRandom());
+		String pwd = RandomStringUtils.random(10, 0, 62, false, false, characters.toCharArray(), new SecureRandom());
 		return pwd;
 	}
-
 
 	public static int getDefaultCoursePreparationTime(int noOfPages, int noOfPagesPerHour, int noOfHoursPerWeek) {
 

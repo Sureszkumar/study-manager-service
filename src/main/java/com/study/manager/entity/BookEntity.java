@@ -24,6 +24,16 @@ public class BookEntity extends BaseEntity {
 
 	private String isbn;
 	
+	private String imageUrl;
+	
+	public String getImageUrl() {
+		return imageUrl;
+	}
+
+	public void setImageUrl(String imageUrl) {
+		this.imageUrl = imageUrl;
+	}
+
 	@NotNull
 	@Enumerated(EnumType.STRING)
 	private Type type;

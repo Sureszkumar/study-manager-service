@@ -173,7 +173,7 @@ public class ApiController {
 		try {
 			userService.resetPassword(userId, user.getPassword());
 			response.setSuccess(true);
-			response.setMessage("Successfully added");
+			response.setMessage("Successfully password reset");
 			return response;
 		} catch (Exception e) {
 			response.setSuccess(false);

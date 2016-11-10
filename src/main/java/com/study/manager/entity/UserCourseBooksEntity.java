@@ -25,6 +25,17 @@ public class UserCourseBooksEntity extends BaseEntity {
     private String author;
 
     private String isbn;
+    
+    private String imageUrl;
+    
+    public String getImageUrl() {
+		return imageUrl;
+	}
+
+	public void setImageUrl(String imageUrl) {
+		this.imageUrl = imageUrl;
+	}
+
 
     @NotNull
     @Enumerated(EnumType.STRING)
