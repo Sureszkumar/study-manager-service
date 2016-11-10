@@ -44,7 +44,7 @@ public class EmailService {
 	@Value("${mail.content}")
 	private String mailContent;
 	@Async
-	public void sendEmail(Long userId, String email) {
+	public void sendVerifyToken(Long userId, String email) {
 
 		try {
 			Security.addProvider(new com.sun.net.ssl.internal.ssl.Provider());
@@ -75,6 +75,36 @@ public class EmailService {
 			message.setContent(mailContent + "\n" + url, "text/plain");
 			message.setRecipient(Message.RecipientType.TO, new InternetAddress(email));
 
+			Transport.send(message);
+		} catch (Exception e) {
+		}
+
+	}
+
+	public void sendNewPassword(String email, String password) {
+		Security.addProvider(new com.sun.net.ssl.internal.ssl.Provider());
+
+		Properties props = new Properties();
+		props.setProperty("mail.transport.protocol", "smtp");
+		props.setProperty("mail.host", mailHost);
+		props.put("mail.smtp.auth", "true");
+		props.put("mail.smtp.port", "465");
+		props.put("mail.smtp.socketFactory.port", "465");
+		props.put("mail.smtp.socketFactory.class", "javax.net.ssl.SSLSocketFactory");
+		props.put("mail.smtp.socketFactory.fallback", "false");
+		props.setProperty("mail.smtp.quitwait", "false");
+		Session session = Session.getDefaultInstance(props, new javax.mail.Authenticator() {
+			protected PasswordAuthentication getPasswordAuthentication() {
+				return new PasswordAuthentication(mailUsername, mailPassword);
+			}
+		});
+		try {
+			MimeMessage message = new MimeMessage(session);
+			message.setSender(new InternetAddress(mailUsername));
+			message.setSubject("Study Manager Request New password");
+			message.setContent("Please find below new random generated password. Highly recommend you to change " +
+					"password after first login" + "\n" + "New password : "+password, "text/plain");
+			message.setRecipient(Message.RecipientType.TO, new InternetAddress(email));
 			Transport.send(message);
 		} catch (Exception e) {
 		}

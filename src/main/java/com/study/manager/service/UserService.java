@@ -10,6 +10,7 @@ import javax.transaction.Transactional;
 
 import com.study.manager.entity.UserCoursesEntity;
 import com.study.manager.repository.UserCoursesRepository;
+import com.study.manager.util.EmailService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -43,6 +44,9 @@ public class UserService {
 
 	@Inject
 	private CredentialsValidator credentialsValidator;
+
+    @Inject
+    private EmailService emailService;
 
 	@Transactional
 	public User create(User user) {
@@ -172,4 +176,20 @@ public class UserService {
 		return userTranslator.translateToDomain(userRepository.findAll());
 
 	}
+
+    public void sendPassword(String email) {
+        UserEntity userEntity = userRepository.findByEmail(email);
+        if (userEntity == null) {
+            throw new CredentialsException("User not found for email" + email);
+        }
+        try {
+            String randomPassword = ServiceUtils.generateRandomPassword();
+            userEntity.setPassword(Password.encrypt(randomPassword));
+            userRepository.save(userEntity);
+            emailService.sendNewPassword(email, randomPassword);
+        } catch (Exception e) {
+            throw new ServiceException("Exception while encrypting password");
+        }
+
+    }
 }

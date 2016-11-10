@@ -1,5 +1,6 @@
 package com.study.manager.util;
 
+import java.security.SecureRandom;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoField;
@@ -8,6 +9,7 @@ import java.util.Set;
 import java.util.UUID;
 
 import org.apache.commons.codec.binary.Base64;
+import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.BeanWrapper;
 import org.springframework.beans.BeanWrapperImpl;
@@ -60,6 +62,13 @@ public class ServiceUtils {
 
 		return null;
 	}
+
+	public static String generateRandomPassword(){
+		String characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+		String pwd = RandomStringUtils.random(10, 0, 0, false, false, characters.toCharArray(), new SecureRandom());
+		return pwd;
+	}
+
 
 	public static int getDefaultCoursePreparationTime(int noOfPages, int noOfPagesPerHour, int noOfHoursPerWeek) {
 

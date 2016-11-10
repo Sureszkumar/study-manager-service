@@ -48,7 +48,7 @@ public class LoginController {
 			response.setMessage(e.getMessage());
 			return response;
 		}
-		emailService.sendEmail(createdUser.getId(), createdUser.getEmail());
+		emailService.sendVerifyToken(createdUser.getId(), createdUser.getEmail());
 		response.setSuccess(true);
 		response.setMessage("User created for email " + user.getEmail() +" Check your mail and verify");
 		return response;
@@ -64,6 +64,22 @@ public class LoginController {
 			response.setMessage("User logged in successfully");
 			response.setUserId(createdUser.getId());
 			response.setAuthToken(createdUser.getAuthToken());
+			return response;
+		} catch (Exception e) {
+			response.setSuccess(false);
+			response.setMessage(e.getMessage());
+			return response;
+		}
+	}
+
+	@RequestMapping(value = "/sendNewPassword", method = RequestMethod.POST)
+	public ServiceResponse sendPassword(@RequestBody final User user) {
+		LOGGER.debug("Received request to sendPassword {}", user.getEmail());
+		ServiceResponse response = new ServiceResponse();
+		try {
+			userService.sendPassword(user.getEmail());
+			response.setSuccess(true);
+			response.setMessage("Password sent to mail successfully");
 			return response;
 		} catch (Exception e) {
 			response.setSuccess(false);
