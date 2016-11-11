@@ -15,6 +15,7 @@ public class UserTranslator {
 		User user = new User();
 		user.setId(userEntity.getId());
 		user.setEmail(userEntity.getEmail());
+		user.setName(userEntity.getName());
 		user.setAuthToken(userEntity.getAuthToken());
 		return user;
 	}

@@ -182,6 +182,12 @@ public class ApiController {
 		}
 	}
 
+	@RequestMapping(value = "/getUserProfile", method = RequestMethod.GET)
+	public User getUserProfile(@RequestHeader("user-id") final Long userId) {
+		User user = userService.getUserProfile(userId);
+		return user;
+	}
+
 	@RequestMapping(value = "/updateUserProfile", method = RequestMethod.POST)
 	public ServiceResponse updateUserProfile(@RequestHeader("user-id") final Long userId,
 										 @RequestBody final User user) {

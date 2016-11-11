@@ -210,4 +210,15 @@ public class UserService {
 		userEntity.setName(user.getName());
 		userRepository.save(userEntity);
 	}
+
+	public User getUserProfile(Long userId) {
+		UserEntity userEntity = userRepository.findOne(userId);
+		if (userEntity == null) {
+			throw new ServiceException("User not found for userId" + userId);
+		}
+		User user = new User();
+		user.setEmail(userEntity.getEmail());
+		user.setName(userEntity.getName());
+		return user;
+	}
 }
