@@ -46,8 +46,8 @@ public class ApiController {
 	}
 
 	@RequestMapping(value = "/course/{courseId}", method = RequestMethod.GET)
-	public Course getCourse(@PathVariable("courseId") final Long courseId) {
-		return courseService.getCourse(courseId);
+	public Course getCourse(@PathVariable("courseId") final Long courseId, @RequestHeader("user-id") long userId) {
+		return courseService.getCourse(userId, courseId);
 	}
 
 

@@ -15,9 +15,12 @@ import com.study.manager.domain.Type;
 import com.study.manager.entity.BookEntity;
 import com.study.manager.entity.CourseBooksEntity;
 import com.study.manager.entity.CourseEntity;
+import com.study.manager.entity.UserCourseBooksEntity;
+import com.study.manager.entity.UserCoursesEntity;
 import com.study.manager.repository.BookRepository;
 import com.study.manager.repository.CourseBooksRepository;
 import com.study.manager.repository.CourseRepository;
+import com.study.manager.repository.UserCoursesRepository;
 import com.study.manager.translator.BookTranslator;
 import com.study.manager.translator.CourseTranslator;
 import com.study.manager.util.ServiceUtils;
@@ -29,6 +32,9 @@ public class CourseService {
     @Inject
     private CourseRepository courseRepository;
 
+    @Inject
+    private UserCoursesRepository userCoursesRepository;
+    
     @Inject
     private CourseTranslator courseTranslator;
 
@@ -96,13 +102,29 @@ public class CourseService {
 
     }
 
-    public Course getCourse(Long courseId) {
-        CourseEntity courseEntity = courseRepository.findOne(courseId);
-        List<Book> bookList = bookTranslator.translateToDomain(courseBooksService.findBooks(courseId));
-        Course course = courseTranslator.translateToDomain(courseEntity);
-        course.setBookList(bookList);
-        return course;
+	public Course getCourse(Long userId, Long courseId) {
+		CourseEntity courseEntity = courseRepository.findOne(courseId);
+		List<Book> bookList = new ArrayList<>();
+		if (courseEntity.getType().equals(Type.CUSTOM)) {
+			UserCoursesEntity userCoursesEntity = userCoursesRepository.findBy(userId, courseId);
+			List<UserCourseBooksEntity> userCourseBooksEntities = userCoursesEntity.getUserCourseBooksEntity();
+			for (UserCourseBooksEntity userCourseBooksEntity : userCourseBooksEntities) {
+				Book book = new Book();
+				book.setId(userCourseBooksEntity.getId());
+				book.setDescription(userCourseBooksEntity.getDescription());
+				book.setNoOfPages(userCourseBooksEntity.getTotalNoOfPages());
+				book.setType(userCourseBooksEntity.getType().name());
+				book.setAuthor(userCourseBooksEntity.getAuthor());
+				book.setTitle(userCourseBooksEntity.getTitle());
+				bookList.add(book);
+			}
+		} else {
+			bookList = bookTranslator.translateToDomain(courseBooksService.findBooks(courseId));
+		}
+		Course course = courseTranslator.translateToDomain(courseEntity);
+		course.setBookList(bookList);
+		return course;
 
-    }
+	}
 
 }
