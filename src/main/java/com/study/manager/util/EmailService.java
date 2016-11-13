@@ -1,12 +1,8 @@
 package com.study.manager.util;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.io.Writer;
-import java.net.URISyntaxException;
 import java.net.URL;
 import java.security.Security;
 import java.util.HashMap;
@@ -21,29 +17,27 @@ import javax.mail.Transport;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 
-import freemarker.template.Template;
-import freemarker.template.TemplateException;
-import org.apache.commons.codec.binary.Base64;
-import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 
 import com.study.manager.service.UserService;
 
+import freemarker.template.Template;
+import freemarker.template.TemplateException;
+
 @Component
 public class EmailService {
-	
+
 	@Inject
 	public UserService userRepository;
-	
+
 	@Value("${mail.host}")
 	private String mailHost;
 
-
 	@Value("${mail.username}")
 	private String mailUsername;
-	
 
 	@Value("${mail.password}")
 	private String mailPassword;
@@ -57,10 +51,11 @@ public class EmailService {
 	@Value("${mail.content}")
 	private String mailContent;
 
-    @Value("${mail.content}")
-    private String baseImageUrl;
+	@Value("${sm.base.image.url}")
+	private String baseImageUrl;
+
 	@Async
-	public void sendVerifyToken(Long userId, String email) {
+	public void sendVerifyToken(Long userId, String email, String userName) {
 
 		try {
 			Security.addProvider(new com.sun.net.ssl.internal.ssl.Provider());
@@ -88,7 +83,7 @@ public class EmailService {
 			MimeMessage message = new MimeMessage(session);
 			message.setSender(new InternetAddress(mailUsername));
 			message.setSubject(mailSubject);
-			String newUserEmailContent = getNewUserEmailContent(email, email, url.toString(), baseImageUrl);
+			String newUserEmailContent = getNewUserEmailContent(userName, email, url.toString());
 			message.setContent(newUserEmailContent, "text/html");
 			message.setRecipient(Message.RecipientType.TO, new InternetAddress(email));
 
@@ -98,7 +93,7 @@ public class EmailService {
 
 	}
 
-	public void sendNewPassword(String email, String password) {
+	public void sendNewPassword(String email, String password, String userName) {
 		Security.addProvider(new com.sun.net.ssl.internal.ssl.Provider());
 
 		Properties props = new Properties();
@@ -119,7 +114,7 @@ public class EmailService {
 			MimeMessage message = new MimeMessage(session);
 			message.setSender(new InternetAddress(mailUsername));
 			message.setSubject("Study Manager Request New password");
-			String newUserEmailContent = getForgotPasswordContent(email, email, password, baseImageUrl);
+			String newUserEmailContent = getForgotPasswordContent(userName, email, password);
 			message.setContent(newUserEmailContent, "text/html");
 			message.setRecipient(Message.RecipientType.TO, new InternetAddress(email));
 			Transport.send(message);
@@ -128,17 +123,20 @@ public class EmailService {
 
 	}
 
-	public String getNewUserEmailContent(String userName, String userEmail, String verifyEmailLink, String image) {
+	public String getNewUserEmailContent(String userName, String userEmail, String verifyEmailLink) {
 		FreemarkerTemplateEngine freemarkerTemplateEngine = new FreemarkerTemplateEngine("new_user.ftl");
 		Writer stringWriter = new StringWriter();
 		Template template = null;
 		try {
 			template = freemarkerTemplateEngine.getTemplate();
+			if (StringUtils.isBlank(userName)) {
+				userName = userEmail.split("@")[0];
+			}
 			Map<String, Object> input = new HashMap<>();
 			input.put("userName", userName);
 			input.put("userEmail", userEmail);
 			input.put("verifyEmailLink", verifyEmailLink);
-            input.put("image", image);
+			input.put("baseImageUrl", baseImageUrl);
 			template.process(input, stringWriter);
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -148,17 +146,20 @@ public class EmailService {
 		return stringWriter.toString();
 	}
 
-	public String getForgotPasswordContent(String userName, String userEmail, String newPassword, String image) {
+	public String getForgotPasswordContent(String userName, String userEmail, String newPassword) {
 		FreemarkerTemplateEngine freemarkerTemplateEngine = new FreemarkerTemplateEngine("forgot_password.ftl");
 		Writer stringWriter = new StringWriter();
 		Template template = null;
 		try {
 			template = freemarkerTemplateEngine.getTemplate();
 			Map<String, Object> input = new HashMap<>();
+			if (StringUtils.isBlank(userName)) {
+				userName = userEmail.split("@")[0];
+			}
 			input.put("userName", userName);
 			input.put("userEmail", userEmail);
 			input.put("newPassword", newPassword);
-            input.put("baseImageUrl", baseImageUrl);
+			input.put("baseImageUrl", baseImageUrl);
 			template.process(input, stringWriter);
 		} catch (IOException e) {
 			e.printStackTrace();

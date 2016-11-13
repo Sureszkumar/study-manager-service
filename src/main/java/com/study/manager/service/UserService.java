@@ -182,7 +182,7 @@ public class UserService {
 			String randomPassword = ServiceUtils.generateRandomPassword();
 			userEntity.setPassword(Password.encrypt(randomPassword));
 			userRepository.save(userEntity);
-			emailService.sendNewPassword(email, randomPassword);
+			emailService.sendNewPassword(email, randomPassword, userEntity.getName());
 		} catch (Exception e) {
 			throw new ServiceException("Exception while encrypting password");
 		}

@@ -48,7 +48,7 @@ public class LoginController {
 			response.setMessage(e.getMessage());
 			return response;
 		}
-		emailService.sendVerifyToken(createdUser.getId(), createdUser.getEmail());
+		emailService.sendVerifyToken(createdUser.getId(), createdUser.getEmail(), createdUser.getName());
 		response.setSuccess(true);
 		response.setMessage("User created for email " + user.getEmail() +" Check your mail and verify");
 		return response;

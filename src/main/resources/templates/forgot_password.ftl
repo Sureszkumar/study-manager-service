@@ -1,7 +1,7 @@
 <p>
     <img
-            width="714"
-            height="176"
+            width="650"
+            height="150"
             src= ${baseImageUrl}
             />
 </p>
@@ -21,7 +21,7 @@
     Your registered email-id: ${userEmail}
 </p>
 <p>
-    Your new password is: ${newPassword}
+    Your new password is: <b>${newPassword}</b>
 </p>
 <p>
     We highly recommend you to change your password after logging in

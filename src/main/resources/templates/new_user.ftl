@@ -1,8 +1,8 @@
 <p>
     <img
-            width="707"
-            height="176"
-            src="${baseImageUrl}
+            width="650"
+            height="150"
+            src=${baseImageUrl}
             />
 </p>
 <p>
