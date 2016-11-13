@@ -56,6 +56,9 @@ public class EmailService {
 
 	@Value("${mail.content}")
 	private String mailContent;
+
+    @Value("${mail.content}")
+    private String baseImageUrl;
 	@Async
 	public void sendVerifyToken(Long userId, String email) {
 
@@ -85,8 +88,7 @@ public class EmailService {
 			MimeMessage message = new MimeMessage(session);
 			message.setSender(new InternetAddress(mailUsername));
 			message.setSubject(mailSubject);
-            String image = getBaseImage();
-			String newUserEmailContent = getNewUserEmailContent(email, email, url.toString(), image);
+			String newUserEmailContent = getNewUserEmailContent(email, email, url.toString(), baseImageUrl);
 			message.setContent(newUserEmailContent, "text/html");
 			message.setRecipient(Message.RecipientType.TO, new InternetAddress(email));
 
@@ -117,8 +119,7 @@ public class EmailService {
 			MimeMessage message = new MimeMessage(session);
 			message.setSender(new InternetAddress(mailUsername));
 			message.setSubject("Study Manager Request New password");
-            String image = getBaseImage();
-			String newUserEmailContent = getForgotPasswordContent(email, email, password, image);
+			String newUserEmailContent = getForgotPasswordContent(email, email, password, baseImageUrl);
 			message.setContent(newUserEmailContent, "text/html");
 			message.setRecipient(Message.RecipientType.TO, new InternetAddress(email));
 			Transport.send(message);
@@ -157,7 +158,7 @@ public class EmailService {
 			input.put("userName", userName);
 			input.put("userEmail", userEmail);
 			input.put("newPassword", newPassword);
-            input.put("image", image);
+            input.put("baseImageUrl", baseImageUrl);
 			template.process(input, stringWriter);
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -166,24 +167,4 @@ public class EmailService {
 		}
 		return stringWriter.toString();
 	}
-
-    public String getBaseImage() {
-        URL url = this.getClass().getResource("/templates/img/study-manager.png");
-        String imgAsBase64 = null;
-        byte[] imgBytes = new byte[0];
-        try {
-            File img = new File(url.toURI());
-            imgBytes = IOUtils.toByteArray(new FileInputStream(img));
-            byte[] imgBytesAsBase64 = Base64.encodeBase64(imgBytes);
-            String imgDataAsBase64 = new String(imgBytesAsBase64);
-            imgAsBase64 = "data:image/png;base64," + imgDataAsBase64;
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (URISyntaxException e) {
-            e.printStackTrace();
-        }
-        return imgAsBase64;
-    }
 }
