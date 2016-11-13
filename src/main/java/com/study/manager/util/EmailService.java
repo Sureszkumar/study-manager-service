@@ -1,7 +1,12 @@
 package com.study.manager.util;
 
+import java.io.IOException;
+import java.io.StringWriter;
+import java.io.Writer;
 import java.net.URL;
 import java.security.Security;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Properties;
 
 import javax.inject.Inject;
@@ -12,6 +17,8 @@ import javax.mail.Transport;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 
+import freemarker.template.Template;
+import freemarker.template.TemplateException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
@@ -72,7 +79,8 @@ public class EmailService {
 			MimeMessage message = new MimeMessage(session);
 			message.setSender(new InternetAddress(mailUsername));
 			message.setSubject(mailSubject);
-			message.setContent(mailContent + "\n" + url, "text/plain");
+			String newUserEmailContent = getNewUserEmailContent(email, email, url.toString());
+			message.setContent(newUserEmailContent, "text/html");
 			message.setRecipient(Message.RecipientType.TO, new InternetAddress(email));
 
 			Transport.send(message);
@@ -102,12 +110,59 @@ public class EmailService {
 			MimeMessage message = new MimeMessage(session);
 			message.setSender(new InternetAddress(mailUsername));
 			message.setSubject("Study Manager Request New password");
-			message.setContent("Please find below new random generated password. Highly recommend you to change " +
-					"password after first login" + "\n" + "New password : "+password, "text/plain");
+			String newUserEmailContent = getForgotPasswordContent(email, email, password);
+			message.setContent(newUserEmailContent, "text/html");
 			message.setRecipient(Message.RecipientType.TO, new InternetAddress(email));
 			Transport.send(message);
 		} catch (Exception e) {
 		}
 
+	}
+
+	public String getNewUserEmailContent(String userName, String userEmail, String verifyEmailLink) {
+		FreemarkerTemplateEngine freemarkerTemplateEngine = new FreemarkerTemplateEngine("new_user.ftl");
+		Writer stringWriter = new StringWriter();
+		Template template = null;
+		try {
+			template = freemarkerTemplateEngine.getTemplate();
+			Map<String, Object> input = new HashMap<>();
+			input.put("userName", userName);
+			input.put("userEmail", userEmail);
+			input.put("verifyEmailLink", verifyEmailLink);
+			template.process(input, stringWriter);
+		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (TemplateException e) {
+			e.printStackTrace();
+		}
+		return stringWriter.toString();
+	}
+
+	public String getForgotPasswordContent(String userName, String userEmail, String newPassword) {
+		FreemarkerTemplateEngine freemarkerTemplateEngine = new FreemarkerTemplateEngine("forgot_password.ftl");
+		Writer stringWriter = new StringWriter();
+		Template template = null;
+		try {
+			template = freemarkerTemplateEngine.getTemplate();
+			Map<String, Object> input = new HashMap<>();
+			input.put("userName", userName);
+			input.put("userEmail", userEmail);
+			input.put("newPassword", newPassword);
+			template.process(input, stringWriter);
+		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (TemplateException e) {
+			e.printStackTrace();
+		}
+		return stringWriter.toString();
+	}
+
+
+
+	public static void main(String ap[]){
+		EmailService emailService = new EmailService();
+		String htmlContent = emailService.getNewUserEmailContent("Suresh", "sureszkumar@gmail.com",
+				"http://localhost:8080/user/verifyEmail?user=MA==&token=EED81280-D3A7-404C-9939-5C696D93103AMA==");
+		System.out.println(htmlContent);
 	}
 }
