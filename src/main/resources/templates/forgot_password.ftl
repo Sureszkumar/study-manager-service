@@ -2,7 +2,7 @@
     <img
             width="714"
             height="176"
-            src="img/study-manager.jpg"
+            src= ${image}
             />
 </p>
 <p>

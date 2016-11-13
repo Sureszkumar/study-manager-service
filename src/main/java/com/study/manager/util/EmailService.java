@@ -1,8 +1,12 @@
 package com.study.manager.util;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.io.Writer;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.security.Security;
 import java.util.HashMap;
@@ -19,6 +23,8 @@ import javax.mail.internet.MimeMessage;
 
 import freemarker.template.Template;
 import freemarker.template.TemplateException;
+import org.apache.commons.codec.binary.Base64;
+import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
@@ -79,7 +85,8 @@ public class EmailService {
 			MimeMessage message = new MimeMessage(session);
 			message.setSender(new InternetAddress(mailUsername));
 			message.setSubject(mailSubject);
-			String newUserEmailContent = getNewUserEmailContent(email, email, url.toString());
+            String image = getBaseImage();
+			String newUserEmailContent = getNewUserEmailContent(email, email, url.toString(), image);
 			message.setContent(newUserEmailContent, "text/html");
 			message.setRecipient(Message.RecipientType.TO, new InternetAddress(email));
 
@@ -110,7 +117,8 @@ public class EmailService {
 			MimeMessage message = new MimeMessage(session);
 			message.setSender(new InternetAddress(mailUsername));
 			message.setSubject("Study Manager Request New password");
-			String newUserEmailContent = getForgotPasswordContent(email, email, password);
+            String image = getBaseImage();
+			String newUserEmailContent = getForgotPasswordContent(email, email, password, image);
 			message.setContent(newUserEmailContent, "text/html");
 			message.setRecipient(Message.RecipientType.TO, new InternetAddress(email));
 			Transport.send(message);
@@ -119,7 +127,7 @@ public class EmailService {
 
 	}
 
-	public String getNewUserEmailContent(String userName, String userEmail, String verifyEmailLink) {
+	public String getNewUserEmailContent(String userName, String userEmail, String verifyEmailLink, String image) {
 		FreemarkerTemplateEngine freemarkerTemplateEngine = new FreemarkerTemplateEngine("new_user.ftl");
 		Writer stringWriter = new StringWriter();
 		Template template = null;
@@ -129,6 +137,7 @@ public class EmailService {
 			input.put("userName", userName);
 			input.put("userEmail", userEmail);
 			input.put("verifyEmailLink", verifyEmailLink);
+            input.put("image", image);
 			template.process(input, stringWriter);
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -138,7 +147,7 @@ public class EmailService {
 		return stringWriter.toString();
 	}
 
-	public String getForgotPasswordContent(String userName, String userEmail, String newPassword) {
+	public String getForgotPasswordContent(String userName, String userEmail, String newPassword, String image) {
 		FreemarkerTemplateEngine freemarkerTemplateEngine = new FreemarkerTemplateEngine("forgot_password.ftl");
 		Writer stringWriter = new StringWriter();
 		Template template = null;
@@ -148,6 +157,7 @@ public class EmailService {
 			input.put("userName", userName);
 			input.put("userEmail", userEmail);
 			input.put("newPassword", newPassword);
+            input.put("image", image);
 			template.process(input, stringWriter);
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -157,12 +167,23 @@ public class EmailService {
 		return stringWriter.toString();
 	}
 
-
-
-	public static void main(String ap[]){
-		EmailService emailService = new EmailService();
-		String htmlContent = emailService.getNewUserEmailContent("Suresh", "sureszkumar@gmail.com",
-				"http://localhost:8080/user/verifyEmail?user=MA==&token=EED81280-D3A7-404C-9939-5C696D93103AMA==");
-		System.out.println(htmlContent);
-	}
+    public String getBaseImage() {
+        URL url = this.getClass().getResource("/templates/img/study-manager.png");
+        String imgAsBase64 = null;
+        byte[] imgBytes = new byte[0];
+        try {
+            File img = new File(url.toURI());
+            imgBytes = IOUtils.toByteArray(new FileInputStream(img));
+            byte[] imgBytesAsBase64 = Base64.encodeBase64(imgBytes);
+            String imgDataAsBase64 = new String(imgBytesAsBase64);
+            imgAsBase64 = "data:image/png;base64," + imgDataAsBase64;
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (URISyntaxException e) {
+            e.printStackTrace();
+        }
+        return imgAsBase64;
+    }
 }
