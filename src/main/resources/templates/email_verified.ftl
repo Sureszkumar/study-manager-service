@@ -3,7 +3,7 @@
             width="650"
             height="150"
             src=${baseImageUrl}
-            />
+            style='width:100%;' border="0" alt="Null"/>
 </p>
 <p>
     *** <strong>Email Verified</strong> ***
