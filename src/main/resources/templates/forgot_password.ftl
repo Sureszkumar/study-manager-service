@@ -12,10 +12,10 @@
     <strong></strong>
 </p>
 <p>
-    <strong>Dear ${username},</strong>
+    <strong>Dear ${userName},</strong>
 </p>
 <p>
-    This email is in reply to “Forgotten Password” request in StudyManager
+    This email is in reply to "Forgotten Password" request in StudyManager
 </p>
 <p>
     Your registered email-id: ${userEmail}

@@ -176,7 +176,7 @@ public class UserService {
 	public void sendPassword(String email) {
 		UserEntity userEntity = userRepository.findByEmail(email);
 		if (userEntity == null) {
-			throw new CredentialsException("User not found for email" + email);
+			throw new CredentialsException("User not found for email " + email);
 		}
 		try {
 			String randomPassword = ServiceUtils.generateRandomPassword();
