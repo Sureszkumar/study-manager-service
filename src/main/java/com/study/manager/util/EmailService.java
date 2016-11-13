@@ -168,4 +168,22 @@ public class EmailService {
 		}
 		return stringWriter.toString();
 	}
+	
+	public String getVerifyPasswordContent() {
+		FreemarkerTemplateEngine freemarkerTemplateEngine = new FreemarkerTemplateEngine("email_verified.ftl");
+		Writer stringWriter = new StringWriter();
+		Template template = null;
+		try {
+			template = freemarkerTemplateEngine.getTemplate();
+			Map<String, Object> input = new HashMap<>();
+			input.put("androidAppUrl", "");
+			input.put("baseImageUrl", baseImageUrl);
+			template.process(input, stringWriter);
+		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (TemplateException e) {
+			e.printStackTrace();
+		}
+		return stringWriter.toString();
+	}
 }

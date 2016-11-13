@@ -27,7 +27,7 @@
     Your email id has been registered as ${userEmail}
 </p>
 <p>
-    <a href=${verifyEmailLink}>ClickHere</a> to verify your account
+    <a href=${verifyEmailLink}>Click here</a> to verify your account
 </p>
 <p>
     And if you ever have any questions, feel free to contact us at <u>StudyManagerTeam@gmail.com</u>

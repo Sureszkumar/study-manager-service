@@ -92,7 +92,7 @@ public class LoginController {
 	public String verifyEmail(@RequestParam("user") final String user,
 			@RequestParam("token") final String emailVerifyToken) {
 		userService.verifyEmail(user, emailVerifyToken);
-		return "Email Verified";
+		return emailService.getVerifyPasswordContent();
 	}
 
 	@ExceptionHandler(EmailVerificationException.class)
