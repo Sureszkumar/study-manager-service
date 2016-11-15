@@ -14,6 +14,26 @@ public class CourseSettings {
 
 	private LocalDate targetDate;
 
+	private String defaultView;
+
+	private ProficiencyValue proficiencyValue;
+
+	public ProficiencyValue getProficiencyValue() {
+		return proficiencyValue;
+	}
+
+	public void setProficiencyValue(ProficiencyValue proficiencyValue) {
+		this.proficiencyValue = proficiencyValue;
+	}
+
+	public String getDefaultView() {
+		return defaultView;
+	}
+
+	public void setDefaultView(String defaultView) {
+		this.defaultView = defaultView;
+	}
+
 	public WeeklyHours getWeeklyHours() {
 		return weeklyHours;
 	}

@@ -43,6 +43,8 @@ public class UserCoursesEntity extends BaseEntity {
 
     private int todayGoal;
 
+    private String defaultSettingsView;
+
     @OneToMany(cascade = CascadeType.ALL)
     @JoinColumn(name = "user_course_id")
     private List<UserCourseBooksEntity> userCourseBooksEntity;
@@ -177,4 +179,11 @@ public class UserCoursesEntity extends BaseEntity {
         this.completionRate = completionRate;
     }
 
+    public String getDefaultSettingsView() {
+        return defaultSettingsView;
+    }
+
+    public void setDefaultSettingsView(String defaultSettingsView) {
+        this.defaultSettingsView = defaultSettingsView;
+    }
 }

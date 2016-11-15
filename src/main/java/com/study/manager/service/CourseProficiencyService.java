@@ -24,4 +24,8 @@ public class CourseProficiencyService {
         }
         courseProficiencyRepository.save(courseProficiencyEntity);
     }
+
+    public CourseProficiencyEntity findByCourseId(long courseId){
+        return courseProficiencyRepository.findByCourseId(courseId);
+    }
 }
