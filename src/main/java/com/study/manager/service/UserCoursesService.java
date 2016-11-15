@@ -242,7 +242,7 @@ public class UserCoursesService {
 						.setPagesUnRead(userCoursesEntity.getTotalNoOfPages() - userCoursesEntity.getPagesRead());
 				int todayGoal = userCoursesEntity.getTodayGoal() - goal.getNoOfPagesRead();
 				userCoursesEntity.setTodayGoal(todayGoal >= 0 ? todayGoal : 0);
-				double completionRate = ((double) userCourseBooksEntity.getNoOfPagesRead()
+				double completionRate = ((double) goal.getNoOfPagesRead()
 						/ userCourseBooksEntity.getTotalNoOfPages()) * 70;
 				userCoursesEntity.setCompletionRate(userCoursesEntity.getCompletionRate() + completionRate);
 			}
