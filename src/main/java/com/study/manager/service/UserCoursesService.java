@@ -91,6 +91,7 @@ public class UserCoursesService {
             userCourseBooksEntity.setNoOfPagesUnRead(book.getNoOfPages());
             userCourseBooksEntity.setTitle(book.getTitle());
             userCourseBooksEntity.setType(book.getType());
+            userCourseBooksEntity.setImageUrl(book.getImageUrl());
             totalNoOfPages = +book.getNoOfPages();
             userCourseBooksEntities.add(userCourseBooksEntity);
         }
