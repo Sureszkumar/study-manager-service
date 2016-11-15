@@ -23,6 +23,7 @@ public class BookTranslator {
             book.setType(bookEntity.getType().name());
             book.setAuthor(bookEntity.getAuthor());
             book.setNoOfPages(bookEntity.getNoOfPages());
+            book.setImageUrl(bookEntity.getImageUrl());
             bookList.add(book);
         }
         return bookList;

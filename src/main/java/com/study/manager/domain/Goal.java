@@ -5,6 +5,16 @@ public class Goal {
 	private long bookId;
 	
 	private int noOfPagesRead;
+	
+	private boolean revisionCompleted;
+	
+	public boolean isRevisionCompleted() {
+		return revisionCompleted;
+	}
+
+	public void setRevisionCompleted(boolean revisionCompleted) {
+		this.revisionCompleted = revisionCompleted;
+	}
 
 	public long getBookId() {
 		return bookId;

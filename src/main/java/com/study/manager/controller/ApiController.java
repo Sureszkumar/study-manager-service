@@ -165,6 +165,22 @@ public class ApiController {
 			return response;
 		}
 	}
+	
+	@RequestMapping(value = "/subscribedCourse/{courseId}/book/{bookId}", method = RequestMethod.DELETE)
+	public ServiceResponse deleteBook(@RequestHeader("user-id") final Long userId,
+			@PathVariable("courseId") final Long courseId, @PathVariable("bookId") final Long bookId) {
+		ServiceResponse response = new ServiceResponse();
+		try {
+			userCoursesService.deleteBook(userId, courseId, bookId);
+			response.setSuccess(true);
+			response.setMessage("Successfully book deleted");
+			return response;
+		} catch (Exception e) {
+			response.setSuccess(false);
+			response.setMessage(e.getMessage());
+			return response;
+		}
+	}
 
 	@RequestMapping(value = "/resetPassword", method = RequestMethod.POST)
 	 public ServiceResponse resetPassword(@RequestHeader("user-id") final Long userId,
