@@ -354,6 +354,7 @@ public class UserCoursesService {
 		}
 		course.setTodayGoal(userCoursesEntity.getTodayGoal());
 		course.setBookList(bookList);
+		course.setEndDate(userCoursesEntity.getEndDate());
 		return course;
 
 	}
