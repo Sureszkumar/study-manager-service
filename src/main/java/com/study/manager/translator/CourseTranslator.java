@@ -48,6 +48,7 @@ public class CourseTranslator {
 			course.setTitle(courseEntity.getTitle());
 			course.setDescription(courseEntity.getDescription());
 			course.setType(courseEntity.getType().name());
+			course.setStartDate(userCoursesEntity.getStartDate());
 			course.setEndDate(userCoursesEntity.getEndDate());
 			course.setCurrentStatus(userCoursesEntity.getCurrentStatus());
 			course.setCompletionRate(BigDecimal.valueOf(userCoursesEntity.getCompletionRate()));
