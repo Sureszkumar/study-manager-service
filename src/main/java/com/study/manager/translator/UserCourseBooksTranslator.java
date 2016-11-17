@@ -27,6 +27,7 @@ public class UserCourseBooksTranslator {
         bookEntity.setType(Type.valueOf(book.getType()));
         bookEntity.setAuthor(book.getAuthor());
         bookEntity.setTotalNoOfPages(book.getNoOfPages());
+        bookEntity.setRevisionCompleted(book.isRevisionCompleted());
         return bookEntity;
     }
 }

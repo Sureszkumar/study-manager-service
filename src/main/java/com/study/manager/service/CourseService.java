@@ -117,6 +117,7 @@ public class CourseService {
 				book.setAuthor(userCourseBooksEntity.getAuthor());
 				book.setTitle(userCourseBooksEntity.getTitle());
                 book.setImageUrl(userCourseBooksEntity.getImageUrl());
+                book.setRevisionCompleted(userCourseBooksEntity.isRevisionCompleted());
 				bookList.add(book);
 			}
 		} else {

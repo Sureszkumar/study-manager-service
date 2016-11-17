@@ -92,6 +92,7 @@ public class UserCoursesService {
 			userCourseBooksEntity.setTitle(book.getTitle());
 			userCourseBooksEntity.setType(book.getType());
 			userCourseBooksEntity.setImageUrl(book.getImageUrl());
+			userCourseBooksEntity.setRevisionCompleted(false);
 			totalNoOfPages = totalNoOfPages + book.getNoOfPages();
 			userCourseBooksEntities.add(userCourseBooksEntity);
 		}
@@ -348,6 +349,7 @@ public class UserCoursesService {
 			book.setNoOfPagesRead(userCourseBooksEntity.getNoOfPagesRead());
 			book.setNoOfPagesUnRead(userCourseBooksEntity.getNoOfPagesUnRead());
 			book.setImageUrl(userCourseBooksEntity.getImageUrl());
+			book.setRevisionCompleted(userCourseBooksEntity.isRevisionCompleted());
 			bookList.add(book);
 		}
 		course.setTodayGoal(userCoursesEntity.getTodayGoal());
