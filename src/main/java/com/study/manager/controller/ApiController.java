@@ -1,6 +1,7 @@
 package com.study.manager.controller;
 
 import java.io.IOException;
+import java.time.LocalDate;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -21,6 +22,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.study.manager.domain.Book;
 import com.study.manager.domain.Course;
 import com.study.manager.domain.CourseSettings;
+import com.study.manager.domain.Courses;
 import com.study.manager.domain.Goal;
 import com.study.manager.domain.ServiceResponse;
 import com.study.manager.service.CourseService;
@@ -50,7 +52,6 @@ public class ApiController {
 		return courseService.getCourse(userId, courseId);
 	}
 
-
 	@RequestMapping(value = "/subscribeCourse/{courseId}", method = RequestMethod.POST)
 	public ServiceResponse subscribeCourse(@PathVariable("courseId") final Long courseId,
 			@RequestHeader("user-id") long userId) {
@@ -68,13 +69,19 @@ public class ApiController {
 	}
 
 	@RequestMapping(value = "/subscribedCourses", method = RequestMethod.GET)
-	public List<Course> getSubscribedCourses(@RequestHeader("user-id") final Long userId) {
-		return userCoursesService.getSubscribedCourses(userId);
+	public Courses getSubscribedCourses(@RequestHeader("user-id") final Long userId) {
+		Courses courses = new Courses();
+		List<Course> subscribedCourses = userCoursesService.getSubscribedCourses(userId);
+		courses.setCourses(subscribedCourses);
+		LocalDate lastUpdateDate = subscribedCourses.stream().map(c -> c.getLastUpdatedDate()).max(LocalDate::compareTo)
+				.get();
+		courses.setLastUpdatedDate(lastUpdateDate);
+		return courses;
 	}
 
 	@RequestMapping(value = "/subscribedCourse/{courseId}", method = RequestMethod.GET)
 	public Course getSubscribedCourse(@PathVariable("courseId") final Long courseId,
-								  @RequestHeader("user-id") final Long userId) {
+			@RequestHeader("user-id") final Long userId) {
 		return userCoursesService.getSubscribedCourse(userId, courseId);
 	}
 
@@ -94,7 +101,6 @@ public class ApiController {
 		}
 	}
 
-	
 	@RequestMapping(value = "/subscribedCourse/{courseId}/settings", method = RequestMethod.GET)
 	public CourseSettings getSubscribedCourseSettings(@RequestHeader("user-id") long userId,
 			@PathVariable("courseId") final Long courseId) {
@@ -165,7 +171,7 @@ public class ApiController {
 			return response;
 		}
 	}
-	
+
 	@RequestMapping(value = "/subscribedCourse/{courseId}/book/{bookId}", method = RequestMethod.DELETE)
 	public ServiceResponse deleteBook(@RequestHeader("user-id") final Long userId,
 			@PathVariable("courseId") final Long courseId, @PathVariable("bookId") final Long bookId) {
@@ -183,8 +189,7 @@ public class ApiController {
 	}
 
 	@RequestMapping(value = "/resetPassword", method = RequestMethod.POST)
-	 public ServiceResponse resetPassword(@RequestHeader("user-id") final Long userId,
-										  @RequestBody final User user) {
+	public ServiceResponse resetPassword(@RequestHeader("user-id") final Long userId, @RequestBody final User user) {
 		ServiceResponse response = new ServiceResponse();
 		try {
 			userService.resetPassword(userId, user.getPassword());
@@ -206,7 +211,7 @@ public class ApiController {
 
 	@RequestMapping(value = "/updateUserProfile", method = RequestMethod.POST)
 	public ServiceResponse updateUserProfile(@RequestHeader("user-id") final Long userId,
-										 @RequestBody final User user) {
+			@RequestBody final User user) {
 		ServiceResponse response = new ServiceResponse();
 		try {
 			userService.updateUserProfile(userId, user);

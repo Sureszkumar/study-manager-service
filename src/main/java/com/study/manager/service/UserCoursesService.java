@@ -122,6 +122,7 @@ public class UserCoursesService {
 		userCourseEntity.setWeeklyPagesEntity(weeklyPagesEntity);
 		userCourseEntity.setTodayGoal(weekEntityPages.getTodayGoal(LocalDate.now()));
 		userCourseEntity.setDefaultSettingsView(DefaultSettingsView.DIFFICULTY.name());
+		userCourseEntity.setCreationDateTime(LocalDateTime.now());
 		userCourseEntity.setLastChangeTimestamp(LocalDateTime.now());
 		userCoursesRepository.save(userCourseEntity);
 	}
@@ -150,6 +151,7 @@ public class UserCoursesService {
 		CourseEntity courseEntity = courseTranslator.translateToEntity(course);
 		CourseEntity persistedEntity = courseRepository.save(courseEntity);
 		UserCoursesEntity userCoursesEntity = new UserCoursesEntity(userId, persistedEntity.getId());
+		userCoursesEntity.setCreationDateTime(LocalDateTime.now());
 		userCoursesEntity.setUserCourseBooksEntity(userCourseBooksEntityList);
 		userCoursesEntity.setTotalNoOfPages(totalNoOfPages);
 		userCoursesEntity.setPagesUnRead(totalNoOfPages);
@@ -194,6 +196,7 @@ public class UserCoursesService {
 		userCoursesEntity.setEndDate(getAbsoluteEndDate(userCoursesEntity.getEndDate().plusDays(noOfAdditionalDays),
 				userCoursesEntity.getWeeklyHoursEntity().getWeekEntity()));
 		userCoursesEntity.getUserCourseBooksEntity().add(userCourseBooksEntity);
+		userCoursesEntity.setCreationDateTime(LocalDateTime.now());
 		userCoursesEntity.setLastChangeTimestamp(LocalDateTime.now());
 		userCoursesRepository.save(userCoursesEntity);
 

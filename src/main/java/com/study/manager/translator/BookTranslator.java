@@ -5,6 +5,7 @@ import com.study.manager.domain.Type;
 import com.study.manager.entity.BookEntity;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -56,6 +57,8 @@ public class BookTranslator {
             bookEntity.setAuthor(book.getAuthor());
             bookEntity.setNoOfPages(book.getNoOfPages());
             bookEntity.setImageUrl(book.getImageUrl());
+            bookEntity.setCreationDateTime(LocalDateTime.now());
+            bookEntity.setLastChangeTimestamp(LocalDateTime.now());
             bookEntityList.add(bookEntity);
         }
         return bookEntityList;
