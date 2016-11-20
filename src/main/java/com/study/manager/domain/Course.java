@@ -33,6 +33,17 @@ public class Course {
 	private BigDecimal completionRate;
 
 	private Integer todayGoal;
+	
+	private LocalDate lastUpdatedDate;
+	
+
+	public LocalDate getLastUpdatedDate() {
+		return lastUpdatedDate;
+	}
+
+	public void setLastUpdatedDate(LocalDate lastUpdatedDate) {
+		this.lastUpdatedDate = lastUpdatedDate;
+	}
 
 	public Integer getTodayGoal() {
 		return todayGoal;

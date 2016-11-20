@@ -53,6 +53,8 @@ public class CourseTranslator {
 			course.setCurrentStatus(userCoursesEntity.getCurrentStatus());
 			course.setCompletionRate(BigDecimal.valueOf(userCoursesEntity.getCompletionRate()));
 			course.setTodayGoal(userCoursesEntity.getTodayGoal());
+			course.setLastUpdatedDate(userCoursesEntity.getLastChangeTimestamp() != null ? 
+					userCoursesEntity.getLastChangeTimestamp().toLocalDate() : null);
 			courseList.add(course);
 		}
 		return courseList;

@@ -4,6 +4,7 @@ import static java.time.temporal.ChronoUnit.DAYS;
 
 import java.time.DayOfWeek;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.temporal.TemporalAdjusters;
 import java.util.ArrayList;
 import java.util.List;
@@ -46,6 +47,8 @@ import com.study.manager.util.ServiceUtils;
 public class UserCoursesService {
 
 	public static final int DEFAULT_EASY_PAGES = 18;
+	public static final int DEFAULT_MODERATE_PAGES = 15;
+	public static final int DEFAULT_DIFFICULT_PAGES = 10;
 	@Inject
 	private UserCoursesRepository userCoursesRepository;
 
@@ -119,11 +122,13 @@ public class UserCoursesService {
 		userCourseEntity.setWeeklyPagesEntity(weeklyPagesEntity);
 		userCourseEntity.setTodayGoal(weekEntityPages.getTodayGoal(LocalDate.now()));
 		userCourseEntity.setDefaultSettingsView(DefaultSettingsView.DIFFICULTY.name());
+		userCourseEntity.setLastChangeTimestamp(LocalDateTime.now());
 		userCoursesRepository.save(userCourseEntity);
 	}
 
 	public void unSubscribeCourse(Long userId, Long courseId) {
 		UserCoursesEntity userCourseEntity = userCoursesRepository.findBy(userId, courseId);
+		userCourseEntity.setLastChangeTimestamp(LocalDateTime.now());
 		userCoursesRepository.delete(userCourseEntity);
 	}
 
@@ -166,6 +171,13 @@ public class UserCoursesService {
 		userCoursesEntity.setWeeklyPagesEntity(weeklyPagesEntity);
 		int todayGoal = course.getStartDate().isAfter(LocalDate.now()) ? 0 : weekEntityPages.getTodayGoal(LocalDate.now());
 		userCoursesEntity.setTodayGoal(todayGoal);
+		userCoursesEntity.setLastChangeTimestamp(LocalDateTime.now());
+		CourseProficiencyEntity courseProficiencyEntity = new CourseProficiencyEntity();
+		courseProficiencyEntity.setCourseId(persistedEntity.getId());
+		courseProficiencyEntity.setEasyPages(DEFAULT_EASY_PAGES);
+		courseProficiencyEntity.setModeratePages(DEFAULT_MODERATE_PAGES);
+		courseProficiencyEntity.setDifficultPages(DEFAULT_DIFFICULT_PAGES);
+		courseProficiencyRepository.save(courseProficiencyEntity);
 		userCoursesRepository.save(userCoursesEntity);
 
 	}
@@ -182,6 +194,7 @@ public class UserCoursesService {
 		userCoursesEntity.setEndDate(getAbsoluteEndDate(userCoursesEntity.getEndDate().plusDays(noOfAdditionalDays),
 				userCoursesEntity.getWeeklyHoursEntity().getWeekEntity()));
 		userCoursesEntity.getUserCourseBooksEntity().add(userCourseBooksEntity);
+		userCoursesEntity.setLastChangeTimestamp(LocalDateTime.now());
 		userCoursesRepository.save(userCoursesEntity);
 
 	}
@@ -206,6 +219,7 @@ public class UserCoursesService {
 		long daysToComplete = (int) Math.ceil(weeksToComplete) * 7;
 		LocalDate newEndDate = userCoursesEntity.getStartDate().plusDays(daysToComplete);
 		userCoursesEntity.setEndDate(newEndDate);
+		userCoursesEntity.setLastChangeTimestamp(LocalDateTime.now());
 		userCoursesRepository.save(userCoursesEntity);
 	}
 
@@ -252,6 +266,7 @@ public class UserCoursesService {
 		} else {
 			throw new ServiceException("Book not found with id :" + goal.getBookId());
 		}
+		userCoursesEntity.setLastChangeTimestamp(LocalDateTime.now());
 		userCoursesRepository.save(userCoursesEntity);
 
 	}
@@ -306,6 +321,7 @@ public class UserCoursesService {
 						getAbsoluteEndDate(newEndDate, userCoursesEntity.getWeeklyHoursEntity().getWeekEntity()));
 			}
 		}
+		userCoursesEntity.setLastChangeTimestamp(LocalDateTime.now());
 		userCoursesRepository.save(userCoursesEntity);
 	}
 
