@@ -28,6 +28,7 @@ import com.study.manager.domain.ServiceResponse;
 import com.study.manager.service.CourseService;
 import com.study.manager.service.UserCoursesService;
 import com.study.manager.service.exception.EmailVerificationException;
+import com.study.manager.service.exception.ServiceException;
 
 @RestController
 @RequestMapping(value = "/api")
@@ -61,6 +62,11 @@ public class ApiController {
 			response.setSuccess(true);
 			response.setMessage("Course successfully subscribed");
 			return response;
+		} catch (ServiceException e) {
+			response.setSuccess(false);
+			response.setMessage(e.getMessage());
+			response.setErrorCode(e.getErrorCode());
+			return response;
 		} catch (Exception e) {
 			response.setSuccess(false);
 			response.setMessage(e.getMessage());
@@ -71,11 +77,15 @@ public class ApiController {
 	@RequestMapping(value = "/subscribedCourses", method = RequestMethod.GET)
 	public Courses getSubscribedCourses(@RequestHeader("user-id") final Long userId) {
 		Courses courses = new Courses();
+		courses.setUserName(userService.get(userId).getName());
 		List<Course> subscribedCourses = userCoursesService.getSubscribedCourses(userId);
 		courses.setCourses(subscribedCourses);
-		LocalDate lastUpdateDate = subscribedCourses.stream().map(c -> c.getLastUpdatedDate()).max(LocalDate::compareTo)
-				.get();
-		courses.setLastUpdatedDate(lastUpdateDate);
+		if (subscribedCourses != null && !subscribedCourses.isEmpty()) {
+			LocalDate lastUpdateDate = subscribedCourses.stream().map(c -> c.getLastUpdatedDate())
+					.max(LocalDate::compareTo).get();
+			courses.setLastUpdatedDate(lastUpdateDate);
+		}
+
 		return courses;
 	}
 
@@ -93,6 +103,11 @@ public class ApiController {
 			userCoursesService.updateSubscribedCourseGoal(userId, courseId, goal);
 			response.setSuccess(true);
 			response.setMessage("Subscribed Course goal successfully updated");
+			return response;
+		} catch (ServiceException e) {
+			response.setSuccess(false);
+			response.setMessage(e.getMessage());
+			response.setErrorCode(e.getErrorCode());
 			return response;
 		} catch (Exception e) {
 			response.setSuccess(false);
@@ -116,6 +131,11 @@ public class ApiController {
 			response.setSuccess(true);
 			response.setMessage("Course settings successfully updated");
 			return response;
+		} catch (ServiceException e) {
+			response.setSuccess(false);
+			response.setMessage(e.getMessage());
+			response.setErrorCode(e.getErrorCode());
+			return response;
 		} catch (Exception e) {
 			response.setSuccess(false);
 			response.setMessage(e.getMessage());
@@ -131,6 +151,11 @@ public class ApiController {
 			userCoursesService.unSubscribeCourse(userId, courseId);
 			response.setSuccess(true);
 			response.setMessage("Course successfully unSubscribed");
+			return response;
+		} catch (ServiceException e) {
+			response.setSuccess(false);
+			response.setMessage(e.getMessage());
+			response.setErrorCode(e.getErrorCode());
 			return response;
 		} catch (Exception e) {
 			response.setSuccess(false);
@@ -149,6 +174,11 @@ public class ApiController {
 			response.setMessage("Successfully added");
 			return response;
 
+		} catch (ServiceException e) {
+			response.setSuccess(false);
+			response.setMessage(e.getMessage());
+			response.setErrorCode(e.getErrorCode());
+			return response;
 		} catch (Exception e) {
 			response.setSuccess(false);
 			response.setMessage(e.getMessage());
@@ -164,6 +194,11 @@ public class ApiController {
 			userCoursesService.addCustomBook(userId, courseId, book);
 			response.setSuccess(true);
 			response.setMessage("Successfully added");
+			return response;
+		} catch (ServiceException e) {
+			response.setSuccess(false);
+			response.setMessage(e.getMessage());
+			response.setErrorCode(e.getErrorCode());
 			return response;
 		} catch (Exception e) {
 			response.setSuccess(false);
@@ -181,6 +216,11 @@ public class ApiController {
 			response.setSuccess(true);
 			response.setMessage("Successfully book deleted");
 			return response;
+		} catch (ServiceException e) {
+			response.setSuccess(false);
+			response.setMessage(e.getMessage());
+			response.setErrorCode(e.getErrorCode());
+			return response;
 		} catch (Exception e) {
 			response.setSuccess(false);
 			response.setMessage(e.getMessage());
@@ -195,6 +235,11 @@ public class ApiController {
 			userService.resetPassword(userId, user.getPassword());
 			response.setSuccess(true);
 			response.setMessage("Successfully password reset");
+			return response;
+		} catch (ServiceException e) {
+			response.setSuccess(false);
+			response.setMessage(e.getMessage());
+			response.setErrorCode(e.getErrorCode());
 			return response;
 		} catch (Exception e) {
 			response.setSuccess(false);
@@ -217,6 +262,11 @@ public class ApiController {
 			userService.updateUserProfile(userId, user);
 			response.setSuccess(true);
 			response.setMessage("Successfully added");
+			return response;
+		} catch (ServiceException e) {
+			response.setSuccess(false);
+			response.setMessage(e.getMessage());
+			response.setErrorCode(e.getErrorCode());
 			return response;
 		} catch (Exception e) {
 			response.setSuccess(false);

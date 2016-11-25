@@ -10,9 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.inject.Inject;
-import javax.persistence.EntityExistsException;
 
-import com.study.manager.domain.DefaultSettingsView;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 
@@ -20,6 +18,7 @@ import com.study.manager.domain.Book;
 import com.study.manager.domain.Course;
 import com.study.manager.domain.CourseSettings;
 import com.study.manager.domain.CourseStatus;
+import com.study.manager.domain.DefaultSettingsView;
 import com.study.manager.domain.Goal;
 import com.study.manager.domain.Proficiency;
 import com.study.manager.domain.WeeklyHours;
@@ -36,6 +35,7 @@ import com.study.manager.repository.CourseBooksRepository;
 import com.study.manager.repository.CourseProficiencyRepository;
 import com.study.manager.repository.CourseRepository;
 import com.study.manager.repository.UserCoursesRepository;
+import com.study.manager.service.exception.ErrorCode;
 import com.study.manager.service.exception.ServiceException;
 import com.study.manager.translator.CourseSettingsTranslator;
 import com.study.manager.translator.CourseTranslator;
@@ -46,9 +46,9 @@ import com.study.manager.util.ServiceUtils;
 @Validated
 public class UserCoursesService {
 
-	public static final int DEFAULT_EASY_PAGES = 18;
-	public static final int DEFAULT_MODERATE_PAGES = 15;
-	public static final int DEFAULT_DIFFICULT_PAGES = 10;
+	public static final int DEFAULT_BEGINNER_PAGES = 18;
+	public static final int DEFAULT_NORMAL_PAGES = 15;
+	public static final int DEFAULT_EXPERT_PAGES = 10;
 	@Inject
 	private UserCoursesRepository userCoursesRepository;
 
@@ -74,7 +74,7 @@ public class UserCoursesService {
 	public void subscribeCourse(Long userId, Long courseId) {
 		UserCoursesEntity userCourseEntity = userCoursesRepository.findBy(userId, courseId);
 		if (userCourseEntity != null) {
-			throw new EntityExistsException("User already subscribed to this course");
+			throw new ServiceException(ErrorCode.SM_114);
 		}
 		userCourseEntity = new UserCoursesEntity();
 		userCourseEntity.setUserId(userId);
@@ -106,18 +106,18 @@ public class UserCoursesService {
 		userCourseEntity.setCurrentStatus(CourseStatus.ON_TRACK.name());
 		int defaultTimeInWeeks = courseRepository.findOne(courseId).getDefaultTimeInWeeks();
 		userCourseEntity.setEndDate(LocalDate.now().plusWeeks(defaultTimeInWeeks));
-		userCourseEntity.setProficiency(Proficiency.EASY.name());
+		userCourseEntity.setProficiency(Proficiency.EXPERT.name());
 		WeeklyHoursEntity weeklyHoursEntity = new WeeklyHoursEntity();
 		WeekEntity weekEntity = new WeekEntity(1, 1, 1, 1, 1, 1, 1);
 		weeklyHoursEntity.setWeekEntity(weekEntity);
 		userCourseEntity.setWeeklyHoursEntity(weeklyHoursEntity);
 		WeeklyPagesEntity weeklyPagesEntity = new WeeklyPagesEntity();
 		CourseProficiencyEntity courseProficiencyEntity = courseProficiencyRepository.findByCourseId(courseId);
-		int easyPages = DEFAULT_EASY_PAGES;
+		int expertPages = DEFAULT_EXPERT_PAGES;
 		if (courseProficiencyEntity != null) {
-			easyPages = courseProficiencyEntity.getEasyPages();
+			expertPages = courseProficiencyEntity.getExpertPages();
 		}
-		WeekEntity weekEntityPages = new WeekEntity(easyPages);
+		WeekEntity weekEntityPages = new WeekEntity(expertPages);
 		weeklyPagesEntity.setWeekEntity(weekEntityPages);
 		userCourseEntity.setWeeklyPagesEntity(weeklyPagesEntity);
 		userCourseEntity.setTodayGoal(weekEntityPages.getTodayGoal(LocalDate.now()));
@@ -140,7 +140,7 @@ public class UserCoursesService {
 
 	public void addCustomCourse(Long userId, Course course) {
 		if (course.getBookList() == null || course.getBookList().isEmpty()) {
-			throw new ServiceException("No books included in custom course");
+			throw new ServiceException(ErrorCode.SM_101);
 		}
 		List<UserCourseBooksEntity> userCourseBooksEntityList = new ArrayList<>();
 		int totalNoOfPages = 0;
@@ -152,37 +152,40 @@ public class UserCoursesService {
 		CourseEntity persistedEntity = courseRepository.save(courseEntity);
 		UserCoursesEntity userCoursesEntity = new UserCoursesEntity(userId, persistedEntity.getId());
 		userCoursesEntity.setCreationDateTime(LocalDateTime.now());
+		userCoursesEntity.setDefaultSettingsView(DefaultSettingsView.DIFFICULTY.name());
 		userCoursesEntity.setUserCourseBooksEntity(userCourseBooksEntityList);
 		userCoursesEntity.setTotalNoOfPages(totalNoOfPages);
 		userCoursesEntity.setPagesUnRead(totalNoOfPages);
 		userCoursesEntity.setCompletionRate(0);
-		String currentStatus = course.getStartDate().isAfter(LocalDate.now()) ? CourseStatus.NOT_STARTED.name() :
-				CourseStatus.ON_TRACK.name();
+		String currentStatus = course.getStartDate().isAfter(LocalDate.now()) ? CourseStatus.NOT_STARTED.name()
+				: CourseStatus.ON_TRACK.name();
 		userCoursesEntity.setCurrentStatus(currentStatus);
 		int defaultTimeInWeeks = ServiceUtils.getDefaultCoursePreparationTime(totalNoOfPages, 18, 7);
 		userCoursesEntity.setStartDate(course.getStartDate());
 		userCoursesEntity.setEndDate(course.getStartDate().plusWeeks(defaultTimeInWeeks));
-		userCoursesEntity.setProficiency(Proficiency.EASY.name());
+		userCoursesEntity.setProficiency(Proficiency.EXPERT.name());
 		WeeklyHoursEntity weeklyHoursEntity = new WeeklyHoursEntity();
 		WeekEntity weekEntity = new WeekEntity(1, 1, 1, 1, 1, 1, 1);
 		weeklyHoursEntity.setWeekEntity(weekEntity);
 		userCoursesEntity.setWeeklyHoursEntity(weeklyHoursEntity);
 		WeeklyPagesEntity weeklyPagesEntity = new WeeklyPagesEntity();
-		WeekEntity weekEntityPages = new WeekEntity(DEFAULT_EASY_PAGES);
+		WeekEntity weekEntityPages = new WeekEntity(DEFAULT_EXPERT_PAGES);
 		weeklyPagesEntity.setWeekEntity(weekEntityPages);
 		userCoursesEntity.setWeeklyPagesEntity(weeklyPagesEntity);
-		int todayGoal = course.getStartDate().isAfter(LocalDate.now()) ? 0 : weekEntityPages.getTodayGoal(LocalDate.now());
+		int todayGoal = course.getStartDate().isAfter(LocalDate.now()) ? 0
+				: weekEntityPages.getTodayGoal(LocalDate.now());
 		userCoursesEntity.setTodayGoal(todayGoal);
 		userCoursesEntity.setLastChangeTimestamp(LocalDateTime.now());
 		CourseProficiencyEntity courseProficiencyEntity = new CourseProficiencyEntity();
 		courseProficiencyEntity.setCourseId(persistedEntity.getId());
-		courseProficiencyEntity.setEasyPages(DEFAULT_EASY_PAGES);
-		courseProficiencyEntity.setModeratePages(DEFAULT_MODERATE_PAGES);
-		courseProficiencyEntity.setDifficultPages(DEFAULT_DIFFICULT_PAGES);
+		courseProficiencyEntity.setExpertPages(DEFAULT_EXPERT_PAGES);
+		courseProficiencyEntity.setNormalPages(DEFAULT_NORMAL_PAGES);
+		courseProficiencyEntity.setBeginnerPages(DEFAULT_BEGINNER_PAGES);
 		courseProficiencyRepository.save(courseProficiencyEntity);
 		userCoursesRepository.save(userCoursesEntity);
 
 	}
+
 	public void addCustomBook(Long userId, Long courseId, Book book) {
 		UserCourseBooksEntity userCourseBooksEntity = userCourseBooksTranslator.translateToEntity(book);
 		UserCoursesEntity userCoursesEntity = userCoursesRepository.findBy(userId, courseId);
@@ -207,7 +210,7 @@ public class UserCoursesService {
 		UserCourseBooksEntity deleteBookEntity = userCoursesEntity.getUserCourseBooksEntity().stream()
 				.filter(obj -> obj.getId().equals(bookId)).findFirst().get();
 		if (deleteBookEntity == null) {
-			throw new ServiceException("Book not found");
+			throw new ServiceException(ErrorCode.SM_102);
 		}
 		userCoursesEntity.getUserCourseBooksEntity().removeIf(obj -> obj.getId().equals(bookId));
 		userCoursesEntity
@@ -234,7 +237,7 @@ public class UserCoursesService {
 	public CourseSettings getSubscribedCourseSettings(long userId, Long courseId) {
 		UserCoursesEntity userCoursesEntity = userCoursesRepository.findBy(userId, courseId);
 		if (userCoursesEntity == null) {
-			throw new ServiceException("User : " + userId + " is not subscribed to course : " + courseId);
+			throw new ServiceException(ErrorCode.SM_100);
 		}
 		CourseProficiencyEntity courseProficiencyEntity = courseProficiencyRepository.findByCourseId(courseId);
 		return courseSettingsTranslator.translateToDomain(userCoursesEntity, courseProficiencyEntity);
@@ -262,12 +265,12 @@ public class UserCoursesService {
 						.setPagesUnRead(userCoursesEntity.getTotalNoOfPages() - userCoursesEntity.getPagesRead());
 				int todayGoal = userCoursesEntity.getTodayGoal() - goal.getNoOfPagesRead();
 				userCoursesEntity.setTodayGoal(todayGoal >= 0 ? todayGoal : 0);
-				double completionRate = ((double) goal.getNoOfPagesRead()
-						/ userCourseBooksEntity.getTotalNoOfPages()) * 70;
+				double completionRate = ((double) goal.getNoOfPagesRead() / userCourseBooksEntity.getTotalNoOfPages())
+						* 70;
 				userCoursesEntity.setCompletionRate(userCoursesEntity.getCompletionRate() + completionRate);
 			}
 		} else {
-			throw new ServiceException("Book not found with id :" + goal.getBookId());
+			throw new ServiceException(ErrorCode.SM_102);
 		}
 		userCoursesEntity.setLastChangeTimestamp(LocalDateTime.now());
 		userCoursesRepository.save(userCoursesEntity);
@@ -336,12 +339,12 @@ public class UserCoursesService {
 	private WeekEntity getWeekDayPages(Long courseId, String proficiency, WeekEntity weekDayHours) {
 		CourseProficiencyEntity courseProficiencyEntity = courseProficiencyRepository.findByCourseId(courseId);
 		int pagesPerHour = 0;
-		if (proficiency.equals(Proficiency.EASY.name())) {
-			pagesPerHour = courseProficiencyEntity.getEasyPages();
-		} else if (proficiency.equals(Proficiency.MODERATE.name())) {
-			pagesPerHour = courseProficiencyEntity.getModeratePages();
-		} else if (proficiency.equals(Proficiency.DIFFICULT.name())) {
-			pagesPerHour = courseProficiencyEntity.getDifficultPages();
+		if (proficiency.equals(Proficiency.BEGINNER.name())) {
+			pagesPerHour = courseProficiencyEntity.getBeginnerPages();
+		} else if (proficiency.equals(Proficiency.NORMAL.name())) {
+			pagesPerHour = courseProficiencyEntity.getNormalPages();
+		} else if (proficiency.equals(Proficiency.EXPERT.name())) {
+			pagesPerHour = courseProficiencyEntity.getExpertPages();
 		}
 		WeekEntity weekDayPages = new WeekEntity();
 		weekDayPages.setMonday(weekDayHours.getMonday() * pagesPerHour);
@@ -393,7 +396,8 @@ public class UserCoursesService {
 				}
 				String currentStatus = userCoursesEntity.getCurrentStatus();
 				if (!currentStatus.equals(CourseStatus.NOT_STARTED.name())) {
-					int todayGoal = userCoursesEntity.getWeeklyPagesEntity().getWeekEntity().getTodayGoal(LocalDate.now());
+					int todayGoal = userCoursesEntity.getWeeklyPagesEntity().getWeekEntity()
+							.getTodayGoal(LocalDate.now());
 					int pastGoal = userCoursesEntity.getTodayGoal();
 					if (pastGoal > 0) {
 						userCoursesEntity.setCurrentStatus(CourseStatus.BEHIND_SCHEDULE.name());

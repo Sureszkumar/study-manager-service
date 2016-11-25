@@ -21,6 +21,7 @@ import com.study.manager.domain.ServiceResponse;
 import com.study.manager.domain.User;
 import com.study.manager.service.UserService;
 import com.study.manager.service.exception.EmailVerificationException;
+import com.study.manager.service.exception.ServiceException;
 import com.study.manager.util.EmailService;
 
 @RestController
@@ -43,14 +44,19 @@ public class LoginController {
 		try {
 			createdUser = userService.create(user);
 
-		} catch (Exception e) { 
+		} catch (ServiceException e) {
+			response.setSuccess(false);
+			response.setMessage(e.getMessage());
+			response.setErrorCode(e.getErrorCode());
+			return response;
+		} catch (Exception e) {
 			response.setSuccess(false);
 			response.setMessage(e.getMessage());
 			return response;
 		}
 		emailService.sendVerifyToken(createdUser.getId(), createdUser.getEmail(), createdUser.getName());
 		response.setSuccess(true);
-		response.setMessage("User created for email " + user.getEmail() +" Check your mail and verify");
+		response.setMessage("User created for email " + user.getEmail() + " Check your mail and verify");
 		return response;
 	}
 
@@ -64,6 +70,11 @@ public class LoginController {
 			response.setMessage("User logged in successfully");
 			response.setUserId(createdUser.getId());
 			response.setAuthToken(createdUser.getAuthToken());
+			return response;
+		} catch (ServiceException e) {
+			response.setSuccess(false);
+			response.setMessage(e.getMessage());
+			response.setErrorCode(e.getErrorCode());
 			return response;
 		} catch (Exception e) {
 			response.setSuccess(false);
@@ -80,6 +91,11 @@ public class LoginController {
 			userService.sendPassword(user.getEmail());
 			response.setSuccess(true);
 			response.setMessage("Password sent to mail successfully");
+			return response;
+		} catch (ServiceException e) {
+			response.setSuccess(false);
+			response.setMessage(e.getMessage());
+			response.setErrorCode(e.getErrorCode());
 			return response;
 		} catch (Exception e) {
 			response.setSuccess(false);

@@ -32,6 +32,7 @@ public class CourseTranslator {
 			course.setType(courseEntity.getType().name());
 			course.setSubscribed(true);
 			course.setPreparationTimeInWeeks(courseEntity.getDefaultTimeInWeeks());
+			course.setPreparationTimeInMonths(courseEntity.getDefaultTimeInMonths());
 			courseList.add(course);
 		}
 		return courseList;

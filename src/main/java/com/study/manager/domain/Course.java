@@ -24,6 +24,8 @@ public class Course {
 
 	private Integer preparationTimeInWeeks;
 
+	private Double preparationTimeInMonths;
+	
 	private LocalDate startDate;
 
 	private LocalDate endDate;
@@ -36,6 +38,14 @@ public class Course {
 	
 	private LocalDate lastUpdatedDate;
 	
+
+	public Double getPreparationTimeInMonths() {
+		return preparationTimeInMonths;
+	}
+
+	public void setPreparationTimeInMonths(Double preparationTimeInMonths) {
+		this.preparationTimeInMonths = preparationTimeInMonths;
+	}
 
 	public LocalDate getLastUpdatedDate() {
 		return lastUpdatedDate;

@@ -10,9 +10,20 @@ public class ServiceResponse {
 	
 	private String message;
 	
+	private String errorCode;
+	
 	private Long userId;
 	
 	private String authToken; 
+
+	
+	public String getErrorCode() {
+		return errorCode;
+	}
+
+	public void setErrorCode(String errorCode) {
+		this.errorCode = errorCode;
+	}
 
 	public Long getUserId() {
 		return userId;

@@ -12,6 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.study.manager.entity.BaseEntity;
 import com.study.manager.repository.BaseRepository;
+import com.study.manager.service.exception.ErrorCode;
 import com.study.manager.service.exception.ServiceException;
 
 public class BaseService<T extends BaseEntity> {
@@ -37,8 +38,7 @@ public class BaseService<T extends BaseEntity> {
         LOGGER.debug("Updating {}", o);
         T existing = baseRepository.findOne(o.getId());
         if (existing == null) {
-            throw new ServiceException(
-                    String.format("user with id =%s not exist", o.getId()));
+            throw new ServiceException(ErrorCode.SM_103);
         }
         copyNonNullProperties(o, existing);
         existing.setLastChangeTimestamp(LocalDateTime.now());
@@ -57,8 +57,7 @@ public class BaseService<T extends BaseEntity> {
         LOGGER.debug("Deleting entity with id : {}", id);
         T existing = baseRepository.findOne(id);
         if (existing == null) {
-            throw new ServiceException(
-                    String.format("Entity with id =%s not exist", id));
+            throw new ServiceException(ErrorCode.SM_104);
         }
         baseRepository.delete(id);
     }
@@ -68,8 +67,7 @@ public class BaseService<T extends BaseEntity> {
         LOGGER.debug("Retrieving entity with id : {}", id);
         T existing = baseRepository.findOne(id);
         if (existing == null) {
-            throw new ServiceException(
-                    String.format("Entity with id =%s not exist", id));
+            throw new ServiceException(ErrorCode.SM_104);
         }
         return existing;
     }

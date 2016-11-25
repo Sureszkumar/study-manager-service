@@ -22,6 +22,7 @@ import com.study.manager.repository.UserRepository;
 import com.study.manager.security.Password;
 import com.study.manager.service.exception.CredentialsException;
 import com.study.manager.service.exception.EmailVerificationException;
+import com.study.manager.service.exception.ErrorCode;
 import com.study.manager.service.exception.ServiceException;
 import com.study.manager.translator.UserTranslator;
 import com.study.manager.util.ServiceUtils;
@@ -57,7 +58,7 @@ public class UserService {
 		}
 		log.debug("User credentials valid {}", isValidCredentials);
 		if (userRepository.findByEmail(user.getEmail()) != null) {
-			throw new EntityExistsException("Email already exists");
+			throw new ServiceException(ErrorCode.SM_116);
 		}
 
 		UserEntity userEntity = userTranslator.translateToEntity(user);
@@ -81,24 +82,24 @@ public class UserService {
 
 		boolean isValidCredentials = credentialsValidator.validate(user.getEmail(), user.getPassword());
 		if (!isValidCredentials) {
-			throw new CredentialsException("Invalid email id");
+			throw new CredentialsException(ErrorCode.SM_106);
 		}
 		log.debug("User credentials valid {}", isValidCredentials);
 		UserEntity userEntity = null;
 		try {
 			userEntity = userRepository.findByEmail(user.getEmail());
 		} catch (Exception e) {
-			throw new ServiceException("Exception while finding user");
+			throw new ServiceException(ErrorCode.SM_107);
 
 		}
 		if (userEntity == null) {
-			throw new CredentialsException("User not found for email" + user.getEmail());
+			throw new CredentialsException(ErrorCode.SM_108);
 		}
 		if (!userEntity.getVerified()) {
-			throw new EmailVerificationException("Email not verified");
+			throw new EmailVerificationException(ErrorCode.SM_109);
 		}
 		if (!Password.check(user.getPassword(), userEntity.getPassword())) {
-			throw new CredentialsException("Invalid valid password");
+			throw new CredentialsException(ErrorCode.SM_110);
 		}
 		return userTranslator.translateToDomain(userEntity);
 	}
@@ -123,7 +124,7 @@ public class UserService {
 		String userId = ServiceUtils.decryptUserId(encryptedUserId);
 		UserEntity userEntity = userRepository.findByUserIdAndEmailToken(Long.valueOf(userId), token);
 		if (userEntity == null) {
-			throw new EmailVerificationException("Invalid email verify token for user");
+			throw new EmailVerificationException(ErrorCode.SM_111);
 		}
 		userEntity.setVerified(true);
 		userRepository.save(userEntity);
@@ -137,7 +138,7 @@ public class UserService {
 	public UserEntity updateEmailVerifyToken(Long id, String emailVerifyToken) {
 		UserEntity existing = userRepository.findOne(id);
 		if (existing == null) {
-			throw new ServiceException(String.format("user with id =%s not exist", id));
+			throw new ServiceException(ErrorCode.SM_103);
 		}
 		// copyNonNullProperties(o, existing);
 		existing.setLastChangeTimestamp(LocalDateTime.now());
@@ -154,7 +155,7 @@ public class UserService {
 	public UserEntity updateUser(Long userId, UserEntity newUserEntity) {
 		UserEntity existing = userRepository.findOne(userId);
 		if (existing == null) {
-			throw new ServiceException(String.format("user with id =%s not exist", userId));
+			throw new ServiceException(ErrorCode.SM_103);
 		}
 		ServiceUtils.copyNonNullProperties(newUserEntity, existing);
 		existing.setLastChangeTimestamp(LocalDateTime.now());
@@ -176,7 +177,10 @@ public class UserService {
 	public void sendPassword(String email) {
 		UserEntity userEntity = userRepository.findByEmail(email);
 		if (userEntity == null) {
-			throw new CredentialsException("User not found for email " + email);
+			throw new CredentialsException(ErrorCode.SM_103);
+		}
+		if (!userEntity.getVerified()) {
+			throw new ServiceException(ErrorCode.SM_112);
 		}
 		try {
 			String randomPassword = ServiceUtils.generateRandomPassword();
@@ -184,7 +188,7 @@ public class UserService {
 			userRepository.save(userEntity);
 			emailService.sendNewPassword(email, randomPassword, userEntity.getName());
 		} catch (Exception e) {
-			throw new ServiceException("Exception while encrypting password");
+			throw new ServiceException(ErrorCode.SM_113);
 		}
 
 	}
@@ -192,20 +196,20 @@ public class UserService {
 	public void resetPassword(Long userId, String password) {
 		UserEntity userEntity = userRepository.findOne(userId);
 		if (userEntity == null) {
-			throw new ServiceException("User not found for userId" + userId);
+			throw new ServiceException(ErrorCode.SM_103);
 		}
 		try {
 			userEntity.setPassword(Password.encrypt(password));
 			userRepository.save(userEntity);
 		} catch (Exception e) {
-			throw new ServiceException("Exception while encrypting password");
+			throw new ServiceException(ErrorCode.SM_113);
 		}
 	}
 
 	public void updateUserProfile(Long userId, User user) {
 		UserEntity userEntity = userRepository.findOne(userId);
 		if (userEntity == null) {
-			throw new ServiceException("User not found for userId" + userId);
+			throw new ServiceException(ErrorCode.SM_103);
 		}
 		userEntity.setName(user.getName());
 		userRepository.save(userEntity);
@@ -214,7 +218,7 @@ public class UserService {
 	public User getUserProfile(Long userId) {
 		UserEntity userEntity = userRepository.findOne(userId);
 		if (userEntity == null) {
-			throw new ServiceException("User not found for userId" + userId);
+			throw new ServiceException(ErrorCode.SM_103);
 		}
 		User user = new User();
 		user.setEmail(userEntity.getEmail());

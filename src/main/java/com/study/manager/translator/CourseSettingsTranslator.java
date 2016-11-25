@@ -2,6 +2,9 @@ package com.study.manager.translator;
 
 import com.study.manager.domain.ProficiencyValue;
 import com.study.manager.entity.CourseProficiencyEntity;
+
+import java.time.LocalDate;
+
 import org.springframework.stereotype.Component;
 
 import com.study.manager.domain.CourseSettings;
@@ -12,7 +15,8 @@ import com.study.manager.entity.WeekEntity;
 @Component
 public class CourseSettingsTranslator {
 
-	public CourseSettings translateToDomain(UserCoursesEntity userCoursesEntity, CourseProficiencyEntity courseProficiencyEntity) {
+	public CourseSettings translateToDomain(UserCoursesEntity userCoursesEntity,
+			CourseProficiencyEntity courseProficiencyEntity) {
 		CourseSettings courseSettings = new CourseSettings();
 		courseSettings.setProficiency(userCoursesEntity.getProficiency());
 		courseSettings.setTargetDate(userCoursesEntity.getEndDate());
@@ -27,10 +31,13 @@ public class CourseSettingsTranslator {
 		weeklyHours.setSunday(weekEntity.getSunday());
 		courseSettings.setWeeklyHours(weeklyHours);
 		courseSettings.setDefaultView(userCoursesEntity.getDefaultSettingsView());
+		int noOfPagesUnread = userCoursesEntity.getPagesUnRead();
+		int noOfDays = noOfPagesUnread / (courseProficiencyEntity.getBeginnerPages() * 12);
+		courseSettings.setNearestTargetDate(LocalDate.now().plusDays(noOfDays));
 		ProficiencyValue proficiencyValue = new ProficiencyValue();
-		proficiencyValue.setEasy(courseProficiencyEntity.getEasyPages());
-		proficiencyValue.setModerate(courseProficiencyEntity.getModeratePages());
-		proficiencyValue.setDifficult(courseProficiencyEntity.getDifficultPages());
+		proficiencyValue.setBeginner(courseProficiencyEntity.getBeginnerPages());
+		proficiencyValue.setNormal(courseProficiencyEntity.getNormalPages());
+		proficiencyValue.setExpert(courseProficiencyEntity.getExpertPages());
 		courseSettings.setProficiencyValue(proficiencyValue);
 		return courseSettings;
 	}

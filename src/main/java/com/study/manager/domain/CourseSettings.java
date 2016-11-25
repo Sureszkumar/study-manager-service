@@ -13,10 +13,21 @@ public class CourseSettings {
 	private String proficiency;
 
 	private LocalDate targetDate;
+	
+	private LocalDate nearestTargetDate;
 
 	private String defaultView;
 
 	private ProficiencyValue proficiencyValue;
+	
+
+	public LocalDate getNearestTargetDate() {
+		return nearestTargetDate;
+	}
+
+	public void setNearestTargetDate(LocalDate nearestTargetDate) {
+		this.nearestTargetDate = nearestTargetDate;
+	}
 
 	public ProficiencyValue getProficiencyValue() {
 		return proficiencyValue;

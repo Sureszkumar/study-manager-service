@@ -1,8 +1,8 @@
 package com.study.manager.service.exception;
 
-public class EmailVerificationException extends RuntimeException {
+public class EmailVerificationException extends ServiceException {
 
-    public EmailVerificationException(final String message) {
-        super(message);
+    public EmailVerificationException(ErrorCode errorCode) {
+        super(errorCode);
     }
 }

@@ -14,12 +14,12 @@ public class CourseProficiencyEntity extends BaseEntity {
 
 	private long courseId;
 
-	private int easyPages;
+	private int beginnerPages;
 
-	private int moderatePages;
+    private int normalPages;
 
-	private int difficultPages;
-
+    private int expertPages;
+    
 	public long getCourseId() {
 		return courseId;
 	}
@@ -28,28 +28,30 @@ public class CourseProficiencyEntity extends BaseEntity {
 		this.courseId = courseId;
 	}
 
-	public int getEasyPages() {
-		return easyPages;
+	public int getBeginnerPages() {
+		return beginnerPages;
 	}
 
-	public void setEasyPages(int easyPages) {
-		this.easyPages = easyPages;
+	public void setBeginnerPages(int beginnerPages) {
+		this.beginnerPages = beginnerPages;
 	}
 
-	public int getModeratePages() {
-		return moderatePages;
+	public int getNormalPages() {
+		return normalPages;
 	}
 
-	public void setModeratePages(int moderatePages) {
-		this.moderatePages = moderatePages;
+	public void setNormalPages(int normalPages) {
+		this.normalPages = normalPages;
 	}
 
-	public int getDifficultPages() {
-		return difficultPages;
+	public int getExpertPages() {
+		return expertPages;
 	}
 
-	public void setDifficultPages(int difficultPages) {
-		this.difficultPages = difficultPages;
+	public void setExpertPages(int expertPages) {
+		this.expertPages = expertPages;
 	}
+
+	
 
 }

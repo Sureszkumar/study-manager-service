@@ -1,13 +1,13 @@
 package com.study.manager.translator;
 
-import com.study.manager.domain.Book;
-import com.study.manager.domain.Type;
-import com.study.manager.entity.BookEntity;
-import com.study.manager.entity.UserCourseBooksEntity;
-import org.springframework.stereotype.Component;
-
 import java.util.ArrayList;
 import java.util.List;
+
+import org.springframework.stereotype.Component;
+
+import com.study.manager.domain.Book;
+import com.study.manager.domain.Type;
+import com.study.manager.entity.UserCourseBooksEntity;
 
 @Component
 public class UserCourseBooksTranslator {
@@ -27,6 +27,7 @@ public class UserCourseBooksTranslator {
         bookEntity.setType(Type.valueOf(book.getType()));
         bookEntity.setAuthor(book.getAuthor());
         bookEntity.setTotalNoOfPages(book.getNoOfPages());
+        bookEntity.setNoOfPagesUnRead(book.getNoOfPages());
         bookEntity.setRevisionCompleted(book.isRevisionCompleted());
         return bookEntity;
     }

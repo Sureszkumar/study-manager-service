@@ -21,6 +21,8 @@ import com.study.manager.repository.BookRepository;
 import com.study.manager.repository.CourseBooksRepository;
 import com.study.manager.repository.CourseRepository;
 import com.study.manager.repository.UserCoursesRepository;
+import com.study.manager.service.exception.ErrorCode;
+import com.study.manager.service.exception.ServiceException;
 import com.study.manager.translator.BookTranslator;
 import com.study.manager.translator.CourseTranslator;
 import com.study.manager.util.ServiceUtils;
@@ -29,81 +31,84 @@ import com.study.manager.util.ServiceUtils;
 @Validated
 public class CourseService {
 
-    @Inject
-    private CourseRepository courseRepository;
+	@Inject
+	private CourseRepository courseRepository;
 
-    @Inject
-    private UserCoursesRepository userCoursesRepository;
-    
-    @Inject
-    private CourseTranslator courseTranslator;
+	@Inject
+	private UserCoursesRepository userCoursesRepository;
 
-    @Inject
-    private BookTranslator bookTranslator;
+	@Inject
+	private CourseTranslator courseTranslator;
 
-    @Inject
-    private UserCoursesService userCoursesService;
+	@Inject
+	private BookTranslator bookTranslator;
 
-    @Inject
-    private CourseBooksService courseBooksService;
+	@Inject
+	private UserCoursesService userCoursesService;
 
-    @Inject
-    private CourseBooksRepository courseBooksRepository;
+	@Inject
+	private CourseBooksService courseBooksService;
 
-    @Inject
-    private BookRepository bookRepository;
+	@Inject
+	private CourseBooksRepository courseBooksRepository;
 
-    public List<Course> getAll(long userId) {
-        List<CourseEntity> courseEntities = courseRepository.findAll();
-        List<Course> courseList = courseTranslator.translateToDomain(courseEntities);
-        List<Course> newCourseList = new ArrayList<>();
-        for (Course course : courseList) {
-        	boolean subscribed = userCoursesService.isSubscribed(course.getId(), userId);
-        	if(course.getType().equals(Type.CUSTOM.name())) {
-        		if(subscribed){
-        			newCourseList.add(course);
-        		}
-        	} else {
-        		newCourseList.add(course);
-        	}
-            course.setSubscribed(subscribed);
-        }
-        return newCourseList;
-    }
+	@Inject
+	private BookRepository bookRepository;
 
+	public List<Course> getAll(long userId) {
+		List<CourseEntity> courseEntities = courseRepository.findAll();
+		List<Course> courseList = courseTranslator.translateToDomain(courseEntities);
+		List<Course> newCourseList = new ArrayList<>();
+		for (Course course : courseList) {
+			boolean subscribed = userCoursesService.isSubscribed(course.getId(), userId);
+			if (course.getType().equals(Type.CUSTOM.name())) {
+				if (subscribed) {
+					newCourseList.add(course);
+				}
+			} else {
+				newCourseList.add(course);
+			}
+			course.setSubscribed(subscribed);
+		}
+		return newCourseList;
+	}
 
-    public void addCourse(Course course) {
-        CourseEntity courseEntity = courseTranslator.translateToEntity(course);
-        List<Book> bookList = course.getBookList();
-        int totalNOfPages = 0;
-        for (Book book : bookList) {
-            totalNOfPages += book.getNoOfPages();
-        }
-        List<BookEntity> savedbookList = null;
-        if (bookList != null) {
-            List<BookEntity> translateToEntity = bookTranslator.translateToEntity(bookList);
-            savedbookList = bookRepository.save(translateToEntity);
-        }
+	public void addCourse(Course course) {
+		CourseEntity courseEntity = courseTranslator.translateToEntity(course);
+		List<Book> bookList = course.getBookList();
+		int totalNOfPages = 0;
+		for (Book book : bookList) {
+			totalNOfPages += book.getNoOfPages();
+		}
+		List<BookEntity> savedbookList = null;
+		if (bookList != null) {
+			List<BookEntity> translateToEntity = bookTranslator.translateToEntity(bookList);
+			savedbookList = bookRepository.save(translateToEntity);
+		}
 
-        courseEntity.setCreationDateTime(LocalDateTime.now());
-        courseEntity.setLastChangeTimestamp(LocalDateTime.now());
-        int defaultTimeInWeeks = ServiceUtils.getDefaultCoursePreparationTime(totalNOfPages, 18, 7);
-        courseEntity.setDefaultTimeInWeeks(defaultTimeInWeeks);
-        CourseEntity savedCourse = courseRepository.save(courseEntity);
-        List<CourseBooksEntity> courseBooksEntities = new ArrayList<>();
-        if (savedbookList != null) {
-            for (BookEntity bookEntity : savedbookList) {
-                CourseBooksEntity courseBooksEntity = new CourseBooksEntity(savedCourse.getId(), bookEntity.getId());
-                courseBooksEntities.add(courseBooksEntity);
-            }
+		courseEntity.setCreationDateTime(LocalDateTime.now());
+		courseEntity.setLastChangeTimestamp(LocalDateTime.now());
+		int defaultTimeInWeeks = ServiceUtils.getDefaultCoursePreparationTime(totalNOfPages, 18, 7);
+		courseEntity.setDefaultTimeInWeeks(defaultTimeInWeeks);
+		courseEntity.setDefaultTimeInMonths((defaultTimeInWeeks * 7) / 30);
+		CourseEntity savedCourse = courseRepository.save(courseEntity);
+		List<CourseBooksEntity> courseBooksEntities = new ArrayList<>();
+		if (savedbookList != null) {
+			for (BookEntity bookEntity : savedbookList) {
+				CourseBooksEntity courseBooksEntity = new CourseBooksEntity(savedCourse.getId(), bookEntity.getId());
+				courseBooksEntities.add(courseBooksEntity);
+			}
 
-            courseBooksRepository.save(courseBooksEntities);
-        }
+			courseBooksRepository.save(courseBooksEntities);
+		}
 
-    }
+	}
 
 	public Course getCourse(Long userId, Long courseId) {
 		CourseEntity courseEntity = courseRepository.findOne(courseId);
+		if(courseEntity == null) {
+			throw new ServiceException(ErrorCode.SM_115);
+		}
 		List<Book> bookList = new ArrayList<>();
 		if (courseEntity.getType().equals(Type.CUSTOM)) {
 			UserCoursesEntity userCoursesEntity = userCoursesRepository.findBy(userId, courseId);
@@ -116,8 +121,8 @@ public class CourseService {
 				book.setType(userCourseBooksEntity.getType().name());
 				book.setAuthor(userCourseBooksEntity.getAuthor());
 				book.setTitle(userCourseBooksEntity.getTitle());
-                book.setImageUrl(userCourseBooksEntity.getImageUrl());
-                book.setRevisionCompleted(userCourseBooksEntity.isRevisionCompleted());
+				book.setImageUrl(userCourseBooksEntity.getImageUrl());
+				book.setRevisionCompleted(userCourseBooksEntity.isRevisionCompleted());
 				bookList.add(book);
 			}
 		} else {

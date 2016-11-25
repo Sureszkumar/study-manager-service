@@ -19,6 +19,9 @@ public class CourseEntity extends BaseEntity {
 	private Type type;
 	
 	private int defaultTimeInWeeks;
+	
+	private double defaultTimeInMonths;
+
 
 	public int getDefaultTimeInWeeks() {
 		return defaultTimeInWeeks;
@@ -26,6 +29,14 @@ public class CourseEntity extends BaseEntity {
 
 	public void setDefaultTimeInWeeks(int defaultTimeInWeeks) {
 		this.defaultTimeInWeeks = defaultTimeInWeeks;
+	}
+
+	public double getDefaultTimeInMonths() {
+		return defaultTimeInMonths;
+	}
+
+	public void setDefaultTimeInMonths(double defaultTimeInMonths) {
+		this.defaultTimeInMonths = defaultTimeInMonths;
 	}
 
 	public String getDescription() {

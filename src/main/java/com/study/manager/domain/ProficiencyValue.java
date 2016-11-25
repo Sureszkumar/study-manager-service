@@ -3,33 +3,35 @@ package com.study.manager.domain;
 
 public class ProficiencyValue {
 
-    private int easy;
+    private int beginner;
 
-    private int moderate;
+    private int normal;
 
-    private int difficult;
+    private int expert;
 
-    public int getEasy() {
-        return easy;
-    }
+	public int getBeginner() {
+		return beginner;
+	}
 
-    public void setEasy(int easy) {
-        this.easy = easy;
-    }
+	public void setBeginner(int beginner) {
+		this.beginner = beginner;
+	}
 
-    public int getModerate() {
-        return moderate;
-    }
+	public int getNormal() {
+		return normal;
+	}
 
-    public void setModerate(int moderate) {
-        this.moderate = moderate;
-    }
+	public void setNormal(int normal) {
+		this.normal = normal;
+	}
 
-    public int getDifficult() {
-        return difficult;
-    }
+	public int getExpert() {
+		return expert;
+	}
 
-    public void setDifficult(int difficult) {
-        this.difficult = difficult;
-    }
+	public void setExpert(int expert) {
+		this.expert = expert;
+	}
+
+    
 }

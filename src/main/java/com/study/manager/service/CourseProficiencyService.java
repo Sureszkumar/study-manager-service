@@ -2,6 +2,7 @@ package com.study.manager.service;
 
 import javax.inject.Inject;
 
+import com.study.manager.service.exception.ErrorCode;
 import com.study.manager.service.exception.ServiceException;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
@@ -20,7 +21,7 @@ public class CourseProficiencyService {
         CourseProficiencyEntity courseProficiencyRepositoryByCourseId = courseProficiencyRepository.
                 findByCourseId(courseProficiencyEntity.getCourseId());
         if (courseProficiencyRepositoryByCourseId != null) {
-            throw new ServiceException("CourseProficiency already exist for course : " + courseProficiencyEntity.getId());
+            throw new ServiceException(ErrorCode.SM_105);
         }
         courseProficiencyRepository.save(courseProficiencyEntity);
     }

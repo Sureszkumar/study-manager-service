@@ -1,8 +1,8 @@
 package com.study.manager.service.exception;
 
-public class CredentialsException extends RuntimeException {
+public class CredentialsException extends ServiceException {
 
-    public CredentialsException(final String message) {
-        super(message);
+    public CredentialsException(ErrorCode errorCode) {
+        super(errorCode);
     }
 }

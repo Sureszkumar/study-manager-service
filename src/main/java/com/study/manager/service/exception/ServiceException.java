@@ -2,7 +2,14 @@ package com.study.manager.service.exception;
 
 public class ServiceException extends RuntimeException {
 
-    public ServiceException(final String message) {
-        super(message);
+	private String errorCode;
+	
+    public String getErrorCode() {
+		return errorCode;
+	}
+
+	public ServiceException(ErrorCode errorCode) {
+        super(errorCode.getMessage());
+        this.errorCode = errorCode.name();
     }
 }
