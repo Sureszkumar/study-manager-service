@@ -46,9 +46,9 @@ import com.study.manager.util.ServiceUtils;
 @Validated
 public class UserCoursesService {
 
-	public static final int DEFAULT_BEGINNER_PAGES = 18;
+	public static final int DEFAULT_BEGINNER_PAGES = 10;
 	public static final int DEFAULT_NORMAL_PAGES = 15;
-	public static final int DEFAULT_EXPERT_PAGES = 10;
+	public static final int DEFAULT_EXPERT_PAGES = 18;
 	@Inject
 	private UserCoursesRepository userCoursesRepository;
 
@@ -149,6 +149,9 @@ public class UserCoursesService {
 			userCourseBooksEntityList.add(userCourseBooksTranslator.translateToEntity(book));
 		}
 		CourseEntity courseEntity = courseTranslator.translateToEntity(course);
+		double defaultTimeInWeeks = ServiceUtils.getDefaultCoursePreparationTimeDouble(totalNoOfPages, 18, 7);
+		courseEntity.setDefaultTimeInWeeks((int) Math.ceil(defaultTimeInWeeks));
+		courseEntity.setDefaultTimeInMonths((defaultTimeInWeeks * 7) / 30);
 		CourseEntity persistedEntity = courseRepository.save(courseEntity);
 		UserCoursesEntity userCoursesEntity = new UserCoursesEntity(userId, persistedEntity.getId());
 		userCoursesEntity.setCreationDateTime(LocalDateTime.now());
@@ -160,9 +163,9 @@ public class UserCoursesService {
 		String currentStatus = course.getStartDate().isAfter(LocalDate.now()) ? CourseStatus.NOT_STARTED.name()
 				: CourseStatus.ON_TRACK.name();
 		userCoursesEntity.setCurrentStatus(currentStatus);
-		int defaultTimeInWeeks = ServiceUtils.getDefaultCoursePreparationTime(totalNoOfPages, 18, 7);
 		userCoursesEntity.setStartDate(course.getStartDate());
-		userCoursesEntity.setEndDate(course.getStartDate().plusWeeks(defaultTimeInWeeks));
+		int defaultTimeInDays = (int) Math.ceil((defaultTimeInWeeks * 7));
+		userCoursesEntity.setEndDate(course.getStartDate().plusDays(defaultTimeInDays));
 		userCoursesEntity.setProficiency(Proficiency.EXPERT.name());
 		WeeklyHoursEntity weeklyHoursEntity = new WeeklyHoursEntity();
 		WeekEntity weekEntity = new WeekEntity(1, 1, 1, 1, 1, 1, 1);
@@ -255,19 +258,37 @@ public class UserCoursesService {
 				double revisionCompletedPercentage = (double) 30 / noOfBooks;
 				userCoursesEntity
 						.setCompletionRate(userCoursesEntity.getCompletionRate() + revisionCompletedPercentage);
+				if (userCoursesEntity.getCompletionRate() >= 100.0) {
+					userCoursesEntity.setCurrentStatus(CourseStatus.COMPLETED.name());
+				}
 			} else {
-				userCourseBooksEntity
-						.setNoOfPagesRead(userCourseBooksEntity.getNoOfPagesRead() + goal.getNoOfPagesRead());
-				userCourseBooksEntity.setNoOfPagesUnRead(
-						userCourseBooksEntity.getTotalNoOfPages() - userCourseBooksEntity.getNoOfPagesRead());
-				userCoursesEntity.setPagesRead(userCoursesEntity.getPagesRead() + goal.getNoOfPagesRead());
-				userCoursesEntity
-						.setPagesUnRead(userCoursesEntity.getTotalNoOfPages() - userCoursesEntity.getPagesRead());
-				int todayGoal = userCoursesEntity.getTodayGoal() - goal.getNoOfPagesRead();
-				userCoursesEntity.setTodayGoal(todayGoal >= 0 ? todayGoal : 0);
-				double completionRate = ((double) goal.getNoOfPagesRead() / userCourseBooksEntity.getTotalNoOfPages())
-						* 70;
-				userCoursesEntity.setCompletionRate(userCoursesEntity.getCompletionRate() + completionRate);
+				if (CourseStatus.NOT_STARTED.name().equals(userCoursesEntity.getCurrentStatus())) {
+					userCoursesEntity.setCurrentStatus(CourseStatus.ON_TRACK.name());
+					userCoursesEntity.setEndDate(LocalDate.now().plusDays(
+							DAYS.between(userCoursesEntity.getStartDate(), userCoursesEntity.getEndDate())));
+					userCoursesEntity.setStartDate(LocalDate.now());
+					int todayGoal = userCoursesEntity.getWeeklyPagesEntity().getWeekEntity()
+							.getTodayGoal(LocalDate.now());
+					userCoursesEntity.setTodayGoal(todayGoal);
+				}
+				if (userCoursesEntity.getCurrentStatus().equals(CourseStatus.BEHIND_SCHEDULE.name())
+						|| userCoursesEntity.getCurrentStatus().equals(CourseStatus.ON_TRACK.name())) {
+					userCourseBooksEntity
+							.setNoOfPagesRead(userCourseBooksEntity.getNoOfPagesRead() + goal.getNoOfPagesRead());
+					userCourseBooksEntity.setNoOfPagesUnRead(
+							userCourseBooksEntity.getTotalNoOfPages() - userCourseBooksEntity.getNoOfPagesRead());
+					userCoursesEntity.setPagesRead(userCoursesEntity.getPagesRead() + goal.getNoOfPagesRead());
+					userCoursesEntity
+							.setPagesUnRead(userCoursesEntity.getTotalNoOfPages() - userCoursesEntity.getPagesRead());
+					int todayGoal = userCoursesEntity.getTodayGoal() - goal.getNoOfPagesRead();
+					userCoursesEntity.setTodayGoal(todayGoal >= 0 ? todayGoal : 0);
+					double completionRate = ((double) goal.getNoOfPagesRead()
+							/ userCourseBooksEntity.getTotalNoOfPages()) * 70;
+					userCoursesEntity.setCompletionRate(userCoursesEntity.getCompletionRate() + completionRate);
+					if (userCoursesEntity.getTotalNoOfPages() <= userCoursesEntity.getPagesRead()) {
+						userCoursesEntity.setCurrentStatus(CourseStatus.REVISION_PENDING.name());
+					}
+				}
 			}
 		} else {
 			throw new ServiceException(ErrorCode.SM_102);

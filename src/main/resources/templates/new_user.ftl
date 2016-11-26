@@ -39,6 +39,6 @@
     The Study Manager Development Team
 </p>
 <p>
-    <em>This message is an automated reply to your registration request. Login to your application to setup to
-        preference, courses and to get started</em>
+    <em>This message is an automated reply to your registration request. Login to our application using your device 
+    to subscribe to Courses, setup preferences and to get started</em>
 </p>

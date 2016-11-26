@@ -74,6 +74,14 @@ public class ServiceUtils {
 		return noOfPages / (noOfPagesPerHour * noOfHoursPerWeek);
 
 	}
+	
+	public static double getDefaultCoursePreparationTimeDouble(int noOfPages, int noOfPagesPerHour, int noOfHoursPerWeek) {
+
+		double multiplyExact = Math.multiplyExact(noOfPagesPerHour, noOfHoursPerWeek);
+		double result = noOfPages / multiplyExact;
+		return result;
+
+	}
 	public static String formVerifyEmailUrl(Long id, String email) {
 		return "";
 

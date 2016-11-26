@@ -37,7 +37,7 @@
 </p>
 <p>
     <em>
-        This message is an automated reply to your password recovery request; This inbox is not monitored and hence reply to the above mentioned
-        StudyManagerTeam@gmail.com for queries
+        This message is an automated reply to your password recovery request; DO NOT REPLY to this email-address 
+        and leverage the Customer Care email address specified above
     </em>
 </p>
