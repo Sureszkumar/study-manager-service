@@ -283,7 +283,7 @@ public class UserCoursesService {
 					int todayGoal = userCoursesEntity.getTodayGoal() - goal.getNoOfPagesRead();
 					userCoursesEntity.setTodayGoal(todayGoal >= 0 ? todayGoal : 0);
 					double completionRate = ((double) goal.getNoOfPagesRead()
-							/ userCourseBooksEntity.getTotalNoOfPages()) * 70;
+							/ userCoursesEntity.getTotalNoOfPages()) * 70;
 					userCoursesEntity.setCompletionRate(userCoursesEntity.getCompletionRate() + completionRate);
 					if (userCoursesEntity.getTotalNoOfPages() <= userCoursesEntity.getPagesRead()) {
 						userCoursesEntity.setCurrentStatus(CourseStatus.REVISION_PENDING.name());
