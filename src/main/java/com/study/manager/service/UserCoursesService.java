@@ -273,20 +273,24 @@ public class UserCoursesService {
 				}
 				if (userCoursesEntity.getCurrentStatus().equals(CourseStatus.BEHIND_SCHEDULE.name())
 						|| userCoursesEntity.getCurrentStatus().equals(CourseStatus.ON_TRACK.name())) {
-					userCourseBooksEntity
-							.setNoOfPagesRead(userCourseBooksEntity.getNoOfPagesRead() + goal.getNoOfPagesRead());
-					userCourseBooksEntity.setNoOfPagesUnRead(
-							userCourseBooksEntity.getTotalNoOfPages() - userCourseBooksEntity.getNoOfPagesRead());
-					userCoursesEntity.setPagesRead(userCoursesEntity.getPagesRead() + goal.getNoOfPagesRead());
-					userCoursesEntity
-							.setPagesUnRead(userCoursesEntity.getTotalNoOfPages() - userCoursesEntity.getPagesRead());
-					int todayGoal = userCoursesEntity.getTodayGoal() - goal.getNoOfPagesRead();
-					userCoursesEntity.setTodayGoal(todayGoal >= 0 ? todayGoal : 0);
-					double completionRate = ((double) goal.getNoOfPagesRead()
-							/ userCoursesEntity.getTotalNoOfPages()) * 70;
-					userCoursesEntity.setCompletionRate(userCoursesEntity.getCompletionRate() + completionRate);
-					if (userCoursesEntity.getTotalNoOfPages() <= userCoursesEntity.getPagesRead()) {
-						userCoursesEntity.setCurrentStatus(CourseStatus.REVISION_PENDING.name());
+					if(goal.getNoOfPagesRead() <= userCourseBooksEntity.getNoOfPagesUnRead()) {
+						userCourseBooksEntity
+								.setNoOfPagesRead(userCourseBooksEntity.getNoOfPagesRead() + goal.getNoOfPagesRead());
+						userCourseBooksEntity.setNoOfPagesUnRead(
+								userCourseBooksEntity.getTotalNoOfPages() - userCourseBooksEntity.getNoOfPagesRead());
+						userCoursesEntity.setPagesRead(userCoursesEntity.getPagesRead() + goal.getNoOfPagesRead());
+						userCoursesEntity
+								.setPagesUnRead(userCoursesEntity.getTotalNoOfPages() - userCoursesEntity.getPagesRead());
+						int todayGoal = userCoursesEntity.getTodayGoal() - goal.getNoOfPagesRead();
+						userCoursesEntity.setTodayGoal(todayGoal >= 0 ? todayGoal : 0);
+						double completionRate = ((double) goal.getNoOfPagesRead()
+								/ userCoursesEntity.getTotalNoOfPages()) * 70;
+						userCoursesEntity.setCompletionRate(userCoursesEntity.getCompletionRate() + completionRate);
+						if (userCoursesEntity.getTotalNoOfPages() <= userCoursesEntity.getPagesRead()) {
+							userCoursesEntity.setCurrentStatus(CourseStatus.REVISION_PENDING.name());
+						}
+					} else {
+						throw new ServiceException(ErrorCode.SM_117);
 					}
 				}
 			}

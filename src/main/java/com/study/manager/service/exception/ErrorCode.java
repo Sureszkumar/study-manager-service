@@ -18,7 +18,8 @@ public enum ErrorCode {
 	SM_113("Exception while encrypting password"),
 	SM_114("User already subscribed to this course"),
 	SM_115("Course not found"),
-	SM_116("Email already exists");
+	SM_116("Email already exists"),
+	SM_117("No of pages is higher than pages unread");
 
 	private String message;
 
