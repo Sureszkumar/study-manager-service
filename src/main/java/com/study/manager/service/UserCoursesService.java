@@ -101,6 +101,8 @@ public class UserCoursesService {
 			userCourseBooksEntity.setImageUrl(book.getImageUrl());
 			userCourseBooksEntity.setRevisionCompleted(false);
 			totalNoOfPages = totalNoOfPages + book.getNoOfPages();
+			userCourseBooksEntity.setCreationDateTime(LocalDateTime.now());
+			userCourseBooksEntity.setLastChangeTimestamp(LocalDateTime.now());
 			userCourseBooksEntities.add(userCourseBooksEntity);
 		}
 		userCourseEntity.setUserCourseBooksEntity(userCourseBooksEntities);
@@ -268,6 +270,7 @@ public class UserCoursesService {
 		if (userCourseBooksEntity != null) {
 			if (goal.isRevisionCompleted()) {
 				userCourseBooksEntity.setRevisionCompleted(true);
+				userCourseBooksEntity.setLastChangeTimestamp(LocalDateTime.now());
 				int noOfBooks = userCourseBooksEntities.size();
 				double revisionCompletedPercentage = (double) 30 / noOfBooks;
 				userCoursesEntity
@@ -288,15 +291,22 @@ public class UserCoursesService {
 				if (userCoursesEntity.getCurrentStatus().equals(CourseStatus.BEHIND_SCHEDULE.name())
 						|| userCoursesEntity.getCurrentStatus().equals(CourseStatus.ON_TRACK.name())) {
 					if(goal.getNoOfPagesRead() <= userCourseBooksEntity.getNoOfPagesUnRead()) {
+
 						userCourseBooksEntity
 								.setNoOfPagesRead(userCourseBooksEntity.getNoOfPagesRead() + goal.getNoOfPagesRead());
 						userCourseBooksEntity.setNoOfPagesUnRead(
 								userCourseBooksEntity.getTotalNoOfPages() - userCourseBooksEntity.getNoOfPagesRead());
+						userCourseBooksEntity.setLastChangeTimestamp(LocalDateTime.now());
 						userCoursesEntity.setPagesRead(userCoursesEntity.getPagesRead() + goal.getNoOfPagesRead());
 						userCoursesEntity
 								.setPagesUnRead(userCoursesEntity.getTotalNoOfPages() - userCoursesEntity.getPagesRead());
 						int todayGoal = userCoursesEntity.getTodayGoal() - goal.getNoOfPagesRead();
 						userCoursesEntity.setTodayGoal(todayGoal >= 0 ? todayGoal : 0);
+						if(todayGoal > 0){
+							userCoursesEntity.setCurrentStatus(CourseStatus.BEHIND_SCHEDULE.name());
+						} else {
+							userCoursesEntity.setCurrentStatus(CourseStatus.ON_TRACK.name());
+						}
 						double completionRate = ((double) goal.getNoOfPagesRead()
 								/ userCoursesEntity.getTotalNoOfPages()) * 70;
 						userCoursesEntity.setCompletionRate(userCoursesEntity.getCompletionRate() + completionRate);

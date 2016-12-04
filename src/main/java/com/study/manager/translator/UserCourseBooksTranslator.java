@@ -1,5 +1,6 @@
 package com.study.manager.translator;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -29,6 +30,8 @@ public class UserCourseBooksTranslator {
         bookEntity.setTotalNoOfPages(book.getNoOfPages());
         bookEntity.setNoOfPagesUnRead(book.getNoOfPages());
         bookEntity.setRevisionCompleted(book.isRevisionCompleted());
+        bookEntity.setCreationDateTime(LocalDateTime.now());
+        bookEntity.setLastChangeTimestamp(LocalDateTime.now());
         return bookEntity;
     }
 }

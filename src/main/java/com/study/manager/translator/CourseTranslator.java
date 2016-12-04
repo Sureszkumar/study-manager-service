@@ -2,10 +2,13 @@ package com.study.manager.translator;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 import javax.inject.Inject;
 
+import com.study.manager.domain.Book;
+import com.study.manager.entity.UserCourseBooksEntity;
 import org.springframework.stereotype.Component;
 
 import com.study.manager.domain.Course;
@@ -45,6 +48,21 @@ public class CourseTranslator {
 			Course course = new Course();
 			long courseId = courseEntity.getId();
 			UserCoursesEntity userCoursesEntity = userCoursesRepository.findBy(userId, courseId);
+			List<UserCourseBooksEntity> userCourseBooksEntities = userCoursesEntity.getUserCourseBooksEntity();
+			UserCourseBooksEntity userCourseBooksEntity = userCourseBooksEntities.stream().max(Comparator.comparing(UserCourseBooksEntity::getLastChangeTimestamp)).get();
+			List<Book> bookList = new ArrayList<>();
+			Book book = new Book();
+			book.setNoOfPages(userCourseBooksEntity.getTotalNoOfPages());
+			book.setType(userCourseBooksEntity.getType().name());
+			book.setAuthor(userCourseBooksEntity.getAuthor());
+			book.setTitle(userCourseBooksEntity.getTitle());
+			book.setId(userCourseBooksEntity.getId());
+			book.setNoOfPagesRead(userCourseBooksEntity.getNoOfPagesRead());
+			book.setNoOfPagesUnRead(userCourseBooksEntity.getNoOfPagesUnRead());
+			book.setImageUrl(userCourseBooksEntity.getImageUrl());
+			book.setRevisionCompleted(userCourseBooksEntity.isRevisionCompleted());
+			bookList.add(book);
+			course.setBookList(bookList);
 			course.setId(courseId);
 			course.setTitle(courseEntity.getTitle());
 			course.setDescription(courseEntity.getDescription());
@@ -54,7 +72,7 @@ public class CourseTranslator {
 			course.setCurrentStatus(userCoursesEntity.getCurrentStatus());
 			course.setCompletionRate(BigDecimal.valueOf(userCoursesEntity.getCompletionRate()));
 			course.setTodayGoal(userCoursesEntity.getTodayGoal());
-			course.setLastUpdatedDate(userCoursesEntity.getLastChangeTimestamp() != null ? 
+			course.setLastUpdatedDate(userCoursesEntity.getLastChangeTimestamp() != null ?
 					userCoursesEntity.getLastChangeTimestamp().toLocalDate() : null);
 			courseList.add(course);
 		}

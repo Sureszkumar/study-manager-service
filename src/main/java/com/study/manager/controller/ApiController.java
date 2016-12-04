@@ -147,7 +147,7 @@ public class ApiController {
     }
 
 
-    @RequestMapping(value = "/subscribedCourse/{courseId}/startDate", method = RequestMethod.POST)
+    @RequestMapping(value = "/subscribedCourse/{courseId}/updateStartDate", method = RequestMethod.POST)
     public ServiceResponse updateSubscribedStartDate(@RequestHeader("user-id") long userId,
                                                           @PathVariable("courseId") final Long courseId,
                                                           @RequestBody Course course) {
