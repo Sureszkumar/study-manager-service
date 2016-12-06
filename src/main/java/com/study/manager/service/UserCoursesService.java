@@ -430,6 +430,7 @@ public class UserCoursesService {
 			book.setType(userCourseBooksEntity.getType().name());
 			book.setAuthor(userCourseBooksEntity.getAuthor());
 			book.setTitle(userCourseBooksEntity.getTitle());
+			book.setDescription(userCourseBooksEntity.getDescription());
 			book.setId(userCourseBooksEntity.getId());
 			book.setNoOfPagesRead(userCourseBooksEntity.getNoOfPagesRead());
 			book.setNoOfPagesUnRead(userCourseBooksEntity.getNoOfPagesUnRead());
@@ -441,6 +442,7 @@ public class UserCoursesService {
 		course.setBookList(bookList);
 		course.setStartDate(userCoursesEntity.getStartDate());
 		course.setEndDate(userCoursesEntity.getEndDate());
+		course.setCurrentStatus(userCoursesEntity.getCurrentStatus());
 		return course;
 
 	}
