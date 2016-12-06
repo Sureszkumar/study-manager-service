@@ -2,6 +2,7 @@ package com.study.manager.domain;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -37,7 +38,16 @@ public class Course {
 	private Integer todayGoal;
 	
 	private LocalDate lastUpdatedDate;
-	
+
+	private Integer priority;
+
+	public Integer getPriority() {
+		return priority;
+	}
+
+	public void setPriority(Integer priority) {
+		this.priority = priority;
+	}
 
 	public Double getPreparationTimeInMonths() {
 		return preparationTimeInMonths;
