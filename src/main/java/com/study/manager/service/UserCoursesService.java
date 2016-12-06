@@ -117,6 +117,8 @@ public class UserCoursesService {
 		WeeklyHoursEntity weeklyHoursEntity = new WeeklyHoursEntity();
 		WeekEntity weekEntity = new WeekEntity(1, 1, 1, 1, 1, 1, 1);
 		weeklyHoursEntity.setWeekEntity(weekEntity);
+		weeklyHoursEntity.setCreationDateTime(LocalDateTime.now());
+		weeklyHoursEntity.setLastChangeTimestamp(LocalDateTime.now());
 		userCourseEntity.setWeeklyHoursEntity(weeklyHoursEntity);
 		WeeklyPagesEntity weeklyPagesEntity = new WeeklyPagesEntity();
 		CourseProficiencyEntity courseProficiencyEntity = courseProficiencyRepository.findByCourseId(courseId);
@@ -126,6 +128,8 @@ public class UserCoursesService {
 		}
 		WeekEntity weekEntityPages = new WeekEntity(expertPages);
 		weeklyPagesEntity.setWeekEntity(weekEntityPages);
+		weeklyPagesEntity.setCreationDateTime(LocalDateTime.now());
+		weeklyPagesEntity.setLastChangeTimestamp(LocalDateTime.now());
 		userCourseEntity.setWeeklyPagesEntity(weeklyPagesEntity);
 
 		String currentStatus;
@@ -186,9 +190,13 @@ public class UserCoursesService {
 		WeeklyHoursEntity weeklyHoursEntity = new WeeklyHoursEntity();
 		WeekEntity weekEntity = new WeekEntity(1, 1, 1, 1, 1, 1, 1);
 		weeklyHoursEntity.setWeekEntity(weekEntity);
+		weeklyHoursEntity.setCreationDateTime(LocalDateTime.now());
+		weeklyHoursEntity.setLastChangeTimestamp(LocalDateTime.now());
 		userCoursesEntity.setWeeklyHoursEntity(weeklyHoursEntity);
 		WeeklyPagesEntity weeklyPagesEntity = new WeeklyPagesEntity();
 		WeekEntity weekEntityPages = new WeekEntity(DEFAULT_EXPERT_PAGES);
+		weeklyPagesEntity.setCreationDateTime(LocalDateTime.now());
+		weeklyPagesEntity.setLastChangeTimestamp(LocalDateTime.now());
 		weeklyPagesEntity.setWeekEntity(weekEntityPages);
 		userCoursesEntity.setWeeklyPagesEntity(weeklyPagesEntity);
 		int todayGoal = course.getStartDate().isAfter(LocalDate.now()) ? 0
@@ -336,8 +344,10 @@ public class UserCoursesService {
 			int dailyPagesToRead = (int) (pagesUnRead / noOfDaysLeft);
 			WeekEntity weekDayPages = new WeekEntity(dailyPagesToRead);
 			userCoursesEntity.getWeeklyPagesEntity().setWeekEntity(weekDayPages);
+			userCoursesEntity.getWeeklyPagesEntity().setLastChangeTimestamp(LocalDateTime.now());
 			WeekEntity weekDayHours = new WeekEntity(0);
 			userCoursesEntity.getWeeklyHoursEntity().setWeekEntity(weekDayHours);
+			userCoursesEntity.getWeeklyHoursEntity().setLastChangeTimestamp(LocalDateTime.now());
 			userCoursesEntity.setTodayGoal(dailyPagesToRead);
 			userCoursesEntity.setEndDate(newTargetDate);
 			userCoursesEntity.setDefaultSettingsView(DefaultSettingsView.TARGET_DATE.name());
