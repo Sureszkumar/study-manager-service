@@ -92,7 +92,7 @@ public class ApiController {
         return courses;
     }
 
-    @RequestMapping(value = "/subscribedCourses/updatePriority/{from}/{to}", method = RequestMethod.GET)
+    @RequestMapping(value = "/subscribedCourses/updatePriority/{from}/{to}", method = RequestMethod.POST)
     public ServiceResponse updatePriorityForSubscribedCourses(@RequestHeader("user-id") final Long userId,
                                                               @PathVariable("from") final int from,
                                                               @PathVariable("to") final int to) {
@@ -100,7 +100,7 @@ public class ApiController {
         try {
             userCoursesService.updatePriorityForSubscribedCourses(userId, from, to);
             response.setSuccess(true);
-            response.setMessage("Course successfully subscribed");
+            response.setMessage("Course Priority successfully updated");
             return response;
         } catch (ServiceException e) {
             response.setSuccess(false);

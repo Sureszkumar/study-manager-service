@@ -20,7 +20,7 @@ import javax.persistence.Table;
 @Table(name = "USER_COURSES")
 @NamedQueries({
         @NamedQuery(name = "UserCoursesEntity.findAllCourses", query = "SELECT u.courseId FROM UserCoursesEntity u WHERE u.userId = ?1"),
-        @NamedQuery(name = "UserCoursesEntity.findAllByUserId", query = "SELECT u from UserCoursesEntity u WHERE u.userId = ?1"),
+        @NamedQuery(name = "UserCoursesEntity.findAllByUserId", query = "SELECT u from UserCoursesEntity u WHERE u.userId = ?1 order by u.priority asc"),
         @NamedQuery(name = "UserCoursesEntity.findCount", query = "SELECT count(u) FROM UserCoursesEntity u WHERE u.userId = ?1 and u.courseId = ?2"),
         @NamedQuery(name = "UserCoursesEntity.findBy", query = "SELECT u FROM UserCoursesEntity u WHERE u.userId = ?1 and u.courseId = ?2"),})
 public class UserCoursesEntity extends BaseEntity {

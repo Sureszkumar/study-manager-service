@@ -12,6 +12,7 @@ import java.util.List;
 
 import javax.inject.Inject;
 
+import com.study.manager.domain.Type;
 import com.study.manager.translator.UserCoursesTranslator;
 import org.apache.tomcat.jni.Local;
 import org.springframework.stereotype.Service;
@@ -156,7 +157,10 @@ public class UserCoursesService {
 
 	public void unSubscribeCourse(Long userId, Long courseId) {
 		UserCoursesEntity userCourseEntity = userCoursesRepository.findBy(userId, courseId);
-		userCourseEntity.setLastChangeTimestamp(LocalDateTime.now());
+		if(Type.CUSTOM.equals(userCourseEntity.getType())){
+			courseRepository.delete(userCourseEntity.getCourseId());
+			courseProficiencyRepository.delete(courseProficiencyRepository.findByCourseId(userCourseEntity.getCourseId()));
+		}
 		userCoursesRepository.delete(userCourseEntity);
 	}
 
@@ -179,9 +183,14 @@ public class UserCoursesService {
 		double defaultTimeInWeeks = ServiceUtils.getDefaultCoursePreparationTimeDouble(totalNoOfPages, 18, 7);
 		courseEntity.setDefaultTimeInWeeks((int) Math.ceil(defaultTimeInWeeks));
 		courseEntity.setDefaultTimeInMonths((defaultTimeInWeeks * 7) / 30);
+		courseEntity.setCreationDateTime(LocalDateTime.now());
+		courseEntity.setLastChangeTimestamp(LocalDateTime.now());
 		CourseEntity persistedEntity = courseRepository.save(courseEntity);
 		UserCoursesEntity userCoursesEntity = new UserCoursesEntity(userId, persistedEntity.getId());
 		userCoursesEntity.setCreationDateTime(LocalDateTime.now());
+		userCoursesEntity.setTitle(persistedEntity.getTitle());
+		userCoursesEntity.setDescription(persistedEntity.getDescription());
+		userCoursesEntity.setType(persistedEntity.getType());
 		userCoursesEntity.setDefaultSettingsView(DefaultSettingsView.DIFFICULTY.name());
 		userCoursesEntity.setUserCourseBooksEntity(userCourseBooksEntityList);
 		userCoursesEntity.setTotalNoOfPages(totalNoOfPages);
@@ -500,7 +509,7 @@ public class UserCoursesService {
 	public void updatePriorityForSubscribedCourses(Long userId, int from, int to) {
 		List<UserCoursesEntity> userCoursesEntities = userCoursesRepository.findAllByUserId(userId);
 		Collections.rotate(userCoursesEntities.subList(to - 1, from), 1);
-		int i= 0;
+		int i= 1;
 		for(UserCoursesEntity userCoursesEntity : userCoursesEntities){
 			userCoursesEntity.setPriority(i++);
 		}
