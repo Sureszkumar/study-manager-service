@@ -7,10 +7,12 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.temporal.TemporalAdjusters;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import javax.inject.Inject;
 
+import com.study.manager.translator.UserCoursesTranslator;
 import org.apache.tomcat.jni.Local;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
@@ -66,6 +68,9 @@ public class UserCoursesService {
 	private CourseTranslator courseTranslator;
 
 	@Inject
+	UserCoursesTranslator userCoursesTranslator;
+
+	@Inject
 	private BookRepository bookRepository;
 	@Inject
 	private CourseSettingsTranslator courseSettingsTranslator;
@@ -110,9 +115,11 @@ public class UserCoursesService {
 		userCourseEntity.setPagesUnRead(totalNoOfPages);
 		userCourseEntity.setCompletionRate(0);
 
-
-		int defaultTimeInWeeks = courseRepository.findOne(courseId).getDefaultTimeInWeeks();
-		userCourseEntity.setEndDate(userCourseEntity.getStartDate().plusWeeks(defaultTimeInWeeks));
+		CourseEntity courseEntity = courseRepository.findOne(courseId);
+		userCourseEntity.setEndDate(userCourseEntity.getStartDate().plusWeeks(courseEntity.getDefaultTimeInWeeks()));
+		userCourseEntity.setTitle(courseEntity.getTitle());
+		userCourseEntity.setDescription(courseEntity.getDescription());
+		userCourseEntity.setType(courseEntity.getType());
 		userCourseEntity.setProficiency(Proficiency.EXPERT.name());
 		WeeklyHoursEntity weeklyHoursEntity = new WeeklyHoursEntity();
 		WeekEntity weekEntity = new WeekEntity(1, 1, 1, 1, 1, 1, 1);
@@ -150,8 +157,8 @@ public class UserCoursesService {
 	}
 
 	public List<Course> getSubscribedCourses(Long userId) {
-		List<Long> courseIds = userCoursesRepository.findAllCourses(userId);
-		return courseTranslator.translateToDomain(courseRepository.findAll(courseIds), userId);
+		List<UserCoursesEntity> userCoursesEntities = userCoursesRepository.findAllByUserId(userId);
+		return userCoursesTranslator.translateToDomain(userCoursesEntities);
 	}
 
 	public void addCustomCourse(Long userId, Course course) {
@@ -478,5 +485,15 @@ public class UserCoursesService {
 				}
 			}
 		}
+	}
+
+	public void updatePriorityForSubscribedCourses(Long userId, int from, int to) {
+		List<UserCoursesEntity> userCoursesEntities = userCoursesRepository.findAllByUserId(userId);
+		Collections.rotate(userCoursesEntities.subList(to - 1, from), 1);
+		int i= 0;
+		for(UserCoursesEntity userCoursesEntity : userCoursesEntities){
+			userCoursesEntity.setPriority(i++);
+		}
+		userCoursesRepository.save(userCoursesEntities);
 	}
 }
