@@ -92,6 +92,28 @@ public class ApiController {
         return courses;
     }
 
+    @RequestMapping(value = "/subscribedCourses/updatePriority/{from}/{to}", method = RequestMethod.POST)
+    public ServiceResponse updatePriorityForSubscribedCourses(@RequestHeader("user-id") final Long userId,
+                                                              @PathVariable("from") final int from,
+                                                              @PathVariable("to") final int to) {
+        ServiceResponse response = new ServiceResponse();
+        try {
+            userCoursesService.updatePriorityForSubscribedCourses(userId, from, to);
+            response.setSuccess(true);
+            response.setMessage("Course Priority successfully updated");
+            return response;
+        } catch (ServiceException e) {
+            response.setSuccess(false);
+            response.setMessage(e.getMessage());
+            response.setErrorCode(e.getErrorCode());
+            return response;
+        } catch (Exception e) {
+            response.setSuccess(false);
+            response.setMessage(e.getMessage());
+            return response;
+        }
+    }
+
     @RequestMapping(value = "/subscribedCourse/{courseId}", method = RequestMethod.GET)
     public Course getSubscribedCourse(@PathVariable("courseId") final Long courseId,
                                       @RequestHeader("user-id") final Long userId) {
@@ -106,6 +128,26 @@ public class ApiController {
             userCoursesService.updateSubscribedCourseGoal(userId, courseId, goal);
             response.setSuccess(true);
             response.setMessage("Subscribed Course goal successfully updated");
+            return response;
+        } catch (ServiceException e) {
+            response.setSuccess(false);
+            response.setMessage(e.getMessage());
+            response.setErrorCode(e.getErrorCode());
+            return response;
+        } catch (Exception e) {
+            response.setSuccess(false);
+            response.setMessage(e.getMessage());
+            return response;
+        }
+    }
+
+    @RequestMapping(value = "/subscribedCourses/updateDailyGoal", method = RequestMethod.POST)
+    public ServiceResponse updateDailyGoal(@RequestHeader("user-id") long userId) {
+        ServiceResponse response = new ServiceResponse();
+        try {
+            userCoursesService.addDailyGoalForUser(userId);
+            response.setSuccess(true);
+            response.setMessage("Daily goal successfully updated");
             return response;
         } catch (ServiceException e) {
             response.setSuccess(false);

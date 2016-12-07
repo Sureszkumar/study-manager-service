@@ -1,12 +1,16 @@
 package com.study.manager.controller;
 
-import java.io.IOException;
-import java.util.List;
-
-import javax.inject.Inject;
-import javax.persistence.EntityNotFoundException;
-import javax.servlet.http.HttpServletResponse;
-
+import com.study.manager.domain.Book;
+import com.study.manager.domain.Course;
+import com.study.manager.domain.ServiceResponse;
+import com.study.manager.domain.User;
+import com.study.manager.entity.CourseProficiencyEntity;
+import com.study.manager.service.BookService;
+import com.study.manager.service.CourseBooksService;
+import com.study.manager.service.CourseProficiencyService;
+import com.study.manager.service.CourseService;
+import com.study.manager.service.UserService;
+import com.study.manager.service.exception.EmailVerificationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -15,24 +19,13 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.multipart.MultipartFile;
 
-import com.study.manager.domain.Book;
-import com.study.manager.domain.Course;
-import com.study.manager.domain.ServiceResponse;
-import com.study.manager.domain.User;
-import com.study.manager.entity.CourseProficiencyEntity;
-import com.study.manager.entity.EntityType;
-import com.study.manager.service.BookService;
-import com.study.manager.service.CourseBooksService;
-import com.study.manager.service.CourseProficiencyService;
-import com.study.manager.service.CourseService;
-import com.study.manager.service.ImageService;
-import com.study.manager.service.UserService;
-import com.study.manager.service.exception.EmailVerificationException;
+import javax.inject.Inject;
+import javax.persistence.EntityNotFoundException;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.util.List;
 
 @RestController
 @RequestMapping(value = "/admin")
@@ -51,9 +44,6 @@ public class AdminController {
 
     @Inject
     private CourseBooksService courseBooksService;
-
-    @Inject
-    private ImageService imageService;
 
     @Inject
     private CourseProficiencyService courseProficiencyService;
@@ -148,53 +138,6 @@ public class AdminController {
             bookService.addBook(book);
             response.setSuccess(true);
             response.setMessage("Successfully Book added");
-            return response;
-        } catch (Exception e) {
-            response.setSuccess(false);
-            response.setMessage(e.getMessage());
-            return response;
-        }
-    }
-
-    @RequestMapping(value = "addImage/book/{bookId}", consumes = {"multipart/form-data"}, method = RequestMethod.POST)
-    public ServiceResponse addBookImage(@RequestParam final Long bookId, @RequestPart("image") MultipartFile image) {
-        ServiceResponse response = new ServiceResponse();
-        try {
-            imageService.add(image.getBytes(), bookId, EntityType.BOOK);
-            response.setSuccess(true);
-            response.setMessage("Successfully Image added");
-            return response;
-        } catch (Exception e) {
-            response.setSuccess(false);
-            response.setMessage(e.getMessage());
-            return response;
-        }
-    }
-
-    @RequestMapping(value = "addImage/user/{userId}", consumes = {"multipart/form-data"}, method = RequestMethod.POST)
-    public ServiceResponse addUserImage(@RequestParam final Long userId, @RequestPart("image") MultipartFile image) {
-        ServiceResponse response = new ServiceResponse();
-        try {
-            imageService.add(image.getBytes(), userId, EntityType.USER);
-            response.setSuccess(true);
-            response.setMessage("Successfully Image added");
-            return response;
-        } catch (Exception e) {
-            response.setSuccess(false);
-            response.setMessage(e.getMessage());
-            return response;
-        }
-    }
-
-    @RequestMapping(value = "addImage/course/{courseId}", consumes = {
-            "multipart/form-data"}, method = RequestMethod.POST)
-    public ServiceResponse addCourseImage(@RequestParam final Long courseId,
-                                          @RequestPart("image") MultipartFile image) {
-        ServiceResponse response = new ServiceResponse();
-        try {
-            imageService.add(image.getBytes(), courseId, EntityType.COURSE);
-            response.setSuccess(true);
-            response.setMessage("Successfully Image added");
             return response;
         } catch (Exception e) {
             response.setSuccess(false);
