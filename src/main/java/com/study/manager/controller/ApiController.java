@@ -141,6 +141,26 @@ public class ApiController {
         }
     }
 
+    @RequestMapping(value = "/subscribedCourses/updateDailyGoal", method = RequestMethod.POST)
+    public ServiceResponse updateDailyGoal(@RequestHeader("user-id") long userId) {
+        ServiceResponse response = new ServiceResponse();
+        try {
+            userCoursesService.addDailyGoalForUser(userId);
+            response.setSuccess(true);
+            response.setMessage("Daily goal successfully updated");
+            return response;
+        } catch (ServiceException e) {
+            response.setSuccess(false);
+            response.setMessage(e.getMessage());
+            response.setErrorCode(e.getErrorCode());
+            return response;
+        } catch (Exception e) {
+            response.setSuccess(false);
+            response.setMessage(e.getMessage());
+            return response;
+        }
+    }
+
     @RequestMapping(value = "/subscribedCourse/{courseId}/settings", method = RequestMethod.GET)
     public CourseSettings getSubscribedCourseSettings(@RequestHeader("user-id") long userId,
                                                       @PathVariable("courseId") final Long courseId) {

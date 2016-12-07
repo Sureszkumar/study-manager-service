@@ -484,7 +484,41 @@ public class UserCoursesService {
 					update = true;
 				}
 				String currentStatus = userCoursesEntity.getCurrentStatus();
-				if (!currentStatus.equals(CourseStatus.NOT_STARTED.name())) {
+				if (currentStatus.equals(CourseStatus.ON_TRACK.name()) ||
+						currentStatus.equals(CourseStatus.BEHIND_SCHEDULE.name())) {
+					int todayGoal = userCoursesEntity.getWeeklyPagesEntity().getWeekEntity()
+							.getTodayGoal(LocalDate.now());
+					int pastGoal = userCoursesEntity.getTodayGoal();
+					if (pastGoal > 0) {
+						userCoursesEntity.setCurrentStatus(CourseStatus.BEHIND_SCHEDULE.name());
+					} else {
+						userCoursesEntity.setCurrentStatus(CourseStatus.ON_TRACK.name());
+					}
+					todayGoal = todayGoal + pastGoal;
+					userCoursesEntity.setTodayGoal(todayGoal > userCoursesEntity.getPagesUnRead()
+							? userCoursesEntity.getPagesUnRead() : todayGoal);
+					update = true;
+				}
+				if (update) {
+					userCoursesRepository.save(userCoursesEntity);
+
+				}
+			}
+		}
+	}
+	public void addDailyGoalForUser(Long userId) {
+		List<UserCoursesEntity> userCourses = userCoursesRepository.findAllByUserId(userId);
+		if (userCourses != null && !userCourses.isEmpty()) {
+			for (UserCoursesEntity userCoursesEntity : userCourses) {
+				LocalDate startDate = userCoursesEntity.getStartDate();
+				boolean update = false;
+				if (startDate.equals(LocalDate.now())) {
+					userCoursesEntity.setCurrentStatus(CourseStatus.ON_TRACK.name());
+					update = true;
+				}
+				String currentStatus = userCoursesEntity.getCurrentStatus();
+				if (currentStatus.equals(CourseStatus.ON_TRACK.name()) ||
+						currentStatus.equals(CourseStatus.BEHIND_SCHEDULE.name())) {
 					int todayGoal = userCoursesEntity.getWeeklyPagesEntity().getWeekEntity()
 							.getTodayGoal(LocalDate.now());
 					int pastGoal = userCoursesEntity.getTodayGoal();
