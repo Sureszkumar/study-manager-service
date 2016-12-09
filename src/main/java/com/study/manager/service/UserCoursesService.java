@@ -544,46 +544,13 @@ public class UserCoursesService {
 		List<UserCoursesEntity> userCoursesEntities = userCoursesRepository.findAllByUserId(userId);
 		if(from > to){
 			Collections.rotate(userCoursesEntities.subList(to - 1, from), 1);
+		} else {
+			Collections.rotate(userCoursesEntities.subList(from-1, to ), 1);
 		}
 		int i= 1;
 		for(UserCoursesEntity userCoursesEntity : userCoursesEntities){
 			userCoursesEntity.setPriority(i++);
 		}
 		userCoursesRepository.save(userCoursesEntities);
-	}
-	
-	public static void main(String ap[]){
-		List<UserCoursesEntity> userCoursesEntities = new ArrayList<>();
-		add(userCoursesEntities, 1);
-		add(userCoursesEntities, 2);
-		add(userCoursesEntities, 3);
-		add(userCoursesEntities, 4);
-		add(userCoursesEntities, 5);
-		userCoursesEntities.forEach(item->System.out.println("Before rotate : id : "+item.getId() +" prio : "+item.getPriority()));
-		rotate(userCoursesEntities, 5, 2);
-		userCoursesEntities.forEach(item->System.out.println("After rotate : id : "+item.getId() +" prio : "+item.getPriority()));
-		
-	}
-	
-	public static List<UserCoursesEntity> rotate(List<UserCoursesEntity> userCoursesEntities, int from, int to){
-		if(from > to){
-			Collections.rotate(userCoursesEntities.subList(to - 1, from), 1);
-		} else {
-			Collections.rotate(userCoursesEntities.subList(to , from), 1);
-		}
-		int i= 1;
-		for(UserCoursesEntity userCoursesEntity : userCoursesEntities){
-			userCoursesEntity.setPriority(i++);
-		}
-		return userCoursesEntities;
-		
-	}
-	public static void add(List<UserCoursesEntity> userCoursesEntities, int id){
-		
-		UserCoursesEntity coursesEntity = new UserCoursesEntity();
-		coursesEntity.setId(Long.valueOf(id));
-		coursesEntity.setPriority(id);
-		userCoursesEntities.add(coursesEntity);
-		
 	}
 }
