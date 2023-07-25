@@ -1,1 +1,12 @@
-
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: study-manager
+  description: Service to track study plan.
+  tags:
+    - java
+    - service
+spec:
+  type: service
+  lifecycle: production
+  owner: sm-team
